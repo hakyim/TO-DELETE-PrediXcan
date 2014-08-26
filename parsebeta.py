@@ -3,26 +3,20 @@ import numpy as np
 import MySQLdb as db 
 import pandas as pd
 
-
+#ABC11-48400900C8.1-WB.GTEx.txt
 def parse_title(filename):
-	step1 = filename.split(".")
-	study = step1[1]
-	step2 = step1[0].split("-")
-	if len(step2) == 2:
-		gene = step2[0]
-		tissue = step2[1]
-	elif len(step2) == 3: #to account for stupid gene names with '-' in them
-		print step2 
-		gene = step2[0] + '-' + step2[1]
-		tissue = step2[2]
-		print gene, tissue
-
+	#NEED TO UPDATE WITH AN RSPLIT TO AVOID SHITTY PARSING
+	step1 = filename.rsplit("-",1)
+	#print step1
+	gene = step1[0]
+	step2 = step1[1].split(".")
+	#print step2
+	tissue = step2[0]
+	study = step2[1]
 	return (gene, tissue, study)
 
 ## MAIN ## 
 
-parse_title("A2ML1-AS1-WB.GTEx.txt")
-exit(1)
 
 parser = argparse.ArgumentParser(description="Parse input/output files.")
 #parser.add_argument("--betafile", help="betafile for processing ")
@@ -30,19 +24,25 @@ parser.add_argument("--filelist", help="list of beta-files to process", default=
 args = parser.parse_args()
 
 fl = args.filelist 
-filelist = open(filelist)
+filelist = open(fl)
 
 database = db.connect(host="localhost", # your host 
-                     user="root", # your username
-                      passwd="password", # your password
+                     user="t.cri.hriordan", # your username
+                      passwd="p@ssword1234!", # your password
                       db="mysql") # name of the data base
 cur = database.cursor()
 
 
 for fname in filelist.readlines():
 	fname = fname.strip('\n')
+	fullpath = "transcriptome/" + fname
 	gene,tissue,study = parse_title(fname)
-	snpframe = pd.read_table(fname)
+	try:
+		snpframe = pd.read_table(fullpath)
+	except:
+		print "error in read_table", sys.exc_info()[0]
+		print fullpath
+		continue 
 
 	for row in snpframe.iterrows():
 		statement = """INSERT INTO SNPs (rsnum, eff_allele, beta, p_value, N, cis, genename, tissue, study_name) VALUES ("%s","%s",%f,%f,%d,%r,"%s","%s","%s");""" % (row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],row[1]["N"],row[1]["cis"],gene,tissue,study)
@@ -53,5 +53,5 @@ for fname in filelist.readlines():
 	cur.execute("SELECT * FROM SNPs;")
 	print cur.fetchall()
 	"""
-
+	
 database.close()
