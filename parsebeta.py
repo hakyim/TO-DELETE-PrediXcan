@@ -5,7 +5,6 @@ import pandas as pd
 
 #ABC11-48400900C8.1-WB.GTEx.txt
 def parse_title(filename):
-	#NEED TO UPDATE WITH AN RSPLIT TO AVOID SHITTY PARSING
 	step1 = filename.rsplit("-",1)
 	#print step1
 	gene = step1[0]
@@ -19,23 +18,25 @@ def parse_title(filename):
 
 
 parser = argparse.ArgumentParser(description="Parse input/output files.")
-#parser.add_argument("--betafile", help="betafile for processing ")
+parser.add_argument("--betapath", help="path for betafiles")
 parser.add_argument("--filelist", help="list of beta-files to process", default="trfilelist.txt")
 args = parser.parse_args()
 
 fl = args.filelist 
+pathname = args.betapath
+
 filelist = open(fl)
 
 database = db.connect(host="localhost", # your host 
-                     user="t.cri.hriordan", # your username
-                      passwd="p@ssword1234!", # your password
+                     user="root", # your username
+                      passwd="password", # your password
                       db="mysql") # name of the data base
 cur = database.cursor()
 
 
 for fname in filelist.readlines():
 	fname = fname.strip('\n')
-	fullpath = "transcriptome/" + fname
+	fullpath = pathname + fname
 	gene,tissue,study = parse_title(fname)
 	try:
 		snpframe = pd.read_table(fullpath)
