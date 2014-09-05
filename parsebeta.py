@@ -44,14 +44,20 @@ for fname in filelist.readlines():
 		print "error in read_table", sys.exc_info()[0]
 		print fullpath
 		continue 
+        
+        #fuck. need to account for missing N. DAMN IT.
+        if snpframe.cis.isnull()[0]:
+                snpframe.cis = snpframe.N
+                snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
+                snpframe = snpframe.where(pd.notnull(snpframe), None)
 
 	for row in snpframe.iterrows():
-		statement = """INSERT INTO SNPs (rsnum, eff_allele, beta, p_value, N, cis, genename, tissue, study_name) VALUES ("%s","%s",%f,%f,%d,%r,"%s","%s","%s");""" % (row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],row[1]["N"],row[1]["cis"],gene,tissue,study)
+		statement = """INSERT INTO SNPs (rsnum, eff_allele, beta, p_value, N, cis, genename, tissue, study_name) VALUES ("%s","%s",%f,%f,%s,%r,"%s","%s","%s");""" % (row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],"Null",row[1]["cis"],gene,tissue,study)
 		cur.execute(statement)
 
 	database.commit()
 	"""
-	cur.execute("SELECT * FROM SNPs;")
+	cur.execute("SELECT * FROM SNPs where study_name = 'GD' ;")
 	print cur.fetchall()
 	"""
 	
