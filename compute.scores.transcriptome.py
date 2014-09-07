@@ -21,7 +21,7 @@ import MySQLdb as db
 ## define paths
 bios = True
 if bios:
-     prebios = '/group/im-lab/' 
+     prebios = '/glusterfs/users/im_lab/' 
 else:
      prebios = '/'
 
@@ -164,28 +164,32 @@ for ss in range(len(excludeSNPlist)):
     SNP = excludeSNPlist[ss]
     exsnpindex[SNP] = ''
 
+print "plz"
 ## INDEX ALL BETA FILES IN GENELIST
 indexindex = {}
-"""
-database = db.connect(host="localhost", # your host 
-                     user="root", # your username
-                      passwd="password", # your password
-                      db="mysql") # name of the data base
+
+database = db.connect(host="192.170.232.66", # your host 
+                     user="riordan", # your username
+                      passwd="mathtype5", # your password
+                      db="mysql",port=3306) # name of the data base
+print "got here1"
 cur = database.cursor()
-"""
+print "gothere2"
 for gg in genelist:
     ## READ BETA FILE
     betafilename =  betaheader + gg + betatail
     gene, study, tissue = parse_title(betafilename)
-    """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
-    """    
-    statement = 
+        
+    statement =     """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+
     cur.execute(statement, (gene,study,tissue))
     betarray = cur.fetchall()
     nsnps = len(betarray)
     betaindex = {}
-    for beta in betarray    
+    for beta in betarray:    
         #stuff
+        print beta 
+        raw_input("Continue?")
         rsid = beta[0]
         betaindex[rsid] = beta
     indexindex[gg] = betaindex
@@ -203,7 +207,7 @@ for gg in genelist:
             print betarray[rr,:]
             raw_input("Continue?")
         indexindex[gg] = betaindex
-
+"""
 ## NEW GENELIST, ONLY THOSE THAT HAVE PREDICTIVE MODELS
 print('old ngen ' + str(len(genelist)))
 genelist = indexindex.keys()
