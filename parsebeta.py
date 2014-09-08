@@ -50,15 +50,35 @@ for fname in filelist.readlines():
                 snpframe.cis = snpframe.N
                 snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
                 snpframe = snpframe.where(pd.notnull(snpframe), None)
+                nullparts = True
+        else:
+                nullparts = False
 
 	for row in snpframe.iterrows():
-		statement = """INSERT INTO SNPs (rsnum, eff_allele, beta, p_value, N, cis, genename, tissue, study_name) VALUES ("%s","%s",%f,%f,%s,%r,"%s","%s","%s");""" % (row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],"Null",row[1]["cis"],gene,tissue,study)
-		cur.execute(statement)
 
-	database.commit()
-	"""
-	cur.execute("SELECT * FROM SNPs where study_name = 'GD' ;")
-	print cur.fetchall()
-	"""
-	
+                if row[1]["beta"] == 'Inf': #skip rows with inf in beta  
+                        continue
+                        
+                if nullparts == True:
+                        numparts = "Null"
+                else:
+                        numparts = row[1]["N"]
+
+                statement = """INSERT INTO SNPs (rsnum, eff_allele, beta, p_value, N, cis, genename, tissue, study_name) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+                 
+                try:
+                        cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],numparts,row[1]["cis"],gene,tissue,study) )
+                        
+                except:
+                        err = sys.exc_info()[0]
+                        print "Error: %s" % err
+                        print "On file: %s" % fname 
+                        continue
+                       
+                database.commit()
+                """
+                cur.execute("SELECT * FROM SNPs where genename = %s;", gene)
+                print cur.fetchall()
+                raw_input("continue2?")
+                """
 database.close()
