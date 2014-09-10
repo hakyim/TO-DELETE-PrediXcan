@@ -49,7 +49,7 @@ betatail = '-WB.' + source  + '.txt'
 ## PREDICTED FILE NAMES / OUTFILENAME
 outfilename = data_dir + 'cohorts/WTCCC1/'+ disease_name  + '/score/GENEX.GTEx.ver.txt.profile'
 
-## EXCLUDE SNPs
+## EXCLUDE SNPsoffice space
 excludeSNPfilename = data_dir + 'cohorts/WTCCC1/' + 'exclusion-list-snps-26_04_2007.txt'
 
 
@@ -160,14 +160,14 @@ indexindex = {}
 for gg in genelist:
     ## READ BETA FILE
     betafilename =  betaheader + gg + betatail
-    if(os.path.isfile(betafilename)):
+    if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
         betalistdata = readArray(betafilename)
         betarray = np.asarray(betalistdata[1:]) ## exclude title
         nsnps = len(betarray)
         ## INDEX BETA FILE
         betaindex = {}
         print(gg)
-        for rr in r Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   ange(nsnps):
+        for rr in range(nsnps):
             rsid = betarray[rr,0]
             betaindex[rsid] = betarray[rr,:]
         indexindex[gg] = betaindex
