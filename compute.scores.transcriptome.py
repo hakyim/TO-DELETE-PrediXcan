@@ -126,7 +126,7 @@ parser.add_argument("--genoheader", default=genoheader, help="header of genotype
 parser.add_argument("--genotail", default=genotail, help="tail of genotype/dosage file") 
 parser.add_argument("--betaheader", default=betaheader, help="header of beta file") 
 parser.add_argument("--betatail", default=betatail, help="tail of beta file")
-parser.add_argument("--outfile", defaulthttps://www.facebook.com/=outfilename, help="Outfile path")
+parser.add_argument("--outfile", default=outfilename, help="Outfile path")
 parser.add_argument("--excludeSNPfilename", default=excludeSNPfilename, help="ExSNP file path")
 args = parser.parse_args()
 
@@ -135,7 +135,7 @@ genedatafilename = args.gdfn
 genoheader = args.genoheader
 genotail = args.genotail
 betaheader = args.betaheader
-betatail = args.betatai Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   l
+betatail = args.betatail
 outfilename = args.outfile
 excludeSNPfilename = args.excludeSNPfilename
 
@@ -157,7 +157,7 @@ genelist = genedata[:,1]
 ## TODO: WOULD A DICTIONARY WORK FASTER THAN LIST/ARRAY?
 excludeSNPdata = readArray(excludeSNPfilename)
 excludeSNPdata = np.asarray(excludeSNPdata)
-excludeSNPdata = excludeSNhttps://www.facebook.com/Pdata[1:] ## exclude title
+excludeSNPdata = excludeSNPdata[1:] ## exclude title
 excludeSNPlist = np.unique(excludeSNPdata[:,2])
 exsnpindex = {}
 for ss in range(len(excludeSNPlist)):
@@ -166,19 +166,20 @@ for ss in range(len(excludeSNPlist)):
 
 ## INDEX ALL BETA FILES IN GENELIST
 indexindex = {}
-
+"""
 database = db.connect(host="localhost", # your host 
                      user="root", # your username
                       passwd="password", # your password
                       db="mysql") # name of the data base
 cur = database.cursor()
-
+"""
 for gg in genelist:
     ## READ BETA FILE
     betafilename =  betaheader + gg + betatail
     gene, study, tissue = parse_title(betafilename)
-"""    
-    statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+    """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+    """    
+    statement = 
     cur.execute(statement, (gene,study,tissue))
     betarray = cur.fetchall()
     nsnps = len(betarray)
@@ -188,7 +189,7 @@ for gg in genelist:
         rsid = beta[0]
         betaindex[rsid] = beta
     indexindex[gg] = betaindex
-"""
+    """
     if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
         betalistdata = readArray(betafilename)
         betarray = np.asarray(betalistdata[1:]) ## exclude title
@@ -199,6 +200,8 @@ for gg in genelist:
         for rr in range(nsnps):
             rsid = betarray[rr,0]
             betaindex[rsid] = betarray[rr,:]
+            print betarray[rr,:]
+            raw_input("Continue?")
         indexindex[gg] = betaindex
 
 ## NEW GENELIST, ONLY THOSE THAT HAVE PREDICTIVE MODELS
@@ -213,7 +216,7 @@ predarray = np.zeros((ngen,nsamp))
 for cc in range(1,23):
     chr = str(cc).zfill(2)
     infilename = genoheader + chr + genotail
-    print(infilename)General Quota
+    print(infilename)
     ## READ IMPUTED DOSAGES, GO THROUGH ROWS AND COMPUTE CONTRIBUTION TO POLYSCORE
     dosagefile = gzip.open(infilename)
     for line in dosagefile:
