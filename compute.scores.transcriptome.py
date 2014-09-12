@@ -29,9 +29,8 @@ data_dir = prebios + 'nas40t2/haky/Signatures/data/'
 annot_dir = prebios + 'nas40t2/haky/main/Annotations/'
 
 disease_name = 'CD'
-parser.add_argument("-pfn", default=phenofilename, help="Pheno File path")
 
-## PHENOFILENAME
+## PHENOFILENAMEfirewall
 phenofilename = data_dir + 'cohorts/WTCCC1/'+ disease_name + '/imputed/' + 'Affx_sample_' + disease_name + '.txt' 
 
 ## GENE LIST FILENAME / GENEDATAFILENAME
@@ -61,6 +60,18 @@ excludeSNPfilename = data_dir + 'cohorts/WTCCC1/' + 'exclusion-list-snps-26_04_2
 ## ----------------------------------------
 # FUNCTION DEFINITIONS
 ## ----------------------------------------
+"""Parses beta file names for the gene, tissue, and study it records"""
+def parse_title(filename):
+    step1 = filename.rsplit("-",1)
+    #print step1
+    gene = step1[0]
+    step2 = step1[1].split(".")
+    #print step2
+    tissue = step2[0]
+    study = step2[1]
+    return (gene, tissue, study)
+
+
 def readArray(fname,delim=None):
     print(fname)
     part = fname.split('.')
@@ -106,9 +117,8 @@ def writeArray2DB(fname,arr,delim='\t'):
 
 ## ----------------------------------------
 ## MAIN CODE STARTS HERE 
-## -------------------- Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   --------------------
-
-##Parse command line arguments for file paths. Defaults defined above
+## -------------------- 
+##Parse command line arguments for file paths. Defaultsfirewallfirewall defined above
 parser = argparse.ArgumentParser(description="Parse input/output files.")
 parser.add_argument("-pfn", default=phenofilename, help="Pheno File path")
 parser.add_argument("-gdfn",default=genedatafilename, help = "Gene list file path")
@@ -116,7 +126,7 @@ parser.add_argument("--genoheader", default=genoheader, help="header of genotype
 parser.add_argument("--genotail", default=genotail, help="tail of genotype/dosage file") 
 parser.add_argument("--betaheader", default=betaheader, help="header of beta file") 
 parser.add_argument("--betatail", default=betatail, help="tail of beta file")
-parser.add_argument("--outfile", default=outfilename, help="Outfile path")
+parser.add_argument("--outfile", defaulthttps://www.facebook.com/=outfilename, help="Outfile path")
 parser.add_argument("--excludeSNPfilename", default=excludeSNPfilename, help="ExSNP file path")
 args = parser.parse_args()
 
@@ -147,7 +157,7 @@ genelist = genedata[:,1]
 ## TODO: WOULD A DICTIONARY WORK FASTER THAN LIST/ARRAY?
 excludeSNPdata = readArray(excludeSNPfilename)
 excludeSNPdata = np.asarray(excludeSNPdata)
-excludeSNPdata = excludeSNPdata[1:] ## exclude title
+excludeSNPdata = excludeSNhttps://www.facebook.com/Pdata[1:] ## exclude title
 excludeSNPlist = np.unique(excludeSNPdata[:,2])
 exsnpindex = {}
 for ss in range(len(excludeSNPlist)):
@@ -157,9 +167,28 @@ for ss in range(len(excludeSNPlist)):
 ## INDEX ALL BETA FILES IN GENELIST
 indexindex = {}
 
+database = db.connect(host="localhost", # your host 
+                     user="root", # your username
+                      passwd="password", # your password
+                      db="mysql") # name of the data base
+cur = database.cursor()
+
 for gg in genelist:
     ## READ BETA FILE
     betafilename =  betaheader + gg + betatail
+    gene, study, tissue = parse_title(betafilename)
+"""    
+    statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+    cur.execute(statement, (gene,study,tissue))
+    betarray = cur.fetchall()
+    nsnps = len(betarray)
+    betaindex = {}
+    for beta in betarray    
+        #stuff
+        rsid = beta[0]
+        betaindex[rsid] = beta
+    indexindex[gg] = betaindex
+"""
     if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
         betalistdata = readArray(betafilename)
         betarray = np.asarray(betalistdata[1:]) ## exclude title
@@ -179,7 +208,7 @@ ngen = len(genelist) ## genes in gendata that also have predictive models
 
 ## PREDARRAY(ngen,nsamp)  MATRIX OF PREDICTIONS/POLYSCORES, will transpose at the end
 predarray = np.zeros((ngen,nsamp))
- Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   
+   
 ## LOOP OVER CHR
 for cc in range(1,23):
     chr = str(cc).zfill(2)
