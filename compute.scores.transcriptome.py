@@ -19,7 +19,7 @@ import MySQLdb as db
 
 
 ## define paths
-bios = True
+bios = False
 if bios:
      prebios = '/glusterfs/users/im_lab/' 
 else:
@@ -63,13 +63,11 @@ excludeSNPfilename = data_dir + 'cohorts/WTCCC1/' + 'exclusion-list-snps-26_04_2
 """Parses beta file names for the gene, tissue, and study it records"""
 def parse_title(filename):
     step1 = filename.rsplit("-",1)
-    #print step1
     gene = step1[0]
     step2 = step1[1].split(".")
-    #print step2
     tissue = step2[0]
     study = step2[1]
-    return (gene, tissue, study)
+    return (gene, study, tissue)
 
 
 def readArray(fname,delim=None):
@@ -108,9 +106,13 @@ def writeArray(fname,arr,delim='\t'):
     fout.close()
     return True
 
-def writeArray2DB(fname,arr,delim='\t'):
-    pass
-    #hmm.
+def convertToNPArray(tup):
+     newarray = np.asarray(tup)
+     print newarray[0:6:1]
+     retarray = np.array([str(newarray[0]), str(newarray[1]), str(newarray[2]),str(newarray[3]),str(newarray[4]),bool(newarray[5])])
+     print retarray
+     raw_input("Continue?")
+
 ## ----------------------------------------
 ## END OF FUNCTION DEFINITIONS
 ## ----------------------------------------
@@ -164,7 +166,6 @@ for ss in range(len(excludeSNPlist)):
     SNP = excludeSNPlist[ss]
     exsnpindex[SNP] = ''
 
-print "plz"
 ## INDEX ALL BETA FILES IN GENELIST
 indexindex = {}
 
@@ -172,17 +173,22 @@ database = db.connect(host="192.170.232.66", # your host
                      user="riordan", # your username
                       passwd="mathtype5", # your password
                       db="mysql",port=3306) # name of the data base
-print "got here1"
 cur = database.cursor()
-print "gothere2"
+statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+
+"""
 for gg in genelist:
+
     ## READ BETA FILE
+
     betafilename =  betaheader + gg + betatail
-    gene, study, tissue = parse_title(betafilename)
-        
-    statement =     """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+    gene, study, tissue = parse_title(gg + betatail)
+    print (gene,study,tissue)
+    
+    
 
     cur.execute(statement, (gene,study,tissue))
+
     betarray = cur.fetchall()
     nsnps = len(betarray)
     betaindex = {}
@@ -190,11 +196,15 @@ for gg in genelist:
         #stuff
         print beta 
         raw_input("Continue?")
-        rsid = beta[0]
-        betaindex[rsid] = beta
+        conv = convertToNPArray(beta)
+        rsid = conv[0]
+        betaindex[rsid] = conv
     indexindex[gg] = betaindex
-    """
-    if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
+"""
+
+for gg in genelist:
+     betafilename =  betaheader + gg + betatail
+     if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
         betalistdata = readArray(betafilename)
         betarray = np.asarray(betalistdata[1:]) ## exclude title
         nsnps = len(betarray)
@@ -205,9 +215,10 @@ for gg in genelist:
             rsid = betarray[rr,0]
             betaindex[rsid] = betarray[rr,:]
             print betarray[rr,:]
+            print "['rs10143543' 'A' '-0.143815105851' '0.0258944090122' '184' 'True']"
             raw_input("Continue?")
         indexindex[gg] = betaindex
-"""
+
 ## NEW GENELIST, ONLY THOSE THAT HAVE PREDICTIVE MODELS
 print('old ngen ' + str(len(genelist)))
 genelist = indexindex.keys()
