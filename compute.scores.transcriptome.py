@@ -38,7 +38,7 @@ genedatafilename = prebios + 'nas40t2/haky/main/Data/landmark/Landmark-Genes-n97
 
 ## GENOTYPE/DOSAGE FILE FORM: header + chr + tail
 genoheader = data_dir + 'cohorts/WTCCC1/'+ disease_name + '/imputed/'+ disease_name + '_chr'
-genotail =  '_imputed' + '.dos.gz'
+genotail =  '_aligned_imputed' + '.dos.gz'
 
 ## BETA FILE NAMES FORM: betaheader + gene_name + betatail
 source = 'GTEx'
@@ -107,12 +107,15 @@ def writeArray(fname,arr,delim='\t'):
     return True
 
 def convertToNPArray(tup):
-     newarray = np.asarray(tup)
-     print newarray[0:6:1]
-     retarray = np.array([str(newarray[0]), str(newarray[1]), str(newarray[2]),str(newarray[3]),str(newarray[4]),bool(newarray[5])])
+     print type(tup[0])
+     print np.array(tup)
+     newarray = np.array(tup)
+     assert(np.array(tup)[2] == -0.143815105850628)
+     retarray = np.asarray([newarray[0], str(newarray[1]), tup[2] ,newarray[3],newarray[4],newarray[5]],dtype=np.float32)
      print retarray
-     raw_input("Continue?")
-
+     print type(retarray[2])
+     raw_input("hey?")
+     return retarray
 ## ----------------------------------------
 ## END OF FUNCTION DEFINITIONS
 ## ----------------------------------------
@@ -130,6 +133,7 @@ parser.add_argument("--betaheader", default=betaheader, help="header of beta fil
 parser.add_argument("--betatail", default=betatail, help="tail of beta file")
 parser.add_argument("--outfile", default=outfilename, help="Outfile path")
 parser.add_argument("--excludeSNPfilename", default=excludeSNPfilename, help="ExSNP file path")
+parser.add_argument("--db", default=0, help="Get beta from DB or from local files")
 args = parser.parse_args()
 
 phenofilename = args.pfn
@@ -140,7 +144,7 @@ betaheader = args.betaheader
 betatail = args.betatail
 outfilename = args.outfile
 excludeSNPfilename = args.excludeSNPfilename
-
+useDB = args.db
 
 
 
@@ -175,50 +179,45 @@ database = db.connect(host="192.170.232.66", # your host
                       db="mysql",port=3306) # name of the data base
 cur = database.cursor()
 statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
+print useDB
+## READ BETA FILE
+if useDB == 'db':
+     print "Using DB method"
+     for gg in genelist:
+          betafilename =  betaheader + gg + betatail
+          gene, study, tissue = parse_title(gg + betatail)
+          print (gene,study,tissue)             
+          cur.execute(statement, (gene,study,tissue))
 
-"""
-for gg in genelist:
-
-    ## READ BETA FILE
-
-    betafilename =  betaheader + gg + betatail
-    gene, study, tissue = parse_title(gg + betatail)
-    print (gene,study,tissue)
-    
-    
-
-    cur.execute(statement, (gene,study,tissue))
-
-    betarray = cur.fetchall()
-    nsnps = len(betarray)
-    betaindex = {}
-    for beta in betarray:    
-        #stuff
-        print beta 
-        raw_input("Continue?")
-        conv = convertToNPArray(beta)
-        rsid = conv[0]
-        betaindex[rsid] = conv
-    indexindex[gg] = betaindex
-"""
-
-for gg in genelist:
-     betafilename =  betaheader + gg + betatail
-     if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
-        betalistdata = readArray(betafilename)
-        betarray = np.asarray(betalistdata[1:]) ## exclude title
-        nsnps = len(betarray)
+          betarray = cur.fetchall()
+          nsnps = len(betarray)
+          betaindex = {}
+          for beta in betarray:    
+               conv = convertToNPArray(beta)
+               print "The converted results:"
+               print conv
+               print len(conv[2])
+               raw_input("Continue?")
+               rsid = conv[0]
+               betaindex[rsid] = conv
+               indexindex[gg] = betaindex
+else:
+     print "Using local file method"
+     for gg in genelist:
+          betafilename =  betaheader + gg + betatail
+          if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
+               betalistdata = readArray(betafilename)
+               betalistdata
+               betarray = np.asarray(betalistdata[1:]) ## exclude title
+               nsnps = len(betarray)
         ## INDEX BETA FILE
-        betaindex = {}
-        print(gg)
-        for rr in range(nsnps):
-            rsid = betarray[rr,0]
-            betaindex[rsid] = betarray[rr,:]
-            print betarray[rr,:]
-            print "['rs10143543' 'A' '-0.143815105851' '0.0258944090122' '184' 'True']"
-            raw_input("Continue?")
-        indexindex[gg] = betaindex
-
+               betaindex = {}
+               print(gg)
+               for rr in range(nsnps):
+                    rsid = betarray[rr,0]
+                    betaindex[rsid] = betarray[rr,:]
+                    indexindex[gg] = betaindex
+               
 ## NEW GENELIST, ONLY THOSE THAT HAVE PREDICTIVE MODELS
 print('old ngen ' + str(len(genelist)))
 genelist = indexindex.keys()
@@ -235,32 +234,35 @@ for cc in range(1,23):
     ## READ IMPUTED DOSAGES, GO THROUGH ROWS AND COMPUTE CONTRIBUTION TO POLYSCORE
     dosagefile = gzip.open(infilename)
     for line in dosagefile:
-        part = line.split(None,6)
-        rsid = part[1]
+         print "doing line: " + line
+         part = line.split(None,6)
+         rsid = part[1]
         ## IF RSID IS NOT IN EXCLUSION LIST
-        if not(rsid in exsnpindex):  
-            refalele = part[3]
+         if not(rsid in exsnpindex):  
+              refalele = part[3]
             ## CHECK FOR ALL GENES WHETHER RSID IS EQTL
-            numarrayed = False
-            dosagerow = []
-            cont = 0
+              numarrayed = False
+              dosagerow = []
+              cont = 0
             ## LOOP OVER GENES IN GENELIST
-            for gg in genelist:
-                betaindex = indexindex[gg]
-                if rsid in betaindex:
-                    betaA1 = betaindex[rsid][1]
-                    # print(betaA1 + ' ' + refalele)
-                    if refalele == betaA1:
-                        beta = float(betaindex[rsid][2])
-                    else:
+              for gg in genelist:
+                   betaindex = indexindex[gg]
+                   if rsid in betaindex:
+                        betaA1 = betaindex[rsid][1]
+                   else:
+                        betaA1 = None
+    # print(betaA1 + ' ' + refalele)
+                   if refalele == betaA1:
+                         beta = float(betaindex[rsid][2])
+                   else:
                         beta = -float(betaindex[rsid][2])
                     # print [rsid + ' ' + str(beta) + ' ' + betaindex[rsid][2]]
                     ## dosagerow
-                    if(np.logical_not(numarrayed)): 
+                   if(np.logical_not(numarrayed)): 
                         dosagerow = np.asarray(part[6:][0].split(),float)
                         numarrayed = True
-                    predarray[cont,] += beta * dosagerow
-                cont += 1
+                   predarray[cont,] += beta * dosagerow
+              cont += 1
     dosagefile.close()
 
 ## SAVE PREDICTIONS TO FILE
