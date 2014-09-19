@@ -19,7 +19,7 @@ import MySQLdb as db
 
 
 ## define paths
-bios = True
+bios = False
 if bios:
      prebios = '/group/im-lab/' 
 else:
@@ -29,7 +29,6 @@ data_dir = prebios + 'nas40t2/haky/Signatures/data/'
 annot_dir = prebios + 'nas40t2/haky/main/Annotations/'
 
 disease_name = 'CD'
-parser.add_argument("-pfn", default=phenofilename, help="Pheno File path")
 
 ## PHENOFILENAME
 phenofilename = data_dir + 'cohorts/WTCCC1/'+ disease_name + '/imputed/' + 'Affx_sample_' + disease_name + '.txt' 
@@ -39,7 +38,7 @@ genedatafilename = prebios + 'nas40t2/haky/main/Data/landmark/Landmark-Genes-n97
 
 ## GENOTYPE/DOSAGE FILE FORM: header + chr + tail
 genoheader = data_dir + 'cohorts/WTCCC1/'+ disease_name + '/imputed/'+ disease_name + '_chr'
-genotail =  '_imputed' + '.dos.gz'
+genotail =  '_aligned_imputed' + '.dos.gz'
 
 ## BETA FILE NAMES FORM: betaheader + gene_name + betatail
 source = 'GTEx'
@@ -125,7 +124,7 @@ genedatafilename = args.gdfn
 genoheader = args.genoheader
 genotail = args.genotail
 betaheader = args.betaheader
-betatail = args.betatai Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   l
+betatail = args.betatail 
 outfilename = args.outfile
 excludeSNPfilename = args.excludeSNPfilename
 
@@ -167,7 +166,7 @@ for gg in genelist:
         ## INDEX BETA FILE
         betaindex = {}
         print(gg)
-        for rr in r Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   ange(nsnps):
+        for rr in range(nsnps):
             rsid = betarray[rr,0]
             betaindex[rsid] = betarray[rr,:]
         indexindex[gg] = betaindex
@@ -179,15 +178,15 @@ ngen = len(genelist) ## genes in gendata that also have predictive models
 
 ## PREDARRAY(ngen,nsamp)  MATRIX OF PREDICTIONS/POLYSCORES, will transpose at the end
 predarray = np.zeros((ngen,nsamp))
- Because of the protected nature of the OSDC-Atwood resource, it is not possible to host from a VM.   It is possible to do so from Sullivan however.   
 ## LOOP OVER CHR
 for cc in range(1,23):
     chr = str(cc).zfill(2)
     infilename = genoheader + chr + genotail
-    print(infilename)General Quota
+    print(infilename)
     ## READ IMPUTED DOSAGES, GO THROUGH ROWS AND COMPUTE CONTRIBUTION TO POLYSCORE
     dosagefile = gzip.open(infilename)
     for line in dosagefile:
+        print "doing a line"
         part = line.split(None,6)
         rsid = part[1]
         ## IF RSID IS NOT IN EXCLUSION LIST
