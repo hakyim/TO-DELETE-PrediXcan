@@ -200,14 +200,13 @@ if useDB == 'db':
                raw_input("Continue?")
                rsid = conv[0]
                betaindex[rsid] = conv
-               indexindex[gg] = betaindex
+          indexindex[gg] = betaindex
 else:
      print "Using local file method"
      for gg in genelist:
           betafilename =  betaheader + gg + betatail
           if(os.path.isfile(betafilename)):       #should be changed to query for gene  + study + tissue
                betalistdata = readArray(betafilename)
-               betalistdata
                betarray = np.asarray(betalistdata[1:]) ## exclude title
                nsnps = len(betarray)
         ## INDEX BETA FILE
@@ -216,7 +215,7 @@ else:
                for rr in range(nsnps):
                     rsid = betarray[rr,0]
                     betaindex[rsid] = betarray[rr,:]
-                    indexindex[gg] = betaindex
+               indexindex[gg] = betaindex
                
 ## NEW GENELIST, ONLY THOSE THAT HAVE PREDICTIVE MODELS
 print('old ngen ' + str(len(genelist)))
@@ -237,32 +236,31 @@ for cc in range(1,23):
          print "doing line: " + line
          part = line.split(None,6)
          rsid = part[1]
-        ## IF RSID IS NOT IN EXCLUSION LIST
+         # IF RSID IS NOT IN EXCLUSION LIST
          if not(rsid in exsnpindex):  
               refalele = part[3]
-            ## CHECK FOR ALL GENES WHETHER RSID IS EQTL
+              ## CHECK FOR ALL GENES WHETHER RSID IS EQTL
               numarrayed = False
               dosagerow = []
               cont = 0
-            ## LOOP OVER GENES IN GENELIST
+              ## LOOP OVER GENES IN GENELIST
               for gg in genelist:
                    betaindex = indexindex[gg]
+                   print rsid
                    if rsid in betaindex:
                         betaA1 = betaindex[rsid][1]
-                   else:
-                        betaA1 = None
-    # print(betaA1 + ' ' + refalele)
-                   if refalele == betaA1:
-                         beta = float(betaindex[rsid][2])
-                   else:
-                        beta = -float(betaindex[rsid][2])
+                        print(betaA1 + ' ' + refalele)
+                        if refalele == betaA1:
+                             beta = float(betaindex[rsid][2])
+                        else:
+                             beta = -float(betaindex[rsid][2])
                     # print [rsid + ' ' + str(beta) + ' ' + betaindex[rsid][2]]
                     ## dosagerow
-                   if(np.logical_not(numarrayed)): 
-                        dosagerow = np.asarray(part[6:][0].split(),float)
-                        numarrayed = True
-                   predarray[cont,] += beta * dosagerow
-              cont += 1
+                        if(np.logical_not(numarrayed)): 
+                             dosagerow = np.asarray(part[6:][0].split(),float)
+                             numarrayed = True
+                        predarray[cont,] += beta * dosagerow
+                   cont += 1
     dosagefile.close()
 
 ## SAVE PREDICTIONS TO FILE
