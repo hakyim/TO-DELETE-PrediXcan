@@ -9,11 +9,6 @@ import argparse,gzip,os,sys,datetime,StringIO,math
 import numpy as np
 import MySQLdb as db 
 
-## ----------------------------------------
-## MODIFY THE FOLLOWING PARAMETERS TO SUIT YOUR DATASETS
-## ----------------------------------------
-
-
 
 ## INPUT PARAMETERS/FILENAMES
 
@@ -107,15 +102,10 @@ def writeArray(fname,arr,delim='\t'):
     return True
 
 def convertToNPArray(tup):
-     print type(tup[0])
-     print np.array(tup)
-     newarray = np.array(tup)
-     assert(np.array(tup)[2] == -0.143815105850628)
-     retarray = np.asarray([newarray[0], str(newarray[1]), tup[2] ,newarray[3],newarray[4],newarray[5]],dtype=np.float32)
-     print retarray
-     print type(retarray[2])
-     raw_input("hey?")
-     return retarray
+     newlist = list(tup)
+     newarray = np.asarray(newlist)
+     assert(newarray[2] == tup[2])
+     return newarray
 ## ----------------------------------------
 ## END OF FUNCTION DEFINITIONS
 ## ----------------------------------------
@@ -124,6 +114,7 @@ def convertToNPArray(tup):
 ## MAIN CODE STARTS HERE 
 ## -------------------- 
 ##Parse command line arguments for file paths. Defaultsfirewallfirewall defined above
+
 parser = argparse.ArgumentParser(description="Parse input/output files.")
 parser.add_argument("-pfn", default=phenofilename, help="Pheno File path")
 parser.add_argument("-gdfn",default=genedatafilename, help = "Gene list file path")
@@ -147,14 +138,12 @@ excludeSNPfilename = args.excludeSNPfilename
 useDB = args.db
 
 
-
 ## read phenotype file
 phenoheader = readHeader(phenofilename)
 phenodata = readArray(phenofilename,'\t')
 nsamp = len(phenodata)
 
-## read gene list to compute predictions forparser.add_argument("-pfn", default=phenofilename, help="Pheno File path")
-
+## read gene list to compute predictions
 genedata = readArray(genedatafilename,'\t')
 genedata = np.asarray(genedata[1:])
 genelist = genedata[:,1]
@@ -179,25 +168,26 @@ database = db.connect(host="192.170.232.66", # your host
                       db="mysql",port=3306) # name of the data base
 cur = database.cursor()
 statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
-print useDB
+
 ## READ BETA FILE
 if useDB == 'db':
      print "Using DB method"
      for gg in genelist:
           betafilename =  betaheader + gg + betatail
           gene, study, tissue = parse_title(gg + betatail)
-          print (gene,study,tissue)             
+          
           cur.execute(statement, (gene,study,tissue))
-
           betarray = cur.fetchall()
-          nsnps = len(betarray)
           betaindex = {}
           for beta in betarray:    
                conv = convertToNPArray(beta)
-               print "The converted results:"
-               print conv
-               print len(conv[2])
-               raw_input("Continue?")
+               if(conv[2] == beta[2]):
+                    pass 
+               else:
+                    print "bad conversion"
+                    print conv[2]
+                    print beta[2]
+                    raw_input("Continue? Press ctrl-C to kill.  ")
                rsid = conv[0]
                betaindex[rsid] = conv
           indexindex[gg] = betaindex
@@ -211,7 +201,7 @@ else:
                nsnps = len(betarray)
         ## INDEX BETA FILE
                betaindex = {}
-               print(gg)
+               
                for rr in range(nsnps):
                     rsid = betarray[rr,0]
                     betaindex[rsid] = betarray[rr,:]
@@ -233,7 +223,6 @@ for cc in range(1,23):
     ## READ IMPUTED DOSAGES, GO THROUGH ROWS AND COMPUTE CONTRIBUTION TO POLYSCORE
     dosagefile = gzip.open(infilename)
     for line in dosagefile:
-         print "doing line: " + line
          part = line.split(None,6)
          rsid = part[1]
          # IF RSID IS NOT IN EXCLUSION LIST
@@ -246,7 +235,6 @@ for cc in range(1,23):
               ## LOOP OVER GENES IN GENELIST
               for gg in genelist:
                    betaindex = indexindex[gg]
-                   print rsid
                    if rsid in betaindex:
                         betaA1 = betaindex[rsid][1]
                         print(betaA1 + ' ' + refalele)
@@ -254,7 +242,6 @@ for cc in range(1,23):
                              beta = float(betaindex[rsid][2])
                         else:
                              beta = -float(betaindex[rsid][2])
-                    # print [rsid + ' ' + str(beta) + ' ' + betaindex[rsid][2]]
                     ## dosagerow
                         if(np.logical_not(numarrayed)): 
                              dosagerow = np.asarray(part[6:][0].split(),float)
