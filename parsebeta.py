@@ -38,7 +38,7 @@ filelist = open(fl)
 
 database = db.connect(host="localhost", # your host 
                      user="root", # your username
-                      passwd="password", # your password
+                      passwd="mathtype5", # your password
                       db="mysql") # name of the data base
 cur = database.cursor()
 
@@ -55,7 +55,7 @@ for fname in filelist.readlines():
 		continue 
       
 
-        if snpframe.cis.isnull()[0] and filetype=='regular':
+        if filetype == "regular" and (snpframe.cis.isnull()[0]):
                 snpframe.cis = snpframe.N
                 snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
                 snpframe = snpframe.where(pd.notnull(snpframe), None)
@@ -90,6 +90,8 @@ for fname in filelist.readlines():
                         
                         except:
                                 err = sys.exc_info()[0]
+        
+                                raw_input('whatif?')
                                 print "Error: %s" % err
                                 print "On file: %s" % fname 
                                 continue
