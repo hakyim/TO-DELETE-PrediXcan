@@ -125,6 +125,9 @@ parser.add_argument("--betatail", default=betatail, help="tail of beta file")
 parser.add_argument("--outfile", default=outfilename, help="Outfile path")
 parser.add_argument("--excludeSNPfilename", default=excludeSNPfilename, help="ExSNP file path")
 parser.add_argument("--db", default=0, help="Get beta from DB or from local files")
+parser.add_argument("--dbUser", required=True, help="username for DB")
+parser.add_argument("--dbPass", required=True, help="password for DB")
+
 args = parser.parse_args()
 
 phenofilename = args.pfn
@@ -136,7 +139,8 @@ betatail = args.betatail
 outfilename = args.outfile
 excludeSNPfilename = args.excludeSNPfilename
 useDB = args.db
-
+usern = args.dbUser
+password = args.dbPass
 
 ## read phenotype file
 phenoheader = readHeader(phenofilename)
@@ -163,8 +167,8 @@ for ss in range(len(excludeSNPlist)):
 indexindex = {}
 
 database = db.connect(host="192.170.232.66", # your host 
-                     user="riordan", # your username
-                      passwd="mathtype5", # your password
+                     user=usern, # your username
+                      passwd=password, # your password
                       db="mysql",port=3306) # name of the data base
 cur = database.cursor()
 statement = """SELECT * FROM SNPs where genename = %s AND study_name = %s AND tissue = %s;"""
