@@ -15,6 +15,12 @@ def parse_title(filename,type='regular'):
                 study = step2[1]
                 return (gene, tissue, study)
         elif type == 'LASSO':
+                """
+                step1 = filename.split('.').rsplit('-',2)
+                gene = step1[0]
+                study = step1[1]
+                tissue = step1[2]
+                """
                 step1 = filename.split('-')
                 gene = step1[0]
                 study = step1[1]
@@ -47,21 +53,21 @@ for fname in filelist.readlines():
 	fname = fname.strip('\n')
 	fullpath = pathname + fname
 	gene,tissue,study = parse_title(fname,filetype)
+
 	try:
 		snpframe = pd.read_table(fullpath)
 	except:
 		print "error in read_table", sys.exc_info()[0]
 		print fullpath
-		continue 
-      
+		continue       
 
-        if filetype == "regular" and (snpframe.cis.isnull()[0]):
-                snpframe.cis = snpframe.N
-                snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
-                snpframe = snpframe.where(pd.notnull(snpframe), None)
-                nullparts = True
-        else:
-                nullparts = False
+    if filetype == "regular" and (snpframe.cis.isnull()[0]):
+            snpframe.cis = snpframe.N
+            snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
+            snpframe = snpframe.where(pd.notnull(snpframe), None)
+            nullparts = True
+    else:
+            nullparts = False
 
 	for row in snpframe.iterrows():
 
@@ -77,8 +83,7 @@ for fname in filelist.readlines():
                 
                 if filetype=='regular':
                         try:
-                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],numparts,row[1]["cis"],gene,tissue,study) )
-                                
+                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],numparts,row[1]["cis"],gene,tissue,study) )                             
                         except:
                                 err = sys.exc_info()[0]
                                 print "Error: %s" % err
@@ -87,7 +92,7 @@ for fname in filelist.readlines():
                 elif filetype=='LASSO':
                         try:
                                 cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],"Null","Null","Null",gene,tissue,study) )
-                        
+    
                         except:
                                 err = sys.exc_info()[0]
         
