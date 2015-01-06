@@ -52,7 +52,9 @@ print filetype
 for fname in filelist.readlines():
 	fname = fname.strip('\n')
 	fullpath = pathname + fname
-	gene,tissue,study = parse_title(fname,filetype)
+	gene,tissue,study = parse_title(fname,filetype)\
+    print gene,tissue,study 
+    raw_input("good?")
 
 	try:
 		snpframe = pd.read_table(fullpath)
