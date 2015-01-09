@@ -15,8 +15,7 @@ def parse_title(filename,type='regular'):
                 study = step2[1]
                 return (gene, tissue, study)
         elif type == 'LASSO':
-                """
-                step1 = filename.split('.').rsplit('-',2)
+                step1 = filename.rsplit('.',1)[0].rsplit('-',2)
                 gene = step1[0]
                 study = step1[1]
                 tissue = step1[2]
@@ -25,6 +24,7 @@ def parse_title(filename,type='regular'):
                 gene = step1[0]
                 study = step1[1]
                 tissue = step1[2].split('.')[0] #parameter gore 
+                """
                 return (gene, tissue, study) 
 
 ## MAIN ## 
@@ -52,9 +52,12 @@ print filetype
 for fname in filelist.readlines():
 	fname = fname.strip('\n')
 	fullpath = pathname + fname
-	gene,tissue,study = parse_title(fname,filetype)\
-    print gene,tissue,study 
-    raw_input("good?")
+	gene,tissue,study = parse_title(fname,filetype)
+        #print (gene, tissue, study)
+        #raw_input("good?")
+        if tissue == "GTEx":
+                print fname 
+                raw_input("bad parsing, Proceed?")
 
 	try:
 		snpframe = pd.read_table(fullpath)
@@ -63,13 +66,13 @@ for fname in filelist.readlines():
 		print fullpath
 		continue       
 
-    if filetype == "regular" and (snpframe.cis.isnull()[0]):
-            snpframe.cis = snpframe.N
-            snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
-            snpframe = snpframe.where(pd.notnull(snpframe), None)
-            nullparts = True
-    else:
-            nullparts = False
+        if filetype == "regular" and (snpframe.cis.isnull()[0]):
+                snpframe.cis = snpframe.N
+                snpframe.N = snpframe.N.map(lambda x: np.nan if x == True else x)
+                snpframe = snpframe.where(pd.notnull(snpframe), None)
+                nullparts = True
+        else:
+                nullparts = False
 
 	for row in snpframe.iterrows():
 
@@ -85,7 +88,7 @@ for fname in filelist.readlines():
                 
                 if filetype=='regular':
                         try:
-                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],numparts,row[1]["cis"],gene,tissue,study) )                             
+                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],row[1]["p.value"],numparts,row[1]["cis"],gene,tissue,study,1) )                             
                         except:
                                 err = sys.exc_info()[0]
                                 print "Error: %s" % err
@@ -93,20 +96,22 @@ for fname in filelist.readlines():
                                 continue
                 elif filetype=='LASSO':
                         try:
-                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],"Null","Null","Null",gene,tissue,study) )
-    
+                                print gene, tissue, study,row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"] 
+                                cur.execute(statement,(row[1]["SNP"],row[1]["eff.allele"],row[1]["beta"],"Null","Null","Null",gene,tissue,study, 2) )
+                                 
                         except:
-                                err = sys.exc_info()[0]
+                                err = sys.exc_info()[1]
         
                                 raw_input('whatif?')
                                 print "Error: %s" % err
                                 print "On file: %s" % fname 
                                 continue
                         
-                database.commit()
+               
                 """
                 cur.execute("SELECT * FROM SNPs where genename = %s;", gene)
                 print cur.fetchall()
                 raw_input("continue2?")
                 """
+database.commit()
 database.close()
