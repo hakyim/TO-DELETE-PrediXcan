@@ -24,7 +24,10 @@ class EditForm(Form):
 		if user != None:
 			self.nickname.errors.append("This nickname is already in use. Pick another.")
 			return False 
-		return True 	
+		return True
+
+class PostForm(Form):
+	post_text = TextAreaField('post', validators=[DataRequired(),Length(min=1,max=256)]) 	
 
 class CommandGenForm(Form):
 	pass 

@@ -31,11 +31,22 @@ def edit():
 		db.session.add(g.user)
 		db.session.commit()
 		flash("Ch-ch-ch changes saved.")
-		return redirect(url_for('edit'))
+		#return redirect(url_for('edit'))
+		return redirect('user/' + g.user.nickname)
 	else:
 		form.nickname.data = g.user.nickname
 		form.about_me.data = g.user.about_me
 	return render_template('edit.html',form=form)
+
+@app.route('/post', methods=['GET','POST'])
+@login_required 
+def post():
+	form = PostForm(g.user.nickname)
+	if form.validate_on_submit(): # once its done?
+		#stuff gets submitted TODO
+	else:
+		form.nickname.data = g.user.nickname
+	return render_template('post.html',form=form) # jump to the actual url
 
 @oid.after_login
 def after_login(resp):
