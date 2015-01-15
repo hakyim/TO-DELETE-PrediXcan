@@ -38,15 +38,18 @@ def edit():
 		form.about_me.data = g.user.about_me
 	return render_template('edit.html',form=form)
 
-@app.route('/post', methods=['GET','POST'])
+@app.route('/newpost', methods=['GET','POST'])
 @login_required 
 def post():
 	form = PostForm(g.user.nickname)
 	if form.validate_on_submit(): # once its done?
-		#stuff gets submitted TODO
+		body = form.post_text.data 
+		p = models.Post(body=body, timestamp = datetime.datetime.utcnow(), author = g.user) #correct author ?
+		db.session.add(p)
+		db.session.commit()
 	else:
 		form.nickname.data = g.user.nickname
-	return render_template('post.html',form=form) # jump to the actual url
+	return render_template('newpost.html',form=form) # jump to the actual url
 
 @oid.after_login
 def after_login(resp):
