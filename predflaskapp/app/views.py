@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm, oid
-from forms import LoginForm, EditForm
-from models import User
+from forms import LoginForm, EditForm, PostForm
+from models import User, Post
 from datetime import datetime
 
 @app.route('/login',methods=['GET','POST'])
@@ -41,14 +41,14 @@ def edit():
 @app.route('/newpost', methods=['GET','POST'])
 @login_required 
 def post():
-	form = PostForm(g.user.nickname)
-	if form.validate_on_submit(): # once its done?
+	form = PostForm()
+	if form.validate_on_submit(): 
 		body = form.post_text.data 
-		p = models.Post(body=body, timestamp = datetime.datetime.utcnow(), author = g.user) #correct author ?
+		p = Post(body=body, timestamp = datetime.utcnow(), author = g.user) #correct author ?
 		db.session.add(p)
 		db.session.commit()
-	else:
-		form.nickname.data = g.user.nickname
+		return redirect('user/' + g.user.nickname)
+	
 	return render_template('newpost.html',form=form) # jump to the actual url
 
 @oid.after_login
@@ -118,10 +118,7 @@ def user(nickname):
 	if user == None: 
 		flash('user %s not found.' % nickname)
 		return redirect(url_for('index'))
-	posts = [
-		{'author': user, 'body': 'test 1'},
-		{'author': user, 'body': 'test 2'}
-	]
+	posts = user.posts.all()
 	return render_template('user.html', user=user, posts=posts)
 
 """Here lie error handlers"""
