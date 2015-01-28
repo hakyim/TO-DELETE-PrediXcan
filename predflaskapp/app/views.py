@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm, oid
-from forms import LoginForm, EditForm, PostForm
+from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
+from helpers import *
 
 @app.route('/login',methods=['GET','POST'])
 @oid.loginhandler
@@ -47,6 +48,7 @@ def post():
 		p = Post(body=body, timestamp = datetime.utcnow(), author = g.user) #correct author ?
 		db.session.add(p)
 		db.session.commit()
+		flash("Successfully posted!")
 		return redirect('user/' + g.user.nickname)
 	
 	return render_template('newpost.html',form=form) # jump to the actual url
@@ -109,6 +111,17 @@ def load_user(id):
 def logout():
 	logout_user()
 	return redirect(url_for('index'))
+
+@app.route('/gencmd', methods=['GET','POST'])
+def gen_command():
+	form = CommandGenForm()
+	form.tissuetype.choices = _getTissueTypes() #fetch tissue types from DB
+	form.study.choices = _getStudyNames() #fetch study names from DB
+
+	if form.validate_on_submit():
+		#printCommandline(stuff from forms)
+	return render_template('cmdgen.html',form=form) #TBA
+
 
 """here lie user profiles"""
 @app.route('/user/<nickname>')
