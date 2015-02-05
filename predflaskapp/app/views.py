@@ -1,10 +1,11 @@
+import helpfuncs 
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm, oid
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
-from helpers import *
+
 
 @app.route('/login',methods=['GET','POST'])
 @oid.loginhandler
@@ -112,13 +113,22 @@ def logout():
 	logout_user()
 	return redirect(url_for('index'))
 
-@app.route('/gencmd', methods=['GET','POST'])
+"""Predixcan functionality"""
+@app.route('/cmdgen', methods=['GET','POST'])
 def gen_command():
 	form = CommandGenForm()
-	form.tissuetype.choices = _getTissueTypes() #fetch tissue types from DB
-	form.study.choices = _getStudyNames() #fetch study names from DB
+	form.tissuetype.choices = helpfuncs._getTissueTypes() #fetch tissue types from DB
+	form.study.choices = helpfuncs._getStudyNames() #fetch study names from DB
 
 	if form.validate_on_submit():
+		pfp = form.phenofilepath.data
+		gdfp = form.genedatafilepath.data
+		gtfp = form.genotypefilepath.data 
+		tissue = form.tissuetype.data
+		study = form.study.data
+		#output = helpfuncs.generateCommand(pfp,gdfp,gtfp,tissue,study)
+		flash ("data i got: %s %s %s %s %s" % (pfp,gdfp,gtfp,tissue,study))
+		return redirect(url_for('gen_command'))
 		#printCommandline(stuff from forms)
 	return render_template('cmdgen.html',form=form) #TBA
 
