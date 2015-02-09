@@ -33,7 +33,9 @@ class CommandGenForm(Form):
 	#k so the dropdowns would be for the study and tissue
 	phenofilepath = TextAreaField('phenofilepath',validators=[DataRequired(),Length(min=1,max=1024)])
 	genedatafilepath = TextAreaField('genedatafilepath',validators=[DataRequired(),Length(min=1,max=1024)])
-	genotypefilepath = TextAreaField('genotypefilepath',validators=[DataRequired(),Length(min=1,max=1024)])
+	genotypeheader = TextAreaField('genotypeheader',validators=[DataRequired(),Length(min=1,max=1024)])
+	genotypetail = TextAreaField('genotypetail', validators=[DataRequired(),Length(min=1,max=1024)])
+	#genotypefilepath = TextAreaField('genotypefilepath',validators=[DataRequired(),Length(min=1,max=1024)])
 	tissuetype = SelectField(u'Tissue')
 	study = SelectField(u'Study')
 

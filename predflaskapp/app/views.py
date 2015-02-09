@@ -5,8 +5,10 @@ from app import app, db, lm, oid
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
+import MySQLdb as db 
 
 
+"""
 @app.route('/login',methods=['GET','POST'])
 @oid.loginhandler
 def login():
@@ -16,13 +18,13 @@ def login():
 	if form.validate_on_submit():
 		session['remember_me'] = form.remember_me.data
 		return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
-		"""
+		
 		flash('Login requested for jankyID="%s", remember_me=%s' %	
 			(form.openid.data, str(form.remember_me.data)))
 		return redirect('/index') 
-		"""
+		
 	return render_template('login.html',title='Sign In',form=form,providers=app.config['OPENID_PROVIDERS'])
-
+"""
 @app.route('/edit', methods=['GET','POST'])
 @login_required
 def edit():
@@ -53,7 +55,7 @@ def post():
 		return redirect('user/' + g.user.nickname)
 	
 	return render_template('newpost.html',form=form) # jump to the actual url
-
+"""
 @oid.after_login
 def after_login(resp):
 	if resp.email is None or resp.email == "":
@@ -68,13 +70,15 @@ def after_login(resp):
 		user = User(nickname=nickname,email=resp.email)
 		db.session.add(user)
 		db.session.commit()
-	remember_me = False
+	remember_me = Falsedef index():
+
 	if 'remember_me' in session:
 		remember_me = session['remember_me']
 		session.pop('remember_me',None)
 	login_user(user, remember = remember_me)
 	return redirect(request.args.get('next') or url_for('index'))
-
+"""
+"""
 @app.before_request
 def before_request():
 	g.user = current_user
@@ -82,12 +86,12 @@ def before_request():
 		g.user.last_seen = datetime.utcnow()
 		db.session.add(g.user)
 		db.session.commit()
-
+"""
 @app.route('/')
 @app.route('/index')
-@login_required
+#@login_required
 def index():
-    user = g.user
+    #user = g.user
     posts = [ 
 	    {
 	    	'author':{'nickname':'John'},
@@ -100,9 +104,7 @@ def index():
 	    }
     ]
     return render_template('index.html',
-    						title='home',
-    						user=user,
-    						posts=posts)
+    						title='home')
 
 @lm.user_loader
 def load_user(id):
@@ -117,17 +119,24 @@ def logout():
 @app.route('/cmdgen', methods=['GET','POST'])
 def gen_command():
 	form = CommandGenForm()
-	form.tissuetype.choices = helpfuncs._getTissueTypes() #fetch tissue types from DB
-	form.study.choices = helpfuncs._getStudyNames() #fetch study names from DB
+	database = db.connect(host="192.170.232.66", # your host 
+                     user='public', # your username
+                      passwd='foobar', # your password
+                      db="mysql",port=3306) # name of the data base
+	form.tissuetype.choices = helpfuncs._getTissueTypes(database) #fetch tissue types from DB
+	form.study.choices = helpfuncs._getStudyNames(database) #fetch study names from DB
 
 	if form.validate_on_submit():
 		pfp = form.phenofilepath.data
 		gdfp = form.genedatafilepath.data
-		gtfp = form.genotypefilepath.data 
+		gth = form.genotypeheader.data 
+		gtt = form.genotypetail.data
 		tissue = form.tissuetype.data
 		study = form.study.data
-		#output = helpfuncs.generateCommand(pfp,gdfp,gtfp,tissue,study)
-		flash ("data i got: %s %s %s %s %s" % (pfp,gdfp,gtfp,tissue,study))
+		output = helpfuncs._generateCommand(pfp,gdfp,gth,gtt,tissue,study)
+		
+		flash ("data i got: %s %s %s %s %s %s" % (pfp,gdfp,gth,gtt,tissue,study))
+		flash (output)
 		return redirect(url_for('gen_command'))
 		#printCommandline(stuff from forms)
 	return render_template('cmdgen.html',form=form) #TBA

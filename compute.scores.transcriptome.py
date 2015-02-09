@@ -153,7 +153,7 @@ genedata = np.asarray(genedata[1:])
 genelist = genedata[:,1]
 
 ## list of SNPs to be excluded
-## TODO: WOULD A DICTIONARY WORK FASTER THAN LIST/ARRAY?
+## claimsclaimsTODO: WOULD A DICTIONARY WORK FASTER THAN LIST/ARRAY?
 excludeSNPdata = readArray(excludeSNPfilename)
 excludeSNPdata = np.asarray(excludeSNPdata)
 excludeSNPdata = excludeSNPdata[1:] ## exclude title
