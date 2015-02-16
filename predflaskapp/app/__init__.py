@@ -30,6 +30,7 @@ if not app.debug:
 	mail_handler.setLevel(logging.ERROR)
 	app.logger.addHandler(mail_handler)	
 """
+"""
 #file log
 if not app.debug:
     import logging
@@ -40,3 +41,4 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('microblog startup')
+"""
