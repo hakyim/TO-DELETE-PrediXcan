@@ -4,16 +4,18 @@ from flask.ext.openid import OpenID
 from flask import Flask
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD 
 from flask.ext.sqlalchemy import SQLAlchemy
+from werkzeug import secure_filename
 
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+UPLOAD_FOLDER = '/tmp'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
 
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
 
-oid = OpenID(app, os.path.join(basedir,'tmp'))
 from app import views, models
 
 #email log
