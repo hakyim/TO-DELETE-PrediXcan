@@ -1,0 +1,21 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+
+<!--TODO: CHANGE THIS INTO A NEW POST PAGE -->
+{% block content %}
+  <h1>Write your post</h1>
+  <form action="" method="post" name="newpost">
+      {{form.hidden_tag()}}
+      <table>
+          <tr>
+              <td>Your post:</td>
+              <td>{{ form.post_text(cols=32, rows=4) }}</td>
+          </tr>
+          <tr>
+              <td></td>
+              <td><input type="submit" value="Save Changes"></td>
+          </tr>
+      </table>
+  </form>
+{% endblock %}
