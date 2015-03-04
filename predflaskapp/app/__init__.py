@@ -1,6 +1,6 @@
 import os
 from flask.ext.login import LoginManager
-from flask.ext.openid import OpenID
+#from flask.ext.openid import OpenID
 from flask import Flask
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD 
 from flask.ext.sqlalchemy import SQLAlchemy
