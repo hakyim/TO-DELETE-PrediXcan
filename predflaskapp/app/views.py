@@ -2,7 +2,7 @@ import os
 import helpfuncs 
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, lm, config
+from app import app, db, lm
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
