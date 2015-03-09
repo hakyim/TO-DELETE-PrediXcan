@@ -10,6 +10,7 @@
     <div>PrediXcan: 
         <a href="{{ url_for('index') }}">Home</a> 
         <a href='{{ url_for('gen_command') }}'>Command Line Generator</a>
+        <a href="{{ url_for('upload_file') }}">File Upload Test</a>
     </div>
     <hr>
     {% with messages = get_flashed_messages() %}
