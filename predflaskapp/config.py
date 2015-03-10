@@ -16,4 +16,3 @@ MAIL_PASSWORD = None
 
 # administrator list
 ADMINS = ['you@example.com']
-"test edit"

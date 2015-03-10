@@ -1,11 +1,17 @@
+import os
 import helpfuncs 
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, lm
+from app import app, db, lm, config
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
 import MySQLdb as db 
+from werkzeug import secure_filename
+
+"""temporary globals"""
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
+UPLOAD_FOLDER = '/tmp'
 
 
 """
@@ -237,8 +243,8 @@ def upload_file():
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-			return redirect(url_for('uploaded_file',filename=filename,filetext=open(filename,"r").read()))
+			file.save(os.path.join(UPLOAD_FOLDER,filename))
+			return redirect(url_for('uploaded_file',filename=filename,filetext=open("/tmp/"+filename,"r").read()))
 	return render_template('uploadfile.html')
 
 
