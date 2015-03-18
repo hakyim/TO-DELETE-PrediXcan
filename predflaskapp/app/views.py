@@ -161,32 +161,6 @@ def user(nickname):
 	return render_template('user.html', user=user, posts=posts)
 
 
-"""
-@app.errorhandler(500)
-def internal_error(error):
-    db.session.rollback()
-    return render_template('500.html'), 500
-== "":
-		flash('invalid login. please try again.')
-		return redirect(url_for('login'))
-	user = User.query.filter_by(email=resp.email).first()
-	if user is None:
-		nickname = resp.nickname
-		if nickname is None or nickname == "":
-			nickname = resp.email.split('@')[0]
-		nickname = User.make_unique_nickname(nickname)
-		user = User(nickname=nickname,email=resp.email)
-		db.session.add(user)
-		db.session.commit()
-	remember_me = Falsedef index():
-
-	if 'remember_me' in session:
-		remember_me = session['remember_me']
-		session.pop('remember_me',None)
-	login_user(user, remember = remember_me)
-	return redirect(request.args.get('next') or url_for('index'))
-"""
-
 @app.before_request
 def before_request():
 	g.user = current_user
@@ -241,10 +215,16 @@ def allowed_file(filename):
 def upload_file():
 	if request.method == 'POST':
 		file = request.files['file']
+		print file.filename
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(UPLOAD_FOLDER,filename))
-			return redirect(url_for('uploaded_file',filename=filename,filetext=open("/tmp/"+filename,"r").read()))
+			for thing in os.listdir(UPLOAD_FOLDER):
+				print thing
+			return render_template('uploadfile.html',filename=filename,filetext=open("/tmp/"+filename,"r").read())
+		else:
+			flash("Invalid file type, please try again. Allowed extensions are:")
+			flash(ALLOWED_EXTENSIONS	)
 	return render_template('uploadfile.html')
 
 
