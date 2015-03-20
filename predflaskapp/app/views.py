@@ -1,6 +1,6 @@
 import os
 import helpfuncs 
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm#, config
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
@@ -8,10 +8,11 @@ from models import User, Post
 from datetime import datetime
 import MySQLdb as db 
 from werkzeug import secure_filename
+import prediction
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
-UPLOAD_FOLDER = '/tmp'
+UPLOAD_FOLDER = 'puploads'
 
 
 """
@@ -62,55 +63,7 @@ def post():
 	
 	return render_template('newpost.html',form=form) # jump to the actual url
 
-"""
-@app.route('/login',methods=['GET','POST'])
-@oid.loginhandler
-def login():
-	if g.user is not None and g.user.is_authenticated():
-		return redirect(url_for('index'))
-	form = LoginForm()
-	if form.validate_on_submit():
-		session['remember_me'] = form.remember_me.data
-		return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
-		
-		flash('Login requested for jankyID="%s", remember_me=%s' %	
-			(form.openid.data, str(form.remember_me.data)))
-		return redirect('/index') 
-		
-	return render_template('login.html',title='Sign In',form=form,providers=app.config['OPENID_PROVIDERS'])
-"""
-"""
-@app.route('/edit', methods=['GET','POST'])
-@login_required
-def edit():
-	form = EditForm(g.user.nickname)
-	if form.validate_on_submit():
-		g.user.nickname = form.nickname.data
-		g.user.about_me = form.about_me.data
-		db.session.add(g.user)
-		db.session.commit()
-		flash("Ch-ch-ch changes saved.")
-		#return redirect(url_for('edit'))
-		return redirect('user/' + g.user.nickname)
-	else:
-		form.nickname.data = g.user.nickname
-		form.about_me.data = g.user.about_me
-	return render_template('edit.html',form=form)
 
-@app.route('/newpost', methods=['GET','POST'])
-@login_required 
-def post():
-	form = PostForm()
-	if form.validate_on_submit(): 
-		body = form.post_text.data 
-		p = Post(body=body, timestamp = datetime.utcnow(), author = g.user) #correct author ?
-		db.session.add(p)
-		db.session.commit()
-		flash("Successfully posted!")
-		return redirect('user/' + g.user.nickname)
-	
-	return render_template('newpost.html',form=form) # jump to the actual url
-"""
 """
 @oid.after_login
 def after_login(resp):
@@ -134,19 +87,12 @@ def after_login(resp):
 	login_user(user, remember = remember_me)
 	return redirect(request.args.get('next') or url_for('index'))
 
-@app.before_request
-def before_request():
-	g.user = current_user
-	if g.user.is_authenticated():
-		g.user.last_seen = datetime.utcnow()
-		db.session.add(g.user)
-		db.session.commit()
 """
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html',
-    						title='home')
+	return render_template('index.html',
+							title='home')
 
 
 """here lie user profiles, leaving this code in case profiles are implemented"""
@@ -169,7 +115,6 @@ def before_request():
 		db.session.add(g.user)
 		db.session.commit()
 
-
 @lm.user_loader
 def load_user(id):
 	return User.query.get(int(id))
@@ -179,14 +124,15 @@ def logout():
 	logout_user()
 	return redirect(url_for('index'))
 
+
 """Predixcan functionality"""
 @app.route('/cmdgen', methods=['GET','POST'])
 def gen_command():
 	form = CommandGenForm()
 	database = db.connect(host="192.170.232.66", # your host 
-                     user='public', # your username
-                      passwd='foobar', # your password
-                      db="mysql",port=3306) # name of the data base
+					 user='public', # your username
+					  passwd='foobar', # your password
+					  db="mysql",port=3306) # name of the data base
 	form.tissuetype.choices = helpfuncs._getTissueTypes(database) #fetch tissue types from DB
 	form.study.choices = helpfuncs._getStudyNames(database) #fetch study names from DB
 
@@ -207,8 +153,8 @@ def gen_command():
 
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+	return '.' in filename and \
+		   filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 """file upload functions/tests"""
 @app.route('/fileupload',methods=["POST","GET"])
@@ -227,14 +173,49 @@ def upload_file():
 			flash(ALLOWED_EXTENSIONS	)
 	return render_template('uploadfile.html')
 
+@app.route('/multiupload',methods=["POST","GET"])
+def multi_upload():
+	if request.method == 'POST':
+		uploaded_files = request.files.getlist("file[]")
+		filenames = []
+		for file in uploaded_files:
+			# Check if the file is one of the allowed types/extensions
+			if file and allowed_file(file.filename):
+				# Make the filename safe, remove unsupported chars
+				filename = secure_filename(file.filename)
+				# Move the file form the temporal folder to the upload
+				# folder we setup
+				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+				# Save the filename into a list, we'll use it later
+				filenames.append(filename)
+				# Redirect the user to the uploaded_file route, which
+				# will basicaly show on the browser the uploaded file
+		return render_template("multiupload.html",filenames=filenames)
+
+	return render_template("multiupload.html")
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+	return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+
+
+"""dont use this yet!"""
+@app.route('/predict',methods=["POST","GET"])
+def predict_test():
+	form = predictForm()
+	if request.method == 'POST':
+		pass	
+
+	return render_template("predict.html",form=form)
+
 
 
 """Here lie error handlers"""
 @app.errorhandler(404)
 def not_found_error(error):
-    return render_template('404.html'), 404
+	return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    db.session.rollback()
-    return render_template('500.html'), 500
+	db.session.rollback()
+	return render_template('500.html'), 500

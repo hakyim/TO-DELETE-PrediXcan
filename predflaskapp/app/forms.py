@@ -40,4 +40,5 @@ class CommandGenForm(Form):
 	study = SelectField(u'Study')
 
 	 
-
+class predictForm(Form):
+	pass
