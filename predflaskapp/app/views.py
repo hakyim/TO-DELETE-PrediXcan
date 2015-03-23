@@ -2,16 +2,17 @@ import os
 import helpfuncs 
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, lm#, config
+from app import app, db, lm, config
 from forms import LoginForm, EditForm, PostForm, CommandGenForm
 from models import User, Post
 from datetime import datetime
 import MySQLdb as db 
 from werkzeug import secure_filename
 import prediction
+import tarfile 
 
 """temporary globals"""
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
 UPLOAD_FOLDER = 'puploads'
 
 
@@ -154,7 +155,7 @@ def gen_command():
 
 def allowed_file(filename):
 	return '.' in filename and \
-		   filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+		   filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 """file upload functions/tests"""
 @app.route('/fileupload',methods=["POST","GET"])
@@ -173,33 +174,37 @@ def upload_file():
 			flash(ALLOWED_EXTENSIONS	)
 	return render_template('uploadfile.html')
 
-@app.route('/multiupload',methods=["POST","GET"])
-def multi_upload():
+@app.route('/tarupload',methods=["POST","GET"])
+def tar_upload():
 	if request.method == 'POST':
-		uploaded_files = request.files.getlist("file[]")
-		filenames = []
-		for file in uploaded_files:
-			# Check if the file is one of the allowed types/extensions
-			if file and allowed_file(file.filename):
-				# Make the filename safe, remove unsupported chars
-				filename = secure_filename(file.filename)
-				# Move the file form the temporal folder to the upload
-				# folder we setup
-				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-				# Save the filename into a list, we'll use it later
-				filenames.append(filename)
-				# Redirect the user to the uploaded_file route, which
-				# will basicaly show on the browser the uploaded file
-		return render_template("multiupload.html",filenames=filenames)
+		uploaded_tar = request.files["file"]
+		if uploaded_tar and allowed_file(uploaded_tar.filename):
+			tarname = secure_filename(uploaded_tar.filename)
 
-	return render_template("multiupload.html")
+			path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
+			if not os.path.isdir(path):
+				os.mkdir(path)
+			uploaded_tar.save(os.path.join(path,tarname))
+			print tarname
+			print path
+			tar = tarfile.open(path + tarname,'r')
+			tar.extractall(path)
+			os.listdir(UPLOAD_FOLDER)
+			os.listdir(path)
+			for f in os.listdir(path):
+				print f
+				print f.rsplit(".",1)
+			files=[f for f in os.listdir(path) if f.rsplit('.',1)[1] != "tar"]
+			print files
+			return render_template("tarupload.html",files=files)
+	return render_template("tarupload.html")
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
 	return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 
-"""dont use this yet!"""
+"""dont use this yet! still need to hook in main model code"""
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
 	form = predictForm()

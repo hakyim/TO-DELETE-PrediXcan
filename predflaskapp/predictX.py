@@ -27,7 +27,7 @@ DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
-OUTPUT_FILE = args.outputcebook.com/
+OUTPUT_FILE = args.output
 
 
 def buffered_file(file,DOSAGE_BUFFER=None):
@@ -68,9 +68,11 @@ def get_all_dosages(dosage_dir, dosage_prefix):
 
 class WeightsDB:
     def __init__(self):
+        user = raw_input("user?")
+        passwd = raw_input("password?")
         self.conn = db.connect(host="192.170.232.66", # your host 
-                                    user="", # your username
-                                    passwd="", # your password
+                                    user=user, # your username
+                                    passwd=passwd, # your password
                                      db="mysql",port=3306) # name of the data base
 
     def query(self, sql, args=None):
