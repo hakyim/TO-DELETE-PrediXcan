@@ -10,6 +10,7 @@ import MySQLdb as db
 from werkzeug import secure_filename
 import prediction
 import tarfile 
+import zipfile 
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
@@ -203,13 +204,40 @@ def tar_upload():
 def uploaded_file(filename):
 	return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
+"""helper function - saves files in tar and returns list of files in it"""
+def _save_tar(tarfile):
+	if tarfile and allowed_file(tarfile.filename):	
+		tarname = secure_filename(tarfile.filename)
+		path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
+		if not os.path.isdir(path):
+			os.mkdir(path)
+		uploaded_tar.save(os.path.join(path,tarname))
+		print tarname
+		print path
+		tar = tarfile.open(path + tarname,'r')
+		tar.extractall(path)
+		os.listdir(UPLOAD_FOLDER)
+		os.listdir(path)
+		files=[f for f in os.listdir(path) if f.rsplit('.',1)[1] != "tar"]
+		print files
+		return (files,tarname)
+	else:
+		print "error, could not verify tarfile"
+		return None
+
+
 
 """dont use this yet! still need to hook in main model code"""
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
-		pass	
+		uploaded_tar = form.tarfile["file"]
+		files,tarname = _save_tar(uploaded_tar) #what should return be?	
+		if files:
+			path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
+			prefix = form.dosageprefix
+			
 
 	return render_template("predict.html",form=form)
 

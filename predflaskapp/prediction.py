@@ -16,4 +16,4 @@ class prediction_maker:
 		for rsid, allele, dosage_row in pxget_all_dosages():
 			for gene, weight, ref_allele in get_applications_of(rsid):
 				transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-		transcription_matrix.save("PredXResults.txt")        
+		transcription_matrix.save("PredXResults.txt")#hard coded for the moment`        

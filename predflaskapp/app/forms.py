@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, BooleanField, TextAreaField, SelectField, FileField
 from wtforms.validators import DataRequired, Length
 from app.models import User
 
@@ -41,4 +41,6 @@ class CommandGenForm(Form):
 
 	 
 class predictForm(Form):
-	pass
+	tarfile = FileField('tarfile',validators=[DataRequired()])
+	prefix = TextAreaField('dosageprefix',validators=[DataRequired(),Length(min=1,max=24)])
+	dospath = TextAreaField('dosagepath',validators=[DataRequired(),Length(min=1,max=1024)])

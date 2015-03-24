@@ -52,9 +52,7 @@ def buffered_file(file,DOSAGE_BUFFER=None):
                     if last_eol >= len(buf):
                         buf = ''
                         break
-            
-
-                
+                            
 
 def get_all_dosages(dosage_dir, dosage_prefix):
     for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix)]:
@@ -65,6 +63,7 @@ def get_all_dosages(dosage_dir, dosage_prefix):
             refallele = arr[4]
             dosage_row = np.array(map(float, arr[6:]))
             yield rsid, refallele, dosage_row
+
 
 class WeightsDB:
     def __init__(self):
@@ -131,7 +130,7 @@ class TranscriptionMatrix:
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 """
 transcription_matrix = TranscriptionMatrix()
-for rsid, allele, dosage_row in get_all_dosages(self.D):
+for rsid, allele, dosage_row in get_all_dosages():
     for gene, weight, ref_allele in get_applications_of(rsid):
         transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
 transcription_matrix.save()        
