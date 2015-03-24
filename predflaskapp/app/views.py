@@ -232,13 +232,15 @@ def _save_tar(tarfile):
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
-		uploaded_tar = form.tarfile["file"]
+		uploaded_tar = form.tarfile#["file"]
 		files,tarname = _save_tar(uploaded_tar) #what should return be?	
 		if files:
 			path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
 			prefix = form.dosageprefix
-			
-
+			#more stuff happens
+			#fill in...
+			predictor = px.prediction_maker(gene_list=None,dosage_dir=path,dosage_prefix=prefix)
+			#then check the file
 	return render_template("predict.html",form=form)
 
 
