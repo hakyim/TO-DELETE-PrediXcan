@@ -43,4 +43,4 @@ class CommandGenForm(Form):
 class predictForm(Form):
 	tarfile = FileField('tarfile',validators=[DataRequired()])
 	prefix = TextAreaField('dosageprefix',validators=[DataRequired(),Length(min=1,max=24)])
-	dospath = TextAreaField('dosagepath',validators=[DataRequired(),Length(min=1,max=1024)])
+	#dospath = TextAreaField('dosagepath',validators=[DataRequired(),Length(min=1,max=1024)])

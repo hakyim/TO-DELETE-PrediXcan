@@ -67,11 +67,9 @@ def get_all_dosages(dosage_dir, dosage_prefix):
 
 class WeightsDB:
     def __init__(self):
-        user = raw_input("user?")
-        passwd = raw_input("password?")
         self.conn = db.connect(host="192.170.232.66", # your host 
-                                    user=user, # your username
-                                    passwd=passwd, # your password
+                                    user="public", # your username
+                                    passwd="foobar", # your password
                                      db="mysql",port=3306) # name of the data base
 
     def query(self, sql, args=None):

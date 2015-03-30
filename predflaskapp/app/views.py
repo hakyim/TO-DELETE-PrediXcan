@@ -3,7 +3,7 @@ import helpfuncs
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm
-from forms import LoginForm, EditForm, PostForm, CommandGenForm
+from forms import LoginForm, EditForm, PostForm, CommandGenForm, predictForm
 from models import User, Post
 from datetime import datetime
 import MySQLdb as db 
@@ -14,7 +14,7 @@ import zipfile
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
-UPLOAD_FOLDER = 'puploads'
+UPLOAD_FOLDER = './puploads/'
 
 
 """
@@ -135,6 +135,7 @@ def gen_command():
 					 user='public', # your username
 					  passwd='foobar', # your password
 					  db="mysql",port=3306) # name of the data base
+	
 	form.tissuetype.choices = helpfuncs._getTissueTypes(database) #fetch tissue types from DB
 	form.study.choices = helpfuncs._getStudyNames(database) #fetch study names from DB
 
@@ -143,14 +144,13 @@ def gen_command():
 		gdfp = form.genedatafilepath.data
 		gth = form.genotypeheader.data 
 		gtt = form.genotypetail.data
-		tissue = form.tissuetype.data
-		study = form.study.data
+		tissue = form.tissuetyp
+		e.data
+		study = form.study.data		
 		output = helpfuncs._generateCommand(pfp,gdfp,gth,gtt,tissue,study)
-		
-		flash ("data i got: %s %s %s %s %s %s" % (pfp,gdfp,gth,gtt,tissue,study))
 		flash (output)
 		return redirect(url_for('gen_command'))
-		#printCommandline(stuff from forms)
+			
 	return render_template('cmdgen.html',form=form) #TBA
 
 
@@ -172,32 +172,26 @@ def upload_file():
 			return render_template('uploadfile.html',filename=filename,filetext=open("/tmp/"+filename,"r").read())
 		else:
 			flash("Invalid file type, please try again. Allowed extensions are:")
-			flash(ALLOWED_EXTENSIONS	)
+			flash(ALLOWED_EXTENSIONS)
+
 	return render_template('uploadfile.html')
 
 @app.route('/tarupload',methods=["POST","GET"])
 def tar_upload():
+	print "entering tar_upload func"
 	if request.method == 'POST':
 		uploaded_tar = request.files["file"]
 		if uploaded_tar and allowed_file(uploaded_tar.filename):
 			tarname = secure_filename(uploaded_tar.filename)
-
-			path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
-			if not os.path.isdir(path):
-				os.mkdir(path)
-			uploaded_tar.save(os.path.join(path,tarname))
-			print tarname
-			print path
-			tar = tarfile.open(path + tarname,'r')
-			tar.extractall(path)
-			os.listdir(UPLOAD_FOLDER)
-			os.listdir(path)
-			for f in os.listdir(path):
-				print f
-				print f.rsplit(".",1)
+			path = UPLOAD_FOLDER + str(tarname.rsplit('.',1)[0]) + '/'
+			#TODO: Check if file is aleady there
+			uploaded_tar.save(UPLOAD_FOLDER+tarname)
+			tar = tarfile.open(UPLOAD_FOLDER + tarname,'r')
+			tar.extractall(UPLOAD_FOLDER)
 			files=[f for f in os.listdir(path) if f.rsplit('.',1)[1] != "tar"]
-			print files
+			#TODO: remove files 
 			return render_template("tarupload.html",files=files)
+
 	return render_template("tarupload.html")
 
 @app.route('/uploads/<filename>')
@@ -207,40 +201,40 @@ def uploaded_file(filename):
 """helper function - saves files in tar and returns list of files in it"""
 def _save_tar(tarfile):
 	if tarfile and allowed_file(tarfile.filename):	
-		tarname = secure_filename(tarfile.filename)
-		path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
-		if not os.path.isdir(path):
-			os.mkdir(path)
-		uploaded_tar.save(os.path.join(path,tarname))
-		print tarname
-		print path
-		tar = tarfile.open(path + tarname,'r')
-		tar.extractall(path)
-		os.listdir(UPLOAD_FOLDER)
-		os.listdir(path)
+		tarname = secure_filename(uploaded_tar.filename)
+		path = UPLOAD_FOLDER + str(tarname.rsplit('.',1)[0]) + '/'
+		#TODO: Check if file is aleady there
+		uploaded_tar.save(UPLOAD_FOLDER+tarname)
+		tar = tarfile.open(UPLOAD_FOLDER + tarname,'r')
+		tar.extractall(UPLOAD_FOLDER)
 		files=[f for f in os.listdir(path) if f.rsplit('.',1)[1] != "tar"]
-		print files
 		return (files,tarname)
 	else:
 		print "error, could not verify tarfile"
 		return None
-
-
 
 """dont use this yet! still need to hook in main model code"""
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
-		uploaded_tar = form.tarfile#["file"]
-		files,tarname = _save_tar(uploaded_tar) #what should return be?	
-		if files:
-			path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
-			prefix = form.dosageprefix
-			#more stuff happens
-			#fill in...
-			predictor = px.prediction_maker(gene_list=None,dosage_dir=path,dosage_prefix=prefix)
-			#then check the file
+		print "got past post on predict"
+		if form.validate_on_submit():
+			print "validated form"
+			uploaded_tar = form.tarfile#["file"]
+			files,tarname = _save_tar(uploaded_tar) #returns tuple of files and tarname	
+			if files:
+				print "got past files"
+				path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
+				predictor = px.prediction_maker(gene_list=None,dosage_dir=path,dosage_prefix=prefix)
+				try:
+					predictor.do_predictions()
+				except: #catch all errors for now
+					e = sys.exc_info()[0] 
+					print e 
+					flash("predictor code failed because of error: %s",e)
+					return render_template("predict.html")
+
 	return render_template("predict.html",form=form)
 
 

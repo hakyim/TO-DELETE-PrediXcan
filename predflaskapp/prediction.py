@@ -9,11 +9,12 @@ class prediction_maker:
 		self.DOSAGE_BUFFER = int(dosage_buffer) if dosage_buffer else None
 		self.database = px.WeightsDB()
 
-	def predictions(self):
+	def do_predictions(self):
 		get_applications_of = px.GetApplicationsOf()
 		transcription_matrix = px.TranscriptionMatrix()
 		
-		for rsid, allele, dosage_row in pxget_all_dosages():
+		for rsid, allele, dosage_row in px.get_all_dosages(self.DOSAGE_DIR,self.DOSAGE_PREFIX):
+			print dosage_row 
 			for gene, weight, ref_allele in get_applications_of(rsid):
 				transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
 		transcription_matrix.save("PredXResults.txt")#hard coded for the moment`        
