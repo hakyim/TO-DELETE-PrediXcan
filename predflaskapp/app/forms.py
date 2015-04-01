@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField, SelectField, FileField
+from wtforms import StringField, BooleanField, TextAreaField, SelectField, FileField, SubmitField
+from flask.ext.wtf.file import FileAllowed, FileRequired 
 from wtforms.validators import DataRequired, Length
 from app.models import User
 
@@ -30,7 +31,6 @@ class PostForm(Form):
 	post_text = TextAreaField('post', validators=[DataRequired(),Length(min=1,max=256)]) 	
 
 class CommandGenForm(Form):
-	#k so the dropdowns would be for the study and tissue
 	phenofilepath = TextAreaField('phenofilepath',validators=[DataRequired(),Length(min=1,max=1024)])
 	genedatafilepath = TextAreaField('genedatafilepath',validators=[DataRequired(),Length(min=1,max=1024)])
 	genotypeheader = TextAreaField('genotypeheader',validators=[DataRequired(),Length(min=1,max=1024)])
@@ -41,6 +41,6 @@ class CommandGenForm(Form):
 
 	 
 class predictForm(Form):
-	tarfile = FileField('tarfile',validators=[DataRequired()])
-	prefix = TextAreaField('dosageprefix',validators=[DataRequired(),Length(min=1,max=24)])
-	#dospath = TextAreaField('dosagepath',validators=[DataRequired(),Length(min=1,max=1024)])
+	tarfile = FileField('tarfile')
+	prefix = TextAreaField('dosageprefix')
+	submit = SubmitField("submit")

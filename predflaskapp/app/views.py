@@ -1,4 +1,5 @@
 import os
+import sys
 import helpfuncs 
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
@@ -11,6 +12,7 @@ from werkzeug import secure_filename
 import prediction
 import tarfile 
 import zipfile 
+import prediction as px
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
@@ -199,29 +201,31 @@ def uploaded_file(filename):
 	return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 """helper function - saves files in tar and returns list of files in it"""
-def _save_tar(tarfile):
-	if tarfile and allowed_file(tarfile.filename):	
-		tarname = secure_filename(uploaded_tar.filename)
+def _save_tar(tarfile_):
+	filename = tarfile_.data.filename
+	print "file name in _save_tar is %s" % filename
+	if filename and allowed_file(filename):	
+		tarname = secure_filename(filename)
 		path = UPLOAD_FOLDER + str(tarname.rsplit('.',1)[0]) + '/'
 		#TODO: Check if file is aleady there
-		uploaded_tar.save(UPLOAD_FOLDER+tarname)
+		tarfile_.data.save(UPLOAD_FOLDER+tarname)
 		tar = tarfile.open(UPLOAD_FOLDER + tarname,'r')
 		tar.extractall(UPLOAD_FOLDER)
 		files=[f for f in os.listdir(path) if f.rsplit('.',1)[1] != "tar"]
 		return (files,tarname)
 	else:
 		print "error, could not verify tarfile"
-		return None
+		return (None,None)
 
 """dont use this yet! still need to hook in main model code"""
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
-		print "got past post on predict"
 		if form.validate_on_submit():
 			print "validated form"
-			uploaded_tar = form.tarfile#["file"]
+			uploaded_tar = form.tarfile
+			prefix = form.prefix
 			files,tarname = _save_tar(uploaded_tar) #returns tuple of files and tarname	
 			if files:
 				print "got past files"
@@ -232,8 +236,11 @@ def predict_test():
 				except: #catch all errors for now
 					e = sys.exc_info()[0] 
 					print e 
-					flash("predictor code failed because of error: %s",e)
-					return render_template("predict.html")
+					#TODO: Delete the directory of the uploaded dosages
+					flash("predictor code failed because of error: %s" % e)
+					return render_template("predict.html",form=form)
+		else:
+			flash("bad file upload, for some godforsaken reason")
 
 	return render_template("predict.html",form=form)
 
