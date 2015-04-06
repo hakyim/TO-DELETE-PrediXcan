@@ -74,6 +74,7 @@ class WeightsDB:
 
     def query(self, sql, args=None):
         c = self.conn.cursor()
+        print args 
         if args:
             for ret in c.execute(sql, args):
                 yield ret
@@ -93,11 +94,13 @@ class GetApplicationsOf:
             self.tuples = None
 
     def __call__(self, rsid):
+        print "rsid in call:"
+        print rsid
         if self.tuples:
             for tup in self.tuples[rsid]:
                 yield tup
         else:                
-            for tup in self.db.query("SELECT genename, beta, eff_allele FROM SNPs WHERE rsnum=?", (rsid,)):
+            for tup in self.db.query("SELECT genename, beta, eff_allele FROM SNPs WHERE rsnum=?", args=(rsid,)):
                 yield tup
 
 get_applications_of = GetApplicationsOf()

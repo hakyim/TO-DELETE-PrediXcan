@@ -1,18 +1,19 @@
 import os
 import sys
-import helpfuncs 
+from forms import LoginForm, EditForm, PostForm, CommandGenForm, predictForm
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm
-from forms import LoginForm, EditForm, PostForm, CommandGenForm, predictForm
 from models import User, Post
 from datetime import datetime
-import MySQLdb as db 
+import MySQLdb as db 	
 from werkzeug import secure_filename
 import prediction
 import tarfile 
 import zipfile 
 import prediction as px
+import helpfuncs 
+
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
@@ -180,7 +181,7 @@ def upload_file():
 
 @app.route('/tarupload',methods=["POST","GET"])
 def tar_upload():
-	print "entering tar_upload func"
+	#REQUIRES tar contain folder with same FILENAME as tarfile
 	if request.method == 'POST':
 		uploaded_tar = request.files["file"]
 		if uploaded_tar and allowed_file(uploaded_tar.filename):
@@ -222,23 +223,28 @@ def _save_tar(tarfile_):
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
+		print form.tarfile.data.filename
+		print form.prefix
 		if form.validate_on_submit():
 			print "validated form"
 			uploaded_tar = form.tarfile
-			prefix = form.prefix
+			prefix = form.prefix.data
 			files,tarname = _save_tar(uploaded_tar) #returns tuple of files and tarname	
 			if files:
 				print "got past files"
 				path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
 				predictor = px.prediction_maker(gene_list=None,dosage_dir=path,dosage_prefix=prefix)
-				try:
-					predictor.do_predictions()
+				
+				predictor.do_predictions()
+				"""
 				except: #catch all errors for now
-					e = sys.exc_info()[0] 
+					e = sys.exc_info()
 					print e 
 					#TODO: Delete the directory of the uploaded dosages
-					flash("predictor code failed because of error: %s" % e)
-					return render_template("predict.html",form=form)
+					flash("predictor code failed because of error:")
+					flash (e)
+				"""
+				return render_template("predict.html",form=form)
 		else:
 			flash("bad file upload, for some godforsaken reason")
 

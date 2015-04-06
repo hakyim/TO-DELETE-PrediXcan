@@ -1,3 +1,5 @@
+import os
+import sys
 import MySQLdb as db 
 
 def _getTissueTypes(database):

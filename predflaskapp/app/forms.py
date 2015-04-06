@@ -1,8 +1,9 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField, SelectField, FileField, SubmitField
+from wtforms.fields import StringField, BooleanField, TextAreaField, SelectField, FileField, SubmitField
 from flask.ext.wtf.file import FileAllowed, FileRequired 
 from wtforms.validators import DataRequired, Length
 from app.models import User
+
 
 class LoginForm(Form):
     openid = StringField('openid', validators=[DataRequired()])
@@ -38,7 +39,6 @@ class CommandGenForm(Form):
 	#genotypefilepath = TextAreaField('genotypefilepath',validators=[DataRequired(),Length(min=1,max=1024)])
 	tissuetype = SelectField(u'Tissue')
 	study = SelectField(u'Study')
-
 	 
 class predictForm(Form):
 	tarfile = FileField('tarfile')
