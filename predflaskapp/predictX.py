@@ -74,12 +74,16 @@ class WeightsDB:
 
     def query(self, sql, args=None):
         c = self.conn.cursor()
-        print args 
         if args:
-            for ret in c.execute(sql, args):
+            c.execute(sql,args)
+            results = c.fetchall()
+            print results
+            for ret in results:
                 yield ret
         else:
-            for ret in c.execute(sql):
+            c.execute(sql)
+            results = c.fetchall()
+            for ret in results:
                 yield ret
 
 class GetApplicationsOf:
@@ -94,13 +98,12 @@ class GetApplicationsOf:
             self.tuples = None
 
     def __call__(self, rsid):
-        print "rsid in call:"
-        print rsid
         if self.tuples:
             for tup in self.tuples[rsid]:
                 yield tup
-        else:                
-            for tup in self.db.query("SELECT genename, beta, eff_allele FROM SNPs WHERE rsnum=?", args=(rsid,)):
+        else:
+
+            for tup in self.db.query("SELECT genename, beta, eff_allele FROM SNPs WHERE rsnum=%s", args=[rsid]):
                 yield tup
 
 get_applications_of = GetApplicationsOf()
@@ -113,7 +116,7 @@ class TranscriptionMatrix:
         if GENE_LIST:
             return list(sorted([line.strip().split()[-1] for line in open(GENE_LIST)]))
         else:
-            return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
+            return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT genename FROM SNPs ORDER BY genename")]
 
     def update(self, gene, weight, ref_allele, allele, dosage_row):
         if self.D is None:
