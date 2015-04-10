@@ -11,9 +11,9 @@ class prediction_maker:
 
 	def do_predictions(self):
 		get_applications_of = px.GetApplicationsOf()
-		transcription_matrix = px.TranscriptionMatrix()
+		transcription_matrix = px.TranscriptionMatrix(self.GENE_LIST)
 		
 		for rsid, allele, dosage_row in px.get_all_dosages(self.DOSAGE_DIR,self.DOSAGE_PREFIX): 
 			for gene, weight, ref_allele in get_applications_of(rsid):
 				transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-		transcription_matrix.save("PredXResults.txt")#hard coded for the moment`        
+		transcription_matrix.save("PredXResult.txt") #hard coded for the moment        

@@ -60,7 +60,7 @@ def post():
 	form = PostForm()
 	if form.validate_on_submit(): 
 		body = form.post_text.data 
-		p = Post(body=body, timestamp = datetime.utcnow(), author = g.user) #correct author ?
+		p = Post(body=body, timestamp = datetime.utcnow(), author = g.user)
 		db.session.add(p)
 		db.session.commit()
 		flash("Successfully posted!")
@@ -218,22 +218,24 @@ def _save_tar(tarfile_):
 		print "error, could not verify tarfile"
 		return (None,None)
 
-"""dont use this yet! still need to hook in main model code"""
+
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
 	form = predictForm()
 	if request.method == 'POST':
-		print form.tarfile.data.filename
-		print form.prefix
 		if form.validate_on_submit():
 			print "validated form"
 			uploaded_tar = form.tarfile
 			prefix = form.prefix.data
 			files,tarname = _save_tar(uploaded_tar) #returns tuple of files and tarname	
 			if files:
-				print "got past files"
 				path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
-				predictor = px.prediction_maker(gene_list=None,dosage_dir=path,dosage_prefix=prefix)
+                                if form.genelist.data:
+                                        glistname = form.genelist.data.filename
+                                        form.genelist.data.save(UPLOAD_FOLDER+glistname)
+                                else:
+                                        glistname = None
+				predictor = px.prediction_maker(gene_list=glistname,dosage_dir=path,dosage_prefix=prefix)
 				
 				predictor.do_predictions()
 				"""

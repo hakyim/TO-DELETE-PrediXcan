@@ -27,8 +27,7 @@ DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
-OUTPUT_FILE = args.output
-
+UPLOAD_FOLDER = "./puploads."
 
 def buffered_file(file,DOSAGE_BUFFER=None):
     if not DOSAGE_BUFFER:
@@ -109,12 +108,13 @@ class GetApplicationsOf:
 get_applications_of = GetApplicationsOf()
 
 class TranscriptionMatrix:
-    def __init__(self):
+    def __init__(self,gene_list=None):
         self.D = None
+        self.gene_list = gene_list #a filename
 
     def get_gene_list(self):
-        if GENE_LIST:
-            return list(sorted([line.strip().split()[-1] for line in open(GENE_LIST)]))
+        if self.gene_list:
+            return list(sorted([line.strip().split()[-1] for line in open(self.gene_list)]))
         else:
             return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT genename FROM SNPs ORDER BY genename")]
 
@@ -127,8 +127,8 @@ class TranscriptionMatrix:
             multiplier = 1 if ref_allele == allele else -1
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
 
-    def save(OUTPUT_FILE):
-        with open(OUTPUT_FILE, 'w+') as outfile:
+    def save(self,output_file):
+        with open(output_file, 'w+') as outfile:
             outfile.write('\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')

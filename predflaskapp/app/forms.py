@@ -42,5 +42,6 @@ class CommandGenForm(Form):
 	 
 class predictForm(Form):
 	tarfile = FileField('tarfile')
+        genelist = FileField('genelist',default=None)
 	prefix = TextAreaField('dosageprefix')
 	submit = SubmitField("submit")
