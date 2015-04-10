@@ -14,13 +14,15 @@ context.use_privatekey_file('server.key')
 context.use_certificate_file('server.crt')
 """
 
+app.debug = True 
+
 context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 context.load_cert_chain('server.crt','server.key')
-app.run(debug=True,ssl_context=context,port=443,host='0.0.0.0')
+#app.run(debug=True,ssl_context=context,port=443,host='0.0.0.0')
 
 
 settings = { "certfile": os.path.join("server.crt"), "keyfile": os.path.join("server.key") }
 
 http_server = HTTPServer(WSGIContainer(app),ssl_options=settings)
-http_server.listen(5000)
+http_server.listen(443)
 IOLoop.instance().start()
