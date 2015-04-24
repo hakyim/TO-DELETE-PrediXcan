@@ -27,5 +27,12 @@
 </ul>
 
 <p><i>Please direct questions to hriordan@uchicago.edu</i><p>
+
+{% if fileloc %}
+	<p>Click to download your results. Be wary, the file may be quite large.</p>
+
+	<a href="{{ url_for('download',filename=fileloc) }}" download>Results</a>
+{% endif %}
+
 {% endblock %}
 

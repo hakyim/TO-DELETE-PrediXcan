@@ -218,39 +218,38 @@ def _save_tar(tarfile_):
 		print "error, could not verify tarfile"
 		return (None,None)
 
-
 @app.route('/predict',methods=["POST","GET"])
 def predict_test():
+	print "predict one"
 	form = predictForm()
 	if request.method == 'POST':
 		if form.validate_on_submit():
+
 			print "validated form"
 			uploaded_tar = form.tarfile
 			prefix = form.prefix.data
 			files,tarname = _save_tar(uploaded_tar) #returns tuple of files and tarname	
 			if files:
 				path = "./puploads/" + str(tarname.rsplit('.',1)[0]) + '/'
-                                if form.genelist.data:
-                                        glistname = form.genelist.data.filename
-                                        form.genelist.data.save(UPLOAD_FOLDER+glistname)
-                                else:
-                                        glistname = None
-				predictor = px.prediction_maker(gene_list=glistname,dosage_dir=path,dosage_prefix=prefix)
-				
+				if form.genelist.data:
+						glistname = form.genelist.data.filename
+						form.genelist.data.save(UPLOAD_FOLDER+glistname)
+				else:
+						glistname = None
+				predictor = px.prediction_maker(gene_list=glistname,dosage_dir=path,dosage_prefix=prefix)				
 				predictor.do_predictions()
-				"""
-				except: #catch all errors for now
-					e = sys.exc_info()
-					print e 
-					#TODO: Delete the directory of the uploaded dosages
-					flash("predictor code failed because of error:")
-					flash (e)
-				"""
-				return render_template("predict.html",form=form)
+
+				return render_template("predict.html",fileloc="test.txt",form=form)
 		else:
 			flash("bad file upload, for some godforsaken reason")
 
 	return render_template("predict.html",form=form)
+
+@app.route('/puploads/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+	uploads = app.config['UPLOAD_FOLDER']
+	print uploads
+	return send_from_directory(directory=uploads, filename=filename)
 
 
 
@@ -261,5 +260,4 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-	db.session.rollback()
 	return render_template('500.html'), 500

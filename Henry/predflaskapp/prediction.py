@@ -1,6 +1,9 @@
 import predictX as px 
 import MySQLdb as db 
+from app import app
 
+
+"""class wrapper to run the core prediction code"""
 class prediction_maker:
 	def __init__(self,gene_list,dosage_dir,dosage_prefix,dosage_buffer=None):
 		self.GENE_LIST = gene_list
@@ -15,5 +18,6 @@ class prediction_maker:
 		
 		for rsid, allele, dosage_row in px.get_all_dosages(self.DOSAGE_DIR,self.DOSAGE_PREFIX): 
 			for gene, weight, ref_allele in get_applications_of(rsid):
+				print "doing a rsid"
 				transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-		transcription_matrix.save("PredXResult.txt") #hard coded for the moment        
+		transcription_matrix.save("puploads/test.txt") #hard coded for the moment        

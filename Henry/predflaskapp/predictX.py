@@ -6,7 +6,7 @@ import datetime
 import gzip
 import numpy as np
 import os
-#import sqlite3
+import sqlite3
 import MySQLdb as db
 import sys
 
@@ -94,7 +94,7 @@ class GetApplicationsOf:
                 yield tup
         else:
 
-            for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=%s", args=[rsid]):
+            for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=?", args=[rsid]):
                 yield tup
 
 get_applications_of = GetApplicationsOf()
@@ -107,7 +107,7 @@ class TranscriptionMatrix:
     #this
     def get_gene_list(self):
         if self.gene_list:
-            return list(sorted([line.strip().split()[-1] for line in open(self.gene_list)]))
+            return list(sorted([line.strip().split()[-1] for line in open("puploads/"+self.gene_list)]))
         else:
             return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
 
@@ -116,9 +116,12 @@ class TranscriptionMatrix:
             self.gene_list = self.get_gene_list()  
             self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
             self.D = np.zeros((len(self.gene_list), len(dosage_row))) # Genes x Cases
+            print "I GOT HERE"
+            print self.D
         if gene in self.gene_index:            
             multiplier = 1 if ref_allele == allele else -1
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
+
 
     def save(self,output_file):
         with open(output_file, 'w+') as outfile:

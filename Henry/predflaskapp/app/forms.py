@@ -6,8 +6,8 @@ from app.models import User
 
 
 class LoginForm(Form):
-    openid = StringField('openid', validators=[DataRequired()])
-    remember_me = BooleanField('remember_me', default=False)
+	openid = StringField('openid', validators=[DataRequired()])
+	remember_me = BooleanField('remember_me', default=False)
 
 class EditForm(Form):
 	nickname = StringField('nickname', validators=[DataRequired()])
@@ -42,6 +42,6 @@ class CommandGenForm(Form):
 	 
 class predictForm(Form):
 	tarfile = FileField('tarfile')
-        genelist = FileField('genelist',default=None)
+	genelist = FileField('genelist',default=None)
 	prefix = TextAreaField('dosageprefix')
 	submit = SubmitField("submit")
