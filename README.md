@@ -9,8 +9,9 @@ PredictDB hosts genetic prediction models of transcriptome levels to be used wit
 
 The following models are available for download. 
 
-- DGN Whole Blood Elastic Net [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A ~28MB SQLite file will be downloaded)
-- DGN Whole Blood LASSO [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1") (A ~18MB SQLite file will be downloaded)
+- DGN Whole Blood Elastic Net SQTLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50.db") (A ~28MB file will be downloaded)
+- DGN Whole Blood Elastic Net text[link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
+- DGN Whole Blood LASSO SQTLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1") (A ~18MB file will be downloaded)
 
 ##Reference
 PrediXcan: Trait Mapping Using Human Transcriptome Regulation
@@ -18,7 +19,7 @@ Eric R. Gamazon†, Heather E. Wheeler†, Sahar Mozaffari†, Kaanan P. Shah, K
 
 ##Instructions
 
-You will need 
+To run PrediXcan you will need 
 
 Input: 
 
@@ -43,6 +44,10 @@ All the scripts used to develop the prediction models can be found [here](https:
 
 Supported operating systems:
 Linux or Mac Os.
+
+A Perl version is also available [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Kaanan)
+
+- [You will need the prediction model in text format here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
 
 ###Transcriptome Prediction
 
