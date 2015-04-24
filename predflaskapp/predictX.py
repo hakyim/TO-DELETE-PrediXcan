@@ -25,7 +25,7 @@ GENE_LIST = args.genelist
 DOSAGE_DIR = args.dosages
 DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
-BETA_FILE = args.weights
+BETA_FILE = "DGN-WB_0.5.db"
 PRELOAD_WEIGHTS = not args.weights_on_disk
 UPLOAD_FOLDER = "./puploads."
 
@@ -66,23 +66,15 @@ def get_all_dosages(dosage_dir, dosage_prefix):
 
 class WeightsDB:
     def __init__(self):
-        self.conn = db.connect(host="192.170.232.66", # your host 
-                                    user="public", # your username
-                                    passwd="foobar", # your password
-                                     db="mysql",port=3306) # name of the data base
+        self.conn = sqlite3.connect(BETA_FILE)
 
     def query(self, sql, args=None):
         c = self.conn.cursor()
         if args:
-            c.execute(sql,args)
-            results = c.fetchall()
-            print results
-            for ret in results:
+            for ret in c.execute(sql, args):
                 yield ret
         else:
-            c.execute(sql)
-            results = c.fetchall()
-            for ret in results:
+            for ret in c.execute(sql):
                 yield ret
 
 class GetApplicationsOf:
@@ -91,7 +83,7 @@ class GetApplicationsOf:
         if PRELOAD_WEIGHTS:
             print datetime.datetime.now(), "Preloading weights..."
             self.tuples = defaultdict(list)
-            for tup in self.db.query("SELECT rsnum, genename, beta, eff_allele FROM SNPs"):
+            for tup in self.db.query("SELECT rsid, gene, weight, eff_allele FROM weights"):
                 self.tuples[tup[0]].append(tup[1:])
         else:
             self.tuples = None
@@ -102,7 +94,7 @@ class GetApplicationsOf:
                 yield tup
         else:
 
-            for tup in self.db.query("SELECT genename, beta, eff_allele FROM SNPs WHERE rsnum=%s", args=[rsid]):
+            for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=%s", args=[rsid]):
                 yield tup
 
 get_applications_of = GetApplicationsOf()
@@ -112,11 +104,12 @@ class TranscriptionMatrix:
         self.D = None
         self.gene_list = gene_list #a filename
 
+    #this
     def get_gene_list(self):
         if self.gene_list:
             return list(sorted([line.strip().split()[-1] for line in open(self.gene_list)]))
         else:
-            return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT genename FROM SNPs ORDER BY genename")]
+            return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
 
     def update(self, gene, weight, ref_allele, allele, dosage_row):
         if self.D is None:
