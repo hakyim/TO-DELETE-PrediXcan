@@ -5,7 +5,9 @@ PrediXcan is a gene-based association test that prioritizes genes that are likel
 
 PredictDB
 =========
-PredictDB hosts genetic prediction models of transcriptome levels. The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
+PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan. 
+
+The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
 
 ##Reference
 PrediXcan: Trait Mapping Using Human Transcriptome Regulation
@@ -64,4 +66,13 @@ The following arguments are allowed, with default values as follows
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
 hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC")
+
+##Acknowledgements
+
+### DGN RNA-seq data
+
+Data downloaded from [NIMH Repository and Genomics Resource](https://www.nimhgenetics.org )
+
+Battle, A., Mostafavi, S., Zhu, X., Potash, J.B., Weissman, M.M., McCormick, C., Haudenschild, C.D., Beckman, K.B., Shi, J., Mei, R., et al. (2014). Characterizing the genetic basis of transcriptome diversity through RNA-sequencing of 922 individuals. Genome Research 24, 14–24.
+
 
