@@ -7,7 +7,10 @@ PredictDB
 =========
 PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan. 
 
-The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
+The following models are available for download. 
+
+- DGN Whole Blood Elastic Net [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A ~28MB SQLite file will be downloaded)
+- DGN Whole Blood LASSO [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1") (A ~18MB SQLite file will be downloaded)
 
 ##Reference
 PrediXcan: Trait Mapping Using Human Transcriptome Regulation
