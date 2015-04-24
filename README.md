@@ -5,7 +5,7 @@ PrediXcan is a gene-based association test that prioritizes genes that are likel
 
 PredictDB
 =========
-PredictDB hosts genetic prediction models of transcriptome levels. The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50").
+PredictDB hosts genetic prediction models of transcriptome levels. The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
 
 ##Reference
 PrediXcan: Trait Mapping Using Human Transcriptome Regulation
