@@ -19,7 +19,8 @@ Input:
 
 - genotype file 
 - phenotype file
-- transcriptome prediction model (sqlite db to be downloaded from [here](https://app.box.com/s/i0gxg9703jj9lypq3umopponnsdqupze "DGN-WB-EN0.50")
+- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
+
  	- tissue: Whole Blood (default)
 	- source: DGN (default)
 	- model: Elastic Net 0.50 (default)
