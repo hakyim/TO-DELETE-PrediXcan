@@ -1,0 +1,150 @@
+PMID	trai	gene	snps	chid	cpos	pval	meta
+24778558	Coronary heart disease	PPP1R12B	rs12734338	1	202500595	3E-7	0
+24778558	Coronary heart disease	Intergenic	rs3853444	4	110812980	5E-6	0
+24778558	Coronary heart disease	UBE2Q2P1	rs3883013	15	84545426	3E-7	0
+23364394	Coronary heart disease	CUX2	rs886126	12	111241410	1E-6	0
+23364394	Coronary heart disease	MYL2	rs3782889	12	110912851	4E-14	0
+23364394	Coronary heart disease	FLT1	rs9508025	13	28409926	6E-7	0
+23364394	Coronary heart disease	CDKN2A/2B	rs1333042	9	22103814	1E-9	0
+23364394	Coronary heart disease	ACAD10, ALDH2, C12orf51, RPL6-PTPN11	rs11066015	12	111730205	5E-11	0
+22751097	Coronary heart disease	TTC32, WDR35	rs2123536	2	19745816	7E-11	0
+22751097	Coronary heart disease	GUCY1A3	rs1842896	4	155590307	1E-11	0
+22751097	Coronary heart disease	C6orf10, BTNL2	rs9268402	6	32373576	3E-15	0
+22751097	Coronary heart disease	ATP2B1	rs7136259	12	89687411	6E-10	0
+22751097	Coronary heart disease	CDKN2A/B	rs10757274	9	22096056	8E-45	0
+22751097	Coronary heart disease	C12orf51	rs11066280	12	112379979	2E-11	0
+22751097	Coronary heart disease	PHACTR1	rs9349379	6	12903725	2E-9	0
+22751097	Coronary heart disease	TCF21	rs12524865	6	133875536	2E-7	0
+22745674	Coronary heart disease	PHACTR1	rs9349379	6	12903725	8E-10	0
+22745674	Coronary heart disease	PHACTR1	rs9349379	6	12903725	6E-12	0
+22745674	Coronary heart disease	PHACTR1	rs9349379	6	12903725	4E-7	0
+22319020	Coronary heart disease	HCG27, HLA-C	rs3869109	6	31216419	1E-9	0
+22319020	Coronary heart disease	ILR6	rs2229238	1	154465420	7E-7	0
+22319020	Coronary heart disease	VEGFA	rs6905288	6	43791136	7E-8	0
+22319020	Coronary heart disease	FHL5	rs12200560	6	96632322	6E-7	0
+22319020	Coronary heart disease	FN	rs17458018	2	215420652	7E-6	0
+21971053	Coronary heart disease	HLA, DRB-DQB	rs11752643	6	32701596	5E-7	0
+21971053	Coronary heart disease	CDKN2A, CDKN2B	rs944797	9	22115287	6E-16	0
+21971053	Coronary heart disease	ALDH2	rs671	12	111803962	2E-34	0
+21829389	Coronary heart disease	NR	NR			NS	0
+21846871	Coronary heart disease	PHACTR1	rs9349379	6	12903725	9E-26	0
+21846871	Coronary heart disease	PPAP2B	rs17114046	1	56500678	3E-7	0
+21626137	Coronary heart disease	HFE2	rs12091564, rs10218795			2E-7	0
+21626137	Coronary heart disease	Intergenic	rs11924705, rs6789378			4E-14	0
+21626137	Coronary heart disease	STK32B	rs7697839, rs7673097			2E-11	0
+21626137	Coronary heart disease	CDKN2B, CDKN2A	rs1333048, rs1333049			7E-14	0
+21626137	Coronary heart disease	HSP90B1	rs1165668, rs1165669			3E-9	0
+21606135	Coronary heart disease	Intergenic	rs1333049	9	22125504	7E-58	0
+21606135	Coronary heart disease	MTAP	rs7865618	9	22031006	2E-27	0
+21606135	Coronary heart disease	LIPA	rs1412444	10	89243170	4E-8	0
+21606135	Coronary heart disease	FNDC1	rs365302	6	159225301	8E-7	0
+21606135	Coronary heart disease	Intergenic	rs16893526	6	81805598	5E-6	0
+21378990	Coronary heart disease	PCSK9	rs11206510	1	55030366	9E-8	0
+21378990	Coronary heart disease	CXCL12	rs1746048	10	44280376	3E-10	0
+21378990	Coronary heart disease	PPAP2B	rs17114036	1	56497149	4E-19	0
+21378990	Coronary heart disease	ANKS1A	rs17609940	6	35067023	1E-8	0
+21378990	Coronary heart disease	TCF21	rs12190287	6	133893387	1E-12	0
+21378990	Coronary heart disease	ZC3HC1	rs11556924	7	130023656	9E-18	0
+21378990	Coronary heart disease	ABO	rs579459	9	133278724	4E-14	0
+21378990	Coronary heart disease	CYP17A1, CNNM2, NT5C2	rs12413409	10	102959339	1E-9	0
+21378990	Coronary heart disease	ZNF259, APOA5, APOA4, APOC3, APOA1	rs964184	11	116778201	1E-17	0
+21378990	Coronary heart disease	COL4A1, COL4A2	rs4773144	13	110308365	4E-9	0
+21378990	Coronary heart disease	HHIPL1	rs2895811	14	99667605	1E-10	0
+21378990	Coronary heart disease	ADAMTS7	rs3825807	15	78796769	1E-12	0
+21378990	Coronary heart disease	SMG6, SRR	rs216172	17	2223210	1E-9	0
+21378990	Coronary heart disease	RASD1, SMCR3, PEMT	rs12936587	17	17640408	4E-10	0
+21378990	Coronary heart disease	UBE2Z, GIP, ATP5G1, SNF8	rs46522	17	48911235	2E-8	0
+21378990	Coronary heart disease	SORT1	rs599839	1	109279544	3E-10	0
+21378990	Coronary heart disease	MIA3	rs17465637	1	222650187	1E-8	0
+21378990	Coronary heart disease	WDR12	rs6725887	2	202881162	1E-9	0
+21378990	Coronary heart disease	MRAS	rs2306374	3	138401110	3E-8	0
+21378990	Coronary heart disease	PHACTR1	rs12526453	6	12927312	1E-9	0
+21378990	Coronary heart disease	LPA	rs3798220	6	160540105	3E-11	0
+21378990	Coronary heart disease	CDKN2A, CDKN2B	rs4977574	9	22098575	1E-22	0
+21378990	Coronary heart disease	SH2B3	rs3184504	12	111446804	6E-6	0
+21378990	Coronary heart disease	LDLR	rs1122608	19	11052925	1E-9	0
+21378990	Coronary heart disease	MRPS6	rs9982601	21	34226827	4E-10	0
+21378990	Coronary heart disease	Intergenic	rs10933436	2	233133771	7E-6	0
+21378990	Coronary heart disease	Intergenic	rs7651039	3	15606497	2E-6	0
+21378990	Coronary heart disease	Intergenic	rs7808424	7	117427768	1E-6	0
+21378990	Coronary heart disease	Intergenic	rs4937126	11	126412002	5E-6	0
+21378990	Coronary heart disease	Intergenic	rs1231206	17	2222311	9E-10	0
+21378988	Coronary heart disease	Intergenic	rs4977574	9	22098575	2E-25	0
+21378988	Coronary heart disease	CELSR2, PSRC1, SORT1	rs646776	1	109275908	6E-10	0
+21378988	Coronary heart disease	PHACTR1	rs1332844	6	12888772	6E-8	0
+21378988	Coronary heart disease	LIPA	rs1412444	10	89243170	3E-13	0
+21378988	Coronary heart disease	PDGFD	rs974819	11	103789839	2E-9	0
+21378988	Coronary heart disease	ADAMTS7, MORF4L1	rs4380028	15	78818751	4E-9	0
+21378988	Coronary heart disease	Intergenic	rs10953541	7	107604100	3E-8	0
+21378988	Coronary heart disease	KIAA1462	rs2505083	10	30046193	4E-8	0
+21378988	Coronary heart disease	PHACTR1	rs9349379	6	12903725	9E-26	0
+21378988	Coronary heart disease	Intergenic	rs5943057	23	110695977	9E-7	0
+21378988	Coronary heart disease	Intergenic	rs1395821	4	147126398	7E-7	0
+21378988	Coronary heart disease	Intergenic	rs2472299	15	74741059	3E-6	0
+21378988	Coronary heart disease	Intergenic	rs840616	2	187331742	7E-7	0
+21378988	Coronary heart disease	Intergenic	rs11650066	17	33960430	6E-6	0
+21378988	Coronary heart disease	Intergenic	rs6504218	17	64330939	1E-6	0
+21378988	Coronary heart disease	Intergenic	rs7586970	2	187478770	9E-6	0
+21378988	Coronary heart disease	PPAP2B	rs17114046	1	56500678	2E-7	0
+21378988	Coronary heart disease	Intergenic	rs4743150	9	97977842	5E-6	0
+21378988	Coronary heart disease	Intergenic	rs12413409	10	102959339	4E-6	0
+21378986	Coronary heart disease	NR	NR			NS	0
+21347282	Coronary heart disease	Intergenic	rs7323893	13	88052451	1E-7	0
+21347282	Coronary heart disease	GCOM1	rs937254	15	57617966	1E-6	0
+21347282	Coronary heart disease	SLC12A9	rs7801190	7	100860471	3E-8	0
+21347282	Coronary heart disease	RNF130	rs13161895	5	180044201	6E-7	0
+21347282	Coronary heart disease	Intergenic	rs17577085	5	142484039	4E-6	0
+21347282	Coronary heart disease	Intergenic	rs13232179	7	151423862	1E-6	0
+21347282	Coronary heart disease	Intergenic	rs9546711	13	84480131	2E-6	0
+21347282	Coronary heart disease	Intergenic	rs12239436	1	55277164	5E-6	0
+21347282	Coronary heart disease	LAMC2	rs1028771	1	183201813	4E-6	0
+21347282	Coronary heart disease	Intergenic	rs2346177	2	46415110	2E-6	0
+21347282	Coronary heart disease	CSMD1	rs4875320	8	4306491	6E-6	0
+21347282	Coronary heart disease	PPP1R3B	rs6601299	8	9327181	1E-8	0
+21347282	Coronary heart disease	ABCA1	rs2515629	9	104832083	5E-7	0
+21347282	Coronary heart disease	APOA5	rs1263173	11	116810292	2E-7	0
+21347282	Coronary heart disease	Intergenic	rs12269901	11	117103213	2E-6	0
+21347282	Coronary heart disease	Intergenic	rs1445021	15	68443247	9E-6	0
+21347282	Coronary heart disease	CETP	rs16965039	16	57013387	6E-7	0
+21347282	Coronary heart disease	LCAT	rs3729639	16	67191598	2E-11	0
+21347282	Coronary heart disease	EDC4	rs8060686	16	67877614	8E-6	0
+21347282	Coronary heart disease	DOCK6	rs4804155	19	11223619	5E-6	0
+21347282	Coronary heart disease	Intergenic	rs1190739	23	136973136	5E-6	0
+21347282	Coronary heart disease	SLC30A1	rs7526425	1	211527316	1E-6	0
+21347282	Coronary heart disease	KLHL29	rs4665630	2	23675447	1E-7	0
+21347282	Coronary heart disease	Intergenic	rs17589290	4	112002081	6E-6	0
+21347282	Coronary heart disease	Intergenic	rs10026364	4	134601585	4E-6	0
+21347282	Coronary heart disease	OPRM1	rs675026	6	154093428	5E-6	0
+21347282	Coronary heart disease	Intergenic	rs1475591	21	31068221	6E-6	0
+21347282	Coronary heart disease	IGSF5	rs1735151	21	39751374	9E-6	0
+21347282	Coronary heart disease	CELSR2	rs12740374	1	109274968	9E-29	0
+21347282	Coronary heart disease	Intergenic	rs744487	1	234590266	5E-6	0
+21347282	Coronary heart disease	Intergenic	rs7569328	2	20901018	1E-7	0
+21347282	Coronary heart disease	Intergenic	rs13015955	2	22599287	4E-7	0
+21347282	Coronary heart disease	DTNB	rs11684202	2	25664689	6E-6	0
+21347282	Coronary heart disease	Intergenic	rs2080401	2	170684313	7E-6	0
+21347282	Coronary heart disease	TNIK	rs11920719	3	171116770	4E-6	0
+21347282	Coronary heart disease	PDGFD	rs10895547	11	103937424	3E-6	0
+21347282	Coronary heart disease	PLEKHO2	rs12595292	15	64861491	9E-6	0
+21347282	Coronary heart disease	Intergenic	rs7203193	16	11547324	3E-6	0
+21347282	Coronary heart disease	ZFHX3	rs16971384	16	72897186	5E-6	0
+21347282	Coronary heart disease	DNM2	rs11671653	19	10727810	9E-7	0
+21347282	Coronary heart disease	SMARCA4	rs11669133	19	10981463	1E-8	0
+21347282	Coronary heart disease	Intergenic	rs5904726	23	147241105	9E-6	0
+21347282	Coronary heart disease	TCF7L2	rs7901695	10	112994329	1E-6	0
+21347282	Coronary heart disease	Intergenic	rs13424957	2	164893880	3E-6	0
+21239051	Coronary heart disease	ADAMTS7	rs1994016	15	78787892	5E-13	0
+21239051	Coronary heart disease	ABO	rs514659	9	133266790	8E-9	0
+21088011	Coronary heart disease	KIAA1462	rs3739998	10	30027143	1E-11	0
+19198612	Coronary heart disease	MRAS	rs9818870	3	138403280	7E-13	0
+19198612	Coronary heart disease	HNF1A,C12orf43	rs2259816	12	120997784	5E-7	0
+19198611	Coronary heart disease	SLC22A3,LPAL2,LPA	rs2048327,rs3127599,rs7767084,rs10755578			1E-9	0
+19198611	Coronary heart disease	SLC22A3,LPAL2,LPA	rs2048327,rs3127599,rs7767084,rs10755578			4E-15	0
+17634449	Coronary heart disease	MTHFD1L	rs6922269	6	150931849	3E-8	0
+17634449	Coronary heart disease	pseudogene	rs2943634	2	226203364	2E-7	0
+17634449	Coronary heart disease	MIA3	rs17465637	1	222650187	1E-6	0
+17634449	Coronary heart disease	Intergenic	rs1333049	9	22125504	3E-19	0
+17634449	Coronary heart disease	PSRC1	rs599839	1	109279544	4E-9	0
+17634449	Coronary heart disease	CXCL12	rs501120	10	44258419	9E-8	0
+17634449	Coronary heart disease	SMAD3	rs17228212	15	67166301	2E-7	0
+17478681	Coronary heart disease	NR	NR			NS	0

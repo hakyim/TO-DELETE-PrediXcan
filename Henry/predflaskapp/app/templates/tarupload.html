@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h1>Upload new File</h1>
+<p>Please submit a tarball of your files, containing all dosage files in .gz format</p>
+<form action='' method="POST" enctype="multipart/form-data">
+    <p><input type='file' name='file' multiple=''>
+    <input type='submit' value='upload'>
+    </p>
+</form>
+
+<ul>
+    {% for file in files %}
+      <li><a> {{file}}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
