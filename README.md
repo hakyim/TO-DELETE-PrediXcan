@@ -3,6 +3,10 @@ PrediXcan
 
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
+PredictDB
+=========
+PredictDB hosts genetic prediction models of transcriptome levels. The best way to distribute these models is being developed now. For now the prediction model based on 922 whole blood samples from DGN is available as a SQLite database in this [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50").
+
 ##Reference
 PrediXcan: Trait Mapping Using Human Transcriptome Regulation
 Eric R. Gamazon†, Heather E. Wheeler†, Sahar Mozaffari†, Kaanan P. Shah, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* (Under revision)
