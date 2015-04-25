@@ -47,7 +47,7 @@ dev.off()
 p1
 
 ##calc %genes with R2 that reaches lower bound of h2 estimate
-###LASSO
+###EN
 count<-dataL$R2>dataL$ymin
 table(count)
 sum(table(count))
@@ -66,7 +66,7 @@ sum(table(count))
 table(count)/sum(table(count))
 
 ##calc %genes with R2 that reaches lower bound of h2 estimate, only include genes with h2>0.1
-###LASSO
+###EN
 topdataL<-dataL %>% filter(h2>0.1)
 count<-topdataL$R2>topdataL$ymin
 table(count)
@@ -87,6 +87,20 @@ table(count)
 sum(table(count))
 table(count)/sum(table(count))
 
+
+###calc mean h2 and R2 for intersection of genes with models
+a<-inner_join(dataL,dataP,by='gene')
+b<-inner_join(a,dataT,by='gene')
+inter<-b[complete.cases(b),]
+dim(inter)
+##h2
+summary(inter$h2)
+##EN
+summary(inter$R2.x)
+##Polyscore
+summary(inter$R2.y)
+##Top SNP
+summary(inter$R2)
 ```
 
 ###Figure 4A
