@@ -9,13 +9,14 @@ Eric R. Gamazon†, Heather E. Wheeler†, Sahar Mozaffari, Kaanan P. Shah, Kest
 
 ##Instructions
 
-You will need 
+To run PrediXcan you will need 
 
 Input: 
 
 - genotype file 
 - phenotype file
-- transcriptome prediction model (sqlite db to be downloaded from [here](https://app.box.com/s/i0gxg9703jj9lypq3umopponnsdqupze "DGN-WB-EN0.50")
+- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
+
  	- tissue: Whole Blood (default)
 	- source: DGN (default)
 	- model: Elastic Net 0.50 (default)
@@ -33,6 +34,7 @@ All the scripts used to develop the prediction models can be found [here](https:
 
 Supported operating systems:
 Linux or Mac Os.
+
 
 ###Transcriptome Prediction
 
@@ -59,4 +61,3 @@ The following arguments are allowed, with default values as follows
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
 hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC")
-
