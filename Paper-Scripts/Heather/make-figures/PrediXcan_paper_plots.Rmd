@@ -23,28 +23,59 @@ alpha0.5 <- read.table(cv.dir %&% 'DGN-WB_exp_10-foldCV_elasticNet_alpha0.5_impu
 h2 <- read.table('/Volumes/im-lab/nas40t2/hwheeler/PrediXcan_CV/cis.v.trans.prediction/DGN-WB.localGRM.h2.exp.2014-08-30.txt',header=T)
 ps4 <- read.table(cv.dir %&% 'DGN-WB_exp_10-foldCV_polyscore_Pthresh1e-04_imputedSNPs_chr1-22_2015-02-09.txt',header=T)
 topsnp <- read.table(cv.dir %&% 'DGN-WB_exp_10-foldCV_polyscore_topSNP_imputedSNPs_chr1-22_2015-03-13.txt',header=T)
+
+a<-inner_join(alpha0.5,ps4,by='gene')
+b<-inner_join(a,topsnp,by='gene')
+inter<-b[complete.cases(b),]
+dim(inter)
+##plot only intersection genes
+genelist<-inter$gene
+
 alpha0.5h2 <- inner_join(alpha0.5,h2,by='gene')
-dataL <- alpha0.5h2 %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,R2,h2,ymin,ymax)
+dataL <- alpha0.5h2 %>% filter(gene %in% genelist) %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,R2,h2,ymin,ymax)
 dataL <- dataL %>% mutate(method="Elastic Net",position=1:nrow(dataL))
 ps4h2 <- inner_join(ps4,h2,by='gene')
-dataP <- ps4h2 %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,CV.R2,h2,ymin,ymax)
+dataP <- ps4h2 %>% filter(gene %in% genelist) %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,CV.R2,h2,ymin,ymax)
 dataP <- dataP %>% mutate(method="Polyscore",position=1:nrow(dataP))
 colnames(dataP) <- c('gene','R2','h2','ymin','ymax','method','position')
 toph2 <- inner_join(topsnp,h2,by='gene')
-dataT <- toph2 %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,R2,h2,ymin,ymax)
+dataT <- toph2 %>% filter(gene %in% genelist) %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2) %>% select(gene,R2,h2,ymin,ymax)
 dataT <- dataT %>% mutate(method="Top SNP",position=1:nrow(dataT))
 colnames(dataT) <- c('gene','R2','h2','ymin','ymax','method','position')
 data<-rbind(dataL,dataP,dataT)
 data <- data[complete.cases(data),]
+
+###calc mean h2 and R2 for intersection of genes with models
+##h2
+meanh2<-mean(dataL$h2)
+meanh2
+##EN
+meanEN<-mean(dataL$R2)
+meanEN
+##Polyscore
+meanPS<-mean(dataP$R2)
+meanPS
+##Top SNP
+meanTS<-mean(dataT$R2)
+meanTS
+
+##plot only intersection genes
 p1<-ggplot(data,aes(x=position,y=h2,ymin=ymin, ymax=ymax) ) + geom_pointrange(col='gray')+geom_point()+facet_wrap(~method,ncol=1)
 p1<- p1 + geom_point(data=data,aes(x=position,y=R2),color='red',cex=0.8) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(red)")) +theme_bw(30)
+
+##add mean h2 and R2 to plots
+ann_text <- data.frame(h2 = rep(0.9,3),position = rep(0,3),r2= round(c(meanEN,meanPS,meanTS),3),meanh2 = round(rep(meanh2,3),3), method = factor(c("Elastic Net","Polyscore","Top SNP")),ymin=rep(0.9,3),ymax=rep(0.9,3))
+p2<-p1+geom_text(data=ann_text,aes(label=paste("mean_h^2 ==",meanh2,sep="")),parse=T,hjust=0,size=7)
+ann_text <- data.frame(h2 = rep(0.80,3),position = rep(0,3),r2= round(c(meanEN,meanPS,meanTS),3),meanh2 = round(rep(meanh2,3),3), method = factor(c("Elastic Net","Polyscore","Top SNP")),ymin=rep(0.80,3),ymax=rep(0.85,3))
+p3<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7)
+
 png(filename="Fig3_compareR2_h2_en_poly_top.png",width=720,height=960)
-print(p1)
+print(p3)
 dev.off()
 tiff(filename="Fig3_compareR2_h2_en_poly_top.tiff",width=720,height=960)
-print(p1)
+print(p3)
 dev.off()
-p1
+p3
 
 ##calc %genes with R2 that reaches lower bound of h2 estimate
 ###EN
@@ -87,20 +118,6 @@ table(count)
 sum(table(count))
 table(count)/sum(table(count))
 
-
-###calc mean h2 and R2 for intersection of genes with models
-a<-inner_join(dataL,dataP,by='gene')
-b<-inner_join(a,dataT,by='gene')
-inter<-b[complete.cases(b),]
-dim(inter)
-##h2
-summary(inter$h2)
-##EN
-summary(inter$R2.x)
-##Polyscore
-summary(inter$R2.y)
-##Top SNP
-summary(inter$R2)
 ```
 
 ###Figure 4A
@@ -164,10 +181,23 @@ geuR2<-geuR2 %>% mutate(gene=rownames(geuR2))
 
 all<-inner_join(geuh2,geuR2,by='gene')
 all<-all %>% mutate(ymin = pmax(0, h2 - 2 * se), ymax = pmin(1, h2 + 2 * se)) %>% arrange(h2)
+all<-all[complete.cases(all),]
 
-h2plot<-ggplot(all,aes(x=1:nrow(all),y=h2,ymin=ymin, ymax=ymax) ) + geom_pointrange(col='gray')+geom_point()+coord_cartesian(ylim=c(-0.05,0.85))
+position=1:nrow(all)
+h2plot<-ggplot(all,aes(x=position,y=h2,ymin=ymin, ymax=ymax) ) + geom_pointrange(col='gray')+geom_point()+coord_cartesian(ylim=c(-0.05,0.85))
 h2plot<- h2plot + geom_point(data=all,aes(x=1:nrow(all),y=R2),color='green',cex=1) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(green)")) +theme_bw(30)
 h2plot
+
+meanh2<-round(mean(all$h2),4)
+meanh2
+meanr2<-round(mean(all$R2),4)
+meanr2
+
+##add mean h2 and R2 to plots
+ann_text <- data.frame(h2 = 0.8, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
+p2<-h2plot+geom_text(data=ann_text,aes(label=paste("mean_h^2 ==",meanh2,sep="")),parse=T,hjust=0,size=7)
+ann_text <- data.frame(h2 = 0.7, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
+h2plot<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7)
 
 ##calc %genes with R2 that reaches lower bound of h2 estimate
 count<-all$R2>all$ymin
@@ -362,25 +392,31 @@ tissueinfo<-read.table(my.dir %&% 'GTEx_pilot_sample_sizes.txt')
 
 finalp<-data.frame()
 
+meanr2vec<-vector()
+tisvec<-vector()
 for(i in 1:dim(tissueinfo)[1]){
   tis<-as.character(tissueinfo[i,1])
   n<-tissueinfo[i,2]
   resfile<-my.dir %&% 'train.DGN-WB_test.GTEX_' %&% tis %&% '_R2.txt'
   finalres<-read.table(resfile,header=T)
+  meanr2vec <- c(meanr2vec,round(mean(finalres$R2),4))
+  tisvec<-c(tisvec,tis)
   p<-qqR2(sqrt(finalres[,1]),n,tis)
   finalp<-rbind(finalp,p)
 }
 
 plot<-ggplot(finalp,aes(x=exp,y=obs))+geom_point(pch=1,cex=1.5)+facet_wrap(~tissue,scales="fixed",ncol=3)
 p2<- plot + geom_abline(intercept=0, slope=1) + xlab(expression("Expected R"^2)) + ylab(expression("Observed Predictive R"^2)) + theme_bw(20)
-p2
+
+ann_text <- data.frame(obs=0.8,exp=0,r2=meanr2vec,tissue=factor(tisvec))
+p3<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=5)
 
 tiff(file="FigS3_DGN-EN_to_GTEx-pilot.tiff",height=720,width=720)
-p2
+p3
 dev.off()
 
 png(file="FigS3_DGN-EN_to_GTEx-pilot.png",height=720,width=720)
-p2
+p3
 dev.off()
 
 ```
