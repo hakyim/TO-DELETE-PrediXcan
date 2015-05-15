@@ -17,7 +17,7 @@ import config
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
-UPLOAD_FOLDER = '/puploads/'
+UPLOAD_FOLDER = 'puploads/'
 
 
 """
@@ -240,6 +240,7 @@ def run_predict():
 				predictor.do_predictions()
 				return render_template("predict.html",filename="PredXResult.txt",form=form)
 				#TODO: delete PredXResult after delivery
+				#TODO: encrypt,email
 		else:
 			flash("bad file upload, for some godforsaken reason")
 
