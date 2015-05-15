@@ -1,7 +1,7 @@
 import os
 import sys
 from forms import LoginForm, EditForm, PostForm, CommandGenForm, predictForm
-from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
+from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm
 from models import User, Post
@@ -13,11 +13,11 @@ import tarfile
 import zipfile 
 import prediction as px
 import helpfuncs 
-
+import config
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
-UPLOAD_FOLDER = './puploads/'
+UPLOAD_FOLDER = '/puploads/'
 
 
 """
@@ -37,6 +37,7 @@ def login():
 		
 	return render_template('login.html',title='Sign In',form=form,providers=app.config['OPENID_PROVIDERS'])
 """
+
 @app.route('/edit', methods=['GET','POST'])
 @login_required
 def edit():
@@ -219,12 +220,11 @@ def _save_tar(tarfile_):
 		return (None,None)
 
 @app.route('/predict',methods=["POST","GET"])
-def predict_test():
+def run_predict():
 	print "predict one"
 	form = predictForm()
 	if request.method == 'POST':
 		if form.validate_on_submit():
-
 			print "validated form"
 			uploaded_tar = form.tarfile
 			prefix = form.prefix.data
@@ -238,19 +238,21 @@ def predict_test():
 						glistname = None
 				predictor = px.prediction_maker(gene_list=glistname,dosage_dir=path,dosage_prefix=prefix)				
 				predictor.do_predictions()
-
-				return render_template("predict.html",fileloc="test.txt",form=form)
+				return render_template("predict.html",filename="PredXResult.txt",form=form)
+				#TODO: delete PredXResult after delivery
 		else:
 			flash("bad file upload, for some godforsaken reason")
 
 	return render_template("predict.html",form=form)
 
-@app.route('/puploads/<path:filename>', methods=['GET', 'POST'])
+@app.route('/<path:filename>',methods=['GET','POST'])
 def download(filename):
-	uploads = app.config['UPLOAD_FOLDER']
-	print uploads
-	return send_from_directory(directory=uploads, filename=filename)
-
+	f = open(os.path.join(app.static_folder,filename))
+	contents = f.read()
+	response = make_response(contents)
+	#set it to be a download response
+	response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
+	return response
 
 
 """Here lie error handlers"""

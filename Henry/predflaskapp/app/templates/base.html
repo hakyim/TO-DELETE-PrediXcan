@@ -12,7 +12,8 @@
         <a href='{{ url_for('gen_command') }}'>Command Line Generator</a>
         <a href="{{ url_for('upload_file') }}">File Upload Test</a>
         <a href="{{ url_for('tar_upload') }}">tar File Upload Test</a>
-        <a href="{{ url_for('predict_test') }}">Prediction Model</a>
+        <a href="{{ url_for('run_predict') }}">Prediction Model</a>
+        <a href="{{ url_for('download',filename='bye.txt') }} ">download test </a>
     </div>
     <hr>
     {% with messages = get_flashed_messages() %}

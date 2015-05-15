@@ -11,9 +11,10 @@ from werkzeug import secure_filename
 
 
 app = Flask(__name__)
+app.static_folder = "static/"
 app.config.from_object('config')
 db = SQLAlchemy(app)
-UPLOAD_FOLDER = '/tmp'
+#UPLOAD_FOLDER = '/tmp'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
 
 lm = LoginManager()
