@@ -14,6 +14,7 @@ import zipfile
 import prediction as px
 import helpfuncs 
 import config
+import celery
 
 """temporary globals"""
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz','tar'])
@@ -237,14 +238,23 @@ def run_predict():
 				else:
 						glistname = None
 				predictor = px.prediction_maker(gene_list=glistname,dosage_dir=path,dosage_prefix=prefix)				
-				predictor.do_predictions()
-				return render_template("predict.html",filename="PredXResult.txt",form=form)
+				#queue up a job?
+				fname = doPredictionJob.delay(predictor)
+				#predictor.do_predictions()
+				return render_template("predict.html",filename=fname,form=form)
 				#TODO: delete PredXResult after delivery
 				#TODO: encrypt,email
 		else:
 			flash("bad file upload, for some godforsaken reason")
 
 	return render_template("predict.html",form=form)
+
+#takes in a precitor object, runs it
+@celery.task
+def doPredictionJob(predictor):
+	print "starting a predict job"
+	fname = predictor.do_predictions()
+	return fname
 
 @app.route('/<path:filename>',methods=['GET','POST'])
 def download(filename):

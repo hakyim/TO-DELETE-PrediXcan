@@ -8,13 +8,24 @@ from flask import Flask
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD 
 from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug import secure_filename
+from celery import Celery
 
 
 app = Flask(__name__)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+print app.name
+#app.celery = celery
+celery.conf.update(app.config)
+
+
 app.static_folder = "static/"
 app.config.from_object('config')
+
+#celery stuff
+
 db = SQLAlchemy(app)
-#UPLOAD_FOLDER = '/tmp'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','gz'])
 
 lm = LoginManager()

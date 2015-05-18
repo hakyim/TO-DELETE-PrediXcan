@@ -10,6 +10,7 @@ import sqlite3
 import MySQLdb as db
 import sys
 
+"""
 parser = argparse.ArgumentParser()
 parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
 parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
@@ -19,14 +20,14 @@ parser.add_argument('--weights', action="store", dest="weights",default="data/we
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
 parser.add_argument('--output', action="store", dest="output", default="output.txt", help="Path to the output file.")
 args = parser.parse_args()
-
+"""
  
-GENE_LIST = args.genelist
-DOSAGE_DIR = args.dosages
-DOSAGE_PREFIX = args.dosages_prefix
-DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
+#GENE_LIST = args.genelist
+#DOSAGE_DIR = args.dosages
+#DOSAGE_PREFIX = args.dosages_prefix
+#DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = "DGN-WB_0.5.db"
-PRELOAD_WEIGHTS = not args.weights_on_disk
+#PRELOAD_WEIGHTS = not args.weights_on_disk
 UPLOAD_FOLDER = "./puploads."
 
 def buffered_file(file,DOSAGE_BUFFER=None):

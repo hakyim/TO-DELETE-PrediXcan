@@ -1,6 +1,7 @@
 import predictX as px 
 import MySQLdb as db 
 from app import app
+import time
 import os
 
 
@@ -21,4 +22,6 @@ class prediction_maker:
 			for gene, weight, ref_allele in get_applications_of(rsid):
 				print "doing a rsid"
 				transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-		transcription_matrix.save(os.path.join(app.static_folder,"PredXResult.txt")) #hard coded for the moment        
+		fname = self.DOSAGE_PREFIX  + time.asctime().replace(" ", "") + ".txt"
+		transcription_matrix.save(os.path.join(app.static_folder,fname)) #hard coded for the moment        
+		return fname
