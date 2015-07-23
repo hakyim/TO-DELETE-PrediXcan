@@ -4,8 +4,7 @@ PrediXcan
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
 ##Reference
-PrediXcan: Trait Mapping Using Human Transcriptome Regulation
-Eric R. Gamazon†, Heather E. Wheeler†, Sahar Mozaffari, Kaanan P. Shah, Keston Aquino-Michaels, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* (Under revision)
+Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Accepted in Nature Genetics) [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
 
 ##Instructions
 
