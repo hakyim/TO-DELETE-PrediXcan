@@ -60,6 +60,7 @@ The following arguments are allowed, with default values as follows
 ####Example
 - Download and untar this file [Working Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-working-example.tar)
 - Go to folder and run the following
+
 > ./predict_gene_expression.py  --dosages dosages  --dosages_prefix chr --weights DGN-WB_0.5.db --output output
 
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
