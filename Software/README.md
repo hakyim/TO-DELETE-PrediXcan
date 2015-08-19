@@ -4,7 +4,10 @@ PrediXcan
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
 ##Reference
-Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Accepted in Nature Genetics) [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+Gamazon, Eric R, Heather E Wheeler, Kaanan P Shah, Sahar V Mozaffari, Keston Aquino-Michaels, Robert J Carroll, Anne E Eyler, et al. 2015. “A Gene-Based Association Method for Mapping Traits Using Reference Transcriptome Data.” Nature Genetics, August, 1–10. doi:10.1038/ng.3367.
+
+[An open access preprint can be found on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Accepted in Nature Genetics) 
 
 ##Instructions
 
@@ -55,8 +58,11 @@ The following arguments are allowed, with default values as follows
 > ./predict_gene_expression.py  --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output output
 
 ####Example
+- Download and untar this file [Working Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-working-example.tar)
+- Go to folder and run the following
 > ./predict_gene_expression.py  --dosages dosages  --dosages_prefix chr --weights DGN-WB_0.5.db --output output
 
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
-hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC")
+hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC"). 
+SNPs not included on this list is not used to make predictions.
