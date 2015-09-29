@@ -19,23 +19,24 @@ parser.add_argument('--weights', action="store", dest="weights",default="data/we
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
 parser.add_argument('--pheno', action="store", dest="pheno", default="GWAS.fam", help="Phenotype file")
 parser.add_argument('--filter', action="store", dest="fil", default="GWAS.filter", help="Filter file for which ids to include")
-parser.add_argument('--troutput', action="store", dest="troutput", default="transcript.txt", help="Path to the transcript output file")
-parser.add_argument('--geoutput', action="store", dest="geoutput", default="gene_association.txt", help="Path to the gene association output file.")
+parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
+#parser.add_argument('--troutput', action="store", dest="troutput", default="transcript.txt", help="Path to the transcript output file")
+#parser.add_argument('--geoutput', action="store", dest="geoutput", default="gene_association.txt", help="Path to the gene association output file.")
 
 args = parser.parse_args()
 
- 
 GENE_LIST = args.genelist
 DOSAGE_DIR = args.dosages
 DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
-FAM_FILE = args.pheno
+PHENO_FILE = args.pheno
 FILTER_FILE = args.fil
-OUTPUT_FILE = args.troutput
-OUTPUT_FILE2 = args.geoutput
+OUTPUT_DIR = args.output
 
+PRED_EXP_FILE = os.path.join(OUTPUT_DIR, "predicted_expression.txt")
+ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")                           
 
 def buffered_file(file):
     if not DOSAGE_BUFFER:
@@ -132,21 +133,26 @@ class TranscriptionMatrix:
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 
-transcription_matrix = TranscriptionMatrix()
-for rsid, allele, dosage_row in get_all_dosages():
-    for gene, weight, ref_allele in get_applications_of(rsid):
-        transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-transcription_matrix.save()
+try:
+    os.mkdir(OUTPUT_DIR)
+    transcription_matrix = TranscriptionMatrix()
+    for rsid, allele, dosage_row in get_all_dosages():
+        for gene, weight, ref_allele in get_applications_of(rsid):
+            transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
+    transcription_matrix.save()
 
-robjects.r.source("PrediXcanAssociation.R")
-print "Reading pheno from " + FAM_FILE + "..."
-fam = robjects.r.read_pheno(FAM_FILE)
-print "Reading filter from " + FILTER_FILE + "..."
-fil = robjects.r.read_filter(FILTER_FILE)
-print "Reading predicted data from " + OUTPUT_FILE + "..."
-predicted = robjects.r.read_predicted(OUTPUT_FILE)
-print "Preparing data and running correlations..."
-OUT = robjects.r.association(fam, fil, predicted)
-print "Writing data to " + OUTPUT_FILE2 + "."
-robjects.r.write_association(OUT, OUTPUT_FILE2)
+    robjects.r.source("PrediXcanAssociation.R")
+    print "Reading pheno from " + PHENO_FILE + "..."
+    pheno = robjects.r.read_pheno(PHENO_FILE)
+    print "Reading filter from " + FILTER_FILE + "..."
+    fil = robjects.r.read_filter(FILTER_FILE)
+    print "Reading predicted data from " + PRED_EXP_FILE + "..."
+    predicted = robjects.r.read_predicted(PRED_EXP_FILE)
+    print "Preparing data and running correlations..."
+    OUT = robjects.r.association(pheno, fil, predicted)
+    print "Writing data to " + ASSOC_FILE + "."
+    robjects.r.write_association(OUT, ASSOC_FILE)
+except OSError as e:
+    print(e + "\nRun again with different --output, or move the existing directory.")
+
 
