@@ -17,7 +17,7 @@ parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", ac
 parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
 parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db",  help="SQLite database with rsid weights.")
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
-parser.add_argument('--phen', action="store", dest="phen", default="GWAS.fam", help="Phenotype file")
+parser.add_argument('--pheno', action="store", dest="pheno", default="GWAS.fam", help="Phenotype file")
 parser.add_argument('--filter', action="store", dest="fil", default="GWAS.filter", help="Filter file for which ids to include")
 parser.add_argument('--troutput', action="store", dest="troutput", default="transcript.txt", help="Path to the transcript output file")
 parser.add_argument('--geoutput', action="store", dest="geoutput", default="gene_association.txt", help="Path to the gene association output file.")
@@ -31,7 +31,7 @@ DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
-FAM_FILE = args.phen
+FAM_FILE = args.pheno
 FILTER_FILE = args.fil
 OUTPUT_FILE = args.troutput
 OUTPUT_FILE2 = args.geoutput
