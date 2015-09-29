@@ -20,8 +20,6 @@ parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_d
 parser.add_argument('--pheno', action="store", dest="pheno", default="GWAS.fam", help="Phenotype file")
 parser.add_argument('--filter', action="store", dest="fil", default="GWAS.filter", help="Filter file for which ids to include")
 parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
-#parser.add_argument('--troutput', action="store", dest="troutput", default="transcript.txt", help="Path to the transcript output file")
-#parser.add_argument('--geoutput', action="store", dest="geoutput", default="gene_association.txt", help="Path to the gene association output file.")
 
 args = parser.parse_args()
 
