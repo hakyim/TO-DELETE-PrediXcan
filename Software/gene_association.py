@@ -150,7 +150,8 @@ try:
     OUT = robjects.r.association(pheno, fil, predicted)
     print "Writing data to " + ASSOC_FILE + "."
     robjects.r.write_association(OUT, ASSOC_FILE)
-except OSError as e:
-    print(e + "\nRun again with different --output, or move the existing directory.")
+except OSError:
+    print OUTPUT_DIR + "directory already exists."
+    print "Run again with different --output, or move the existing directory to avoid overwriting files."
 
 
