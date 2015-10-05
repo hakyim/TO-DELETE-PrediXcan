@@ -104,7 +104,6 @@ class GetApplicationsOf:
             for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=?", (rsid,)):
                 yield tup
 
-get_applications_of = GetApplicationsOf()
 
 class TranscriptionMatrix:
     def __init__(self):
@@ -126,19 +125,24 @@ class TranscriptionMatrix:
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
 
     def save(self):
-        with open(OUTPUT_FILE, 'w+') as outfile:
+        with open(PRED_EXP_FILE, 'w+') as outfile:
             outfile.write('\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 
-try:
-    os.mkdir(OUTPUT_DIR)
+if not os.path.exists(OUTPUT_DIR):
+    os.mkdir(OUTPUT_DIR)    
+if not os.path.exists(PRED_EXP_FILE):
+    get_applications_of = GetApplicationsOf()
     transcription_matrix = TranscriptionMatrix()
     for rsid, allele, dosage_row in get_all_dosages():
         for gene, weight, ref_allele in get_applications_of(rsid):
             transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
     transcription_matrix.save()
+else:
+    print "Using existing expression matrix at: " + PRED_EXP_FILE
 
+if not os.path.exists(ASSOC_FILE):
     robjects.r.source("PrediXcanAssociation.R")
     print "Reading pheno from " + PHENO_FILE + "..."
     pheno = robjects.r.read_pheno(PHENO_FILE)
@@ -150,8 +154,5 @@ try:
     OUT = robjects.r.association(pheno, fil, predicted)
     print "Writing data to " + ASSOC_FILE + "."
     robjects.r.write_association(OUT, ASSOC_FILE)
-except OSError:
-    print OUTPUT_DIR + "directory already exists."
-    print "Run again with different --output, or move the existing directory to avoid overwriting files."
-
-
+else:
+    print "Association already exists."
