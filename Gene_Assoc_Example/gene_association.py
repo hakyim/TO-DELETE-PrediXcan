@@ -17,8 +17,8 @@ parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", ac
 parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
 parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db",  help="SQLite database with rsid weights.")
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
-parser.add_argument('--pheno', action="store", dest="pheno", default="GWAS.fam", help="Phenotype file")
-parser.add_argument('--filter', action="store", dest="fil", default="GWAS.filter", help="Filter file for which ids to include")
+parser.add_argument('--pheno', action="store", dest="pheno", default="data/GWAS.fam", help="Phenotype file")
+parser.add_argument('--filter', action="store", dest="fil", default="data/GWAS.filter", help="Filter file for which ids to include")
 parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
 
 args = parser.parse_args()
