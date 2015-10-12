@@ -5,10 +5,10 @@ matrix and run association tests between the expression matrix and a phenotype f
  
 The following need to be installed in order to run properly:
 
--Python 2.7
--R
--The python packages numpy and rpy2
--The R package dplyr
+- Python 2.7
+- R
+- The python packages numpy and rpy2
+- The R package dplyr
 
 In addition, the script *PrediXcanAssociation.R* needs to be located in the same directory as
 **gene_association.py* to work correctly.
