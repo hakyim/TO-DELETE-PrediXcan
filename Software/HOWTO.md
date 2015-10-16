@@ -144,7 +144,7 @@ gene beta z-stat p-val se(beta)
 
 ##Example
 
-A working example can be download from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/association-working-example.tar).  Note: a 250 MB file will be downloaded by clicking on the link.
+A working example can be download from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/association_working_example.tar).  Note: a 250 MB file will be downloaded by clicking on the link.
 
 Untar this file, go to the directory, and run the following in the commandline:
 
