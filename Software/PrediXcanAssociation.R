@@ -2,8 +2,7 @@ library(dplyr, warn.conflicts=FALSE)
 
 read_pheno <- function(fam_file) {
     fam = read.table(fam_file)
-    fam_colnames <- c("FAMILY","INDIVIDUAL", "PATERNAL", "MATERNAL", "SEX","PHENOTYPE")
-    colnames(fam) <- fam_colnames
+    colnames(fam) <- c("FAMILY","INDIVIDUAL", "PATERNAL", "MATERNAL", "SEX","PHENOTYPE")
     return(fam)
 }
 
