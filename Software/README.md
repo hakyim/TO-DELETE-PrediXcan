@@ -28,7 +28,7 @@ Input:
 
 download [this](https://github.com/hakyimlab/PrediXmod/blob/master/PrediXcan/predict_gene_expression.py "Prediction Script") python script to compute predicted expression levels. Python 2.7 is needed.
 
-The cross validated performance measures for each gene will be added to the db. (- [ ] TODO)
+The cross validated performance measures for each gene can be found in each db.
 
 The script predict\_gene\_expression.py predicts gene expression levels using prediction models (stored in sqlite db such as DGN-WB_0.5.db) and whole genome variation data.
 
