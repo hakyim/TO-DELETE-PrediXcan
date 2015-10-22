@@ -19,7 +19,7 @@ G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a v
 
 
 ##Reference
-Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Accepted in Nature Genetics) [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Nature Genetics) [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
 
 †:equal contribution *:correspondence
 
@@ -30,14 +30,6 @@ Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, K
 
 - Gene expression prediction script [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
 
-### Perl version 
-
-- Download scripts [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Kaanan)
-- Download prediction model in text format [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
-
-### R version
-
-- Gene expression prediction script [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
 
 ##Acknowledgements
 
