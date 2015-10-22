@@ -3,6 +3,19 @@ PrediXcan
 
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
+
+##Reference
+Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+
+†:equal contribution *:correspondence
+
+
+##Software
+
+### Python version
+
+- Download software from this [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
+
 PredictDB
 =========
 PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan. 
@@ -16,19 +29,6 @@ The following models are available for download.
 G2Pdb
 =========
 G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
-
-
-##Reference
-Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
-
-†:equal contribution *:correspondence
-
-
-##Software
-
-### Python version
-
-- Gene expression prediction script [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
 
 
 ##Acknowledgements
