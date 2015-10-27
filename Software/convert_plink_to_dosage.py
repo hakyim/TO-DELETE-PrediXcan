@@ -69,12 +69,18 @@ if __name__ == "__main__":
 
   # now we need to gzip the files
   out_dir = os.path.dirname(args.out)
-  for chrfile in [x for x in os.listdir(out_dir) if x.endswith(".txt")]:
+  prefix = os.path.basename(args.out)
+  for chrfile in [x for x in os.listdir(out_dir) if (x.startswith(prefix) and x.endswith(".txt"))]:
     f = open(os.path.join(out_dir, chrfile), 'rb')
     ofile = gzip.open(os.path.join(out_dir, chrfile + ".gz"), "wb")
     ofile.writelines(f)
     f.close()
     ofile.close()
-    # remove old file
+    # remove non-zipped file
     os.remove(os.path.join(out_dir, chrfile))
+
+  # Remove left over files
+  os.remove(os.path.join(out_dir, prefix + ".frq"))
+  os.remove(os.path.join(out_dir, prefix + ".traw"))
+  os.remove(os.path.join(out_dir, prefix + ".log"))
 
