@@ -58,6 +58,13 @@ if __name__ == "__main__":
         dcols = dline.split()
         fcols = fline.split()
         bcols = bline.split()
+        # Make sure rsIDs match in maf frequency file -- note this cannot
+        # be filtered unlike the --recode 'd file
+        while True:
+          if fcols[1] != dcols[1]:
+            fcols = ffile.readline().split()
+          else:
+            break
         # Combine columns as per 'dosage' format
         nline = fcols[0:2] + [bcols[3]]+ fcols[2:5] + dcols[6:]
         # Write out to the appropriate file for that chromosome
