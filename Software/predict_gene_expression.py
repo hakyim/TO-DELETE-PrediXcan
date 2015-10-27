@@ -56,7 +56,7 @@ def buffered_file(file):
                 
 
 def get_all_dosages():
-    for chrfile in [x for x in sorted(os.listdir(DOSAGE_DIR)) if x.startswith(DOSAGE_PREFIX)]:
+    for chrfile in [x for x in sorted(os.listdir(DOSAGE_DIR)) if (x.startswith(DOSAGE_PREFIX) and x.endswith(".gz"))]:
         print datetime.datetime.now(), "Processing %s"%chrfile
         for line in buffered_file(gzip.open(os.path.join(DOSAGE_DIR, chrfile))):
             arr = line.strip().split()
