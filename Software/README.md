@@ -70,3 +70,6 @@ The following arguments are allowed, with default values as follows
 
 hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC"). 
 SNPs not included on this list is not used to make predictions.
+
+#### Helper Scripts
+Conversion from Plink to Dosage (provided by scottritchie73 via pull request, thank you!) [link](https://github.com/hakyimlab/PrediXcan/blob/master/Software/convert_plink_to_dosage.py)
