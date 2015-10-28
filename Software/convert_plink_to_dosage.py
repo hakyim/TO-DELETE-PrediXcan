@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
   # First we get the minor allele dosages for *all* chromosomes:
   subprocess.call([
-    'plink2', '--bfile', args.bfile, '--geno', '0',
+    'plink2', '--bfile', args.bfile,
     '--recode', 'A-transpose', '--out', args.out
   ])
 
@@ -65,14 +65,14 @@ if __name__ == "__main__":
             fcols = ffile.readline().split()
           else:
             break
-        # Combine columns as per 'dosage' format
-        nline = fcols[0:2] + [bcols[3]]+ fcols[2:5] + dcols[6:]
+        # Combine columns as per 'dosage' format. Impute missing data as 2*MAF.
+        nline = fcols[0:2] + [bcols[3]]+ fcols[2:5] + [fcols[4]*2 if e == "NA" else e for e in dcols[6:]]
         # Write out to the appropriate file for that chromosome
         if fcols[0] != curCHR:
           if curCHR != -1:
             ofile.close()
           ofile = open(args.out + fcols[0] + ".txt", "a")
-          ofile.write(" ".join(nline) + "\n")
+        ofile.write(" ".join(nline) + "\n")
   ofile.close()
 
   # now we need to gzip the files
