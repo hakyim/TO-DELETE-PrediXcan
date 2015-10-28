@@ -20,8 +20,12 @@ if __name__ == "__main__":
     "-o", "--out", dest="out", required=False,
     help="prefix for output files", default="chr"
   )
+  parser.add_argument(
+    "-p", "--plink-binary", dest="plink", default="plink2",
+    help="path to plink (1.9) binary"
+  )
 
-  if len(sys.argv) == 1:
+  if len(sys.argv) == 2:
     parser.print_help()
     sys.exit()
 
@@ -29,13 +33,13 @@ if __name__ == "__main__":
 
   # First we get the minor allele dosages for *all* chromosomes:
   subprocess.call([
-    'plink2', '--bfile', args.bfile,
+    args[["plink"]], '--bfile', args.bfile,
     '--recode', 'A-transpose', '--out', args.out
   ])
 
   # Now calculate the minor allele frequency:
   subprocess.call([
-    'plink2', '--bfile', args.bfile, '--freq', '--out', args.out
+    args[["plink"]], '--bfile', args.bfile, '--freq', '--out', args.out
   ])
 
   # Thanks to Adam Whiteside (https://github.com/adamcw) for
