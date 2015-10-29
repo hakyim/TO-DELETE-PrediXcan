@@ -61,13 +61,13 @@ meanTS
 
 ##plot only intersection genes
 p1<-ggplot(data,aes(x=position,y=h2,ymin=ymin, ymax=ymax) ) + geom_pointrange(col='gray')+geom_point()+facet_wrap(~method,ncol=1)
-p1<- p1 + geom_point(data=data,aes(x=position,y=R2),color='red',cex=0.8) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(red)")) +theme_bw(30)
+p1<- p1 + geom_point(data=data,aes(x=position,y=R2),color='red',cex=0.8) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(red)")) +theme_classic(30)
 
 ##add mean h2 and R2 to plots
 ann_text <- data.frame(h2 = rep(0.9,3),position = rep(0,3),r2= round(c(meanEN,meanPS,meanTS),3),meanh2 = round(rep(meanh2,3),3), method = factor(c("Elastic Net","Polyscore","Top SNP")),ymin=rep(0.9,3),ymax=rep(0.9,3))
 p2<-p1+geom_text(data=ann_text,aes(label=paste("mean_h^2 ==",meanh2,sep="")),parse=T,hjust=0,size=7)
 ann_text <- data.frame(h2 = rep(0.80,3),position = rep(0,3),r2= round(c(meanEN,meanPS,meanTS),3),meanh2 = round(rep(meanh2,3),3), method = factor(c("Elastic Net","Polyscore","Top SNP")),ymin=rep(0.80,3),ymax=rep(0.85,3))
-p3<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7)
+p3<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7) + annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf)+annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf)+ theme(strip.background = element_rect(colour="white", fill="white"))
 
 png(filename="Fig3_compareR2_h2_en_poly_top.png",width=720,height=960)
 print(p3)
@@ -137,12 +137,12 @@ qqR2 <- function(corvec,nn)
   return(data)
 }
 
-#obs<-read.table('/Users/heather/Dropbox/PrediXcan/GEUVADIS/observed',header=T)
-obs<-read.table('/Volumes/im-lab/nas40t2/1000Genomes/Transcriptome/GEUVADIS/observed-mrna',header=T)
+obs<-read.table('/Users/heather/Dropbox/PrediXcan/GEUVADIS/observed',header=T)
+#obs<-read.table('/Volumes/im-lab/nas40t2/1000Genomes/Transcriptome/GEUVADIS/observed-mrna',header=T)
 rownames(obs)<-obs[,1]
 obs<-obs[,-1]
-#pred<-read.table('/Users/heather/Dropbox/PrediXcan/GEUVADIS/DGN.WB.predicted.txt',skip=1)
-pred<-read.table('/Volumes/im-lab/nas40t2/haky/Data/Transcriptome/GEUVADIS/DGN.WB.predicted.txt',skip=1)
+pred<-read.table('/Users/heather/Dropbox/PrediXcan/GEUVADIS/DGN.WB.predicted.txt',skip=1)
+#pred<-read.table('/Volumes/im-lab/nas40t2/haky/Data/Transcriptome/GEUVADIS/DGN.WB.predicted.txt',skip=1)
 headpred<-scan(my.dir %&% 'header.DGN.WB.predicted.txt','character')
 colnames(pred)<-headpred
 rownames(pred)<-pred[,1]
@@ -185,7 +185,7 @@ all<-all[complete.cases(all),]
 
 position=1:nrow(all)
 h2plot<-ggplot(all,aes(x=position,y=h2,ymin=ymin, ymax=ymax) ) + geom_pointrange(col='gray')+geom_point()+coord_cartesian(ylim=c(-0.05,0.85))
-h2plot<- h2plot + geom_point(data=all,aes(x=1:nrow(all),y=R2),color='green',cex=1) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(green)")) +theme_bw(30)
+h2plot<- h2plot + geom_point(data=all,aes(x=1:nrow(all),y=R2),color='green',cex=1) + xlab(expression("Genes sorted by h"^2)) + ylab(expression(h^{2} ~"(black) or " ~ R^{2} ~ "(green)")) +theme_classic(30)
 h2plot
 
 meanh2<-round(mean(all$h2),4)
@@ -194,10 +194,10 @@ meanr2<-round(mean(all$R2),4)
 meanr2
 
 ##add mean h2 and R2 to plots
-ann_text <- data.frame(h2 = 0.8, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
-p2<-h2plot+geom_text(data=ann_text,aes(label=paste("mean_h^2 ==",meanh2,sep="")),parse=T,hjust=0,size=7)
-ann_text <- data.frame(h2 = 0.7, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
-h2plot<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7)
+#ann_text <- data.frame(h2 = 0.8, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
+#p2<-h2plot+geom_text(data=ann_text,aes(label=paste("mean_h^2 ==",meanh2,sep="")),parse=T,hjust=0,size=7)
+#ann_text <- data.frame(h2 = 0.7, position= 0,r2= meanr2,meanh2 = meanh2,ymin=0.8,ymax=0.8)
+#h2plot<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=7)
 
 ##calc %genes with R2 that reaches lower bound of h2 estimate
 count<-all$R2>all$ymin
@@ -213,7 +213,7 @@ sum(table(count))
 table(count)/sum(table(count))
 
 qqR2plot<-ggplot(p,aes(x=exp,y=obs))+geom_point(pch=1,cex=1.5)+coord_cartesian(ylim=c(-0.05,0.85))
-qqR2plot<- qqR2plot + geom_abline(intercept=0, slope=1) + xlab(expression("Expected R"^2)) + ylab(expression("Observed Predictive R"^2)) + theme_bw(30)
+qqR2plot<- qqR2plot + geom_abline(intercept=0, slope=1) + xlab(expression("Expected R"^2)) + ylab(expression("Observed Predictive R"^2)) + theme_classic(30)
 qqR2plot
 
 
@@ -241,7 +241,7 @@ predexp <- gather(predexp)
 data <- cbind(obsexp,predexp)
 colnames(data) <- c("gene","Observed","key","Predicted")
 p<-ggplot(data,aes(x=Predicted,y=Observed)) +geom_point(cex=0.8)+facet_wrap(~gene,scales="free",ncol=4)+ geom_smooth(method = "lm")
-p1<-p + xlab("Predicted Expression") + ylab("Observed Expression") + theme_bw()
+p1<-p + xlab("Predicted Expression") + ylab("Observed Expression") + theme_classic()
 print(p1)
 
 ##pick 4 representative for paper
@@ -256,7 +256,7 @@ r2vec <- round(finalres[genevec,1],2)
 data <- cbind(obsexp,predexp)
 colnames(data) <- c("gene","Observed","key","Predicted")
 p<-ggplot(data,aes(x=Predicted,y=Observed)) +geom_point(cex=0.8)+facet_wrap(~gene,scales="free",ncol=2)+ geom_smooth(method = "lm")
-p1<-p + xlab("Predicted Expression") + ylab("Observed Expression") + theme_bw(20)
+p1<-p + xlab("Predicted Expression") + ylab("Observed Expression") + theme_classic(20) + theme(strip.background = element_rect(colour="white", fill="white"))
 
 ann_text <- data.frame(Predicted = c(-0.3,0.2,0.3,-2),Observed = c(50,25,13,60),lab = r2vec, gene = factor(genevec,levels = c("ERAP2", "NUDT2", "PEX6",  "ERAP1")))
 p1<-p1 + geom_text(data=ann_text,aes(label=paste("R^2 ==",lab,sep="")),parse=T)
@@ -406,7 +406,7 @@ for(i in 1:dim(tissueinfo)[1]){
 }
 
 plot<-ggplot(finalp,aes(x=exp,y=obs))+geom_point(pch=1,cex=1.5)+facet_wrap(~tissue,scales="fixed",ncol=3)
-p2<- plot + geom_abline(intercept=0, slope=1) + xlab(expression("Expected R"^2)) + ylab(expression("Observed Predictive R"^2)) + theme_bw(20)
+p2<- plot + geom_abline(intercept=0, slope=1) + xlab(expression("Expected R"^2)) + ylab(expression("Observed Predictive R"^2)) + theme_classic(20)
 
 ann_text <- data.frame(obs=0.8,exp=0,r2=meanr2vec,tissue=factor(tisvec))
 p3<-p2+geom_text(data=ann_text,aes(label=paste("mean_R^2 ==",r2,sep="")),parse=T,hjust=0,size=5)
