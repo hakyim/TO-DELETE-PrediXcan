@@ -144,7 +144,15 @@ gene beta z-stat p-val se(beta)
 
 ##Example
 
+<<<<<<< HEAD
 A working example can be download from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/association_working_example.tar).  Note: a 250 MB file will be downloaded by clicking on the link.
+=======
+<<<<<<< HEAD
+A working example can be download from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/association-working-example.tar).  Note: a 250 MB file will be downloaded by clicking on the link.
+=======
+A working example can be download from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/association_working_example.tar).  Note: a 250 MB file will be downloaded by clicking on the link.
+>>>>>>> a72e8124376cfd680a4ffed4ff1add24d7eecebe
+>>>>>>> 3bfa1ecedf58adbb4884eb4539607b053d5a44be
 
 Untar this file, go to the directory, and run the following in the commandline:
 
@@ -153,4 +161,12 @@ Untar this file, go to the directory, and run the following in the commandline:
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
 hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC"). 
+<<<<<<< HEAD
 SNPs not included on this list is not used to make predictions.
+=======
+<<<<<<< HEAD
+SNPs not included on this list is not used to make predictions.
+=======
+SNPs not included on this list is not used to make predictions.
+>>>>>>> a72e8124376cfd680a4ffed4ff1add24d7eecebe
+>>>>>>> 3bfa1ecedf58adbb4884eb4539607b053d5a44be
