@@ -97,6 +97,15 @@ cd data/dosages
 aws s3 cp s3://imlab-open/Data/1000Genomes/Transcriptome/GEUVADIS/dosagefiles-hapmap2/ . --recursive
 ```
 
+#### Converting from other file formats to the dosage file format
+
+The script [convert_plink_to_dosage.py](convert_plink_to_dosage.py) will convert data in the [binary PED format](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#bed) used by the popular [plink](http://pngu.mgh.harvard.edu/~purcell/plink/) program to the dosage file format.
+
+To use [convert_plink_to_dosage.py](convert_plink_to_dosage.py) you will need to have the latest version of plink installed: [plink 1.90 beta](https://www.cog-genomics.org/plink2/). By default, the script expects this available as `plink2`, but the path to the binary can be specified at runtime. 
+
+If your data is in another format, you can use plink to convert your file into the plink binary PED format first.
+Plink can be used to convert data in the [oxford format](https://www.cog-genomics.org/plink2/input#oxford) output by the imputation program [IMPUTE2](https://mathgen.stats.ox.ac.uk/impute/impute_v2.html), data in the [23andMe format](https://www.cog-genomics.org/plink2/input#23file), and [VCF or BCF files](https://www.cog-genomics.org/plink2/input#vcf). The [older version of plink (1.70)](http://pngu.mgh.harvard.edu/~purcell/plink/) can be used to convert data in the [dosage format](http://pngu.mgh.harvard.edu/~purcell/plink/dosage.shtml#format) output by the imputation programs [BEAGLE](http://faculty.washington.edu/browning/beagle/beagle.html) and [MACH](www.sph.umich.edu/csg/abecasis/mach/).
+
 ### Phenotype and Filter Files
 
 The phenotype file is expected to be formatted with the following columns:
