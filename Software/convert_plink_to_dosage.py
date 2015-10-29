@@ -33,13 +33,13 @@ if __name__ == "__main__":
 
   # First we get the minor allele dosages for *all* chromosomes:
   subprocess.call([
-    args[["plink"]], '--bfile', args.bfile,
+    args.plink, '--bfile', args.bfile,
     '--recode', 'A-transpose', '--out', args.out
   ])
 
   # Now calculate the minor allele frequency:
   subprocess.call([
-    args[["plink"]], '--bfile', args.bfile, '--freq', '--out', args.out
+    args.plink, '--bfile', args.bfile, '--freq', '--out', args.out
   ])
 
   # Thanks to Adam Whiteside (https://github.com/adamcw) for
