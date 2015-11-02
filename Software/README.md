@@ -12,6 +12,10 @@ Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carro
 
 ##Instructions
 
+These instructions are for generating predicted expression levels. The association has to be performed separately. 
+
+A beta version of the software that does both prediction and association can be found here [HOWTO.md](https://github.com/hakyimlab/PrediXcan/blob/master/Software/HOWTO.md)
+
 To run PrediXcan you will need 
 
 Input: 
@@ -26,7 +30,7 @@ Input:
 
 download [this](https://github.com/hakyimlab/PrediXmod/blob/master/PrediXcan/predict_gene_expression.py "Prediction Script") python script to compute predicted expression levels. Python 2.7 is needed.
 
-The cross validated performance measures for each gene will be added to the db. (- [ ] TODO)
+The cross validated performance measures for each gene can be found in each db.
 
 The script predict\_gene\_expression.py predicts gene expression levels using prediction models (stored in sqlite db such as DGN-WB_0.5.db) and whole genome variation data.
 
@@ -68,3 +72,6 @@ The following arguments are allowed, with default values as follows
 
 hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC"). 
 SNPs not included on this list is not used to make predictions.
+
+#### Helper Scripts
+Conversion from Plink to Dosage (provided by scottritchie73 via pull request, thank you!) [link](https://github.com/hakyimlab/PrediXcan/blob/master/Software/convert_plink_to_dosage.py)

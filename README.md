@@ -3,41 +3,37 @@ PrediXcan
 
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
-PredictDB
-=========
-PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan. 
-
-The following models are available for download. 
-
-- DGN Whole Blood Elastic Net SQTLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50.db") (A ~28MB file will be downloaded)
-- DGN Whole Blood Elastic Net text [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
-- DGN Whole Blood LASSO SQTLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1.db") (A ~18MB file will be downloaded)
-
-G2Pdb
-=========
-G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
-
 
 ##Reference
-Eric R. Gamazon†, Heather E. Wheeler†, Kaanan P. Shah†, Sahar Mozaffari, Keston Aquino-Michaels, Robert J. Carroll, Anne E. Eyler, Joshua C. Denny, GTEx Consortium, Dan L. Nicolae, Nancy J. Cox, and Hae Kyung Im* **PrediXcan: Trait Mapping Using Human Transcriptome Regulation** (2015 Accepted in Nature Genetics) [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. 
 
-†:equal contribution *:correspondence
+[Link to paper](http://www.nature.com/ng/journal/v47/n9/full/ng.3367.html)
+
+[Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+
+†:equal contribution *:correspondence haky at uchicago dot edu
 
 
 ##Software
 
 ### Python version
 
-- Gene expression prediction script [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
+- Download software from this [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
 
-### Perl version 
+PredictDB
+=========
+PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan. 
 
-- Download scripts [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Kaanan)
-- Download prediction model in text format [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
+The following models are available for download. 
 
-### R version
+- DGN Whole Blood Elastic Net SQLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50.db") (A ~28MB file will be downloaded)
+- DGN Whole Blood Elastic Net text [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
+- DGN Whole Blood LASSO SQLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1.db") (A ~18MB file will be downloaded)
 
-- Gene expression prediction script [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
+G2Pdb
+=========
+G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
+
 
 ##Acknowledgements
 
