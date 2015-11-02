@@ -7,4 +7,4 @@ Primarily built on the flask web framework (as well as Tornado and celery/redis 
 Set-up and installation instructions incoming. 
 
 - install celery `> sudo pip install celery`
-- install sqlite3
+- install sqlite3?
