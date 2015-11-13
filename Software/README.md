@@ -14,7 +14,7 @@ Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carro
 
 These instructions are for generating predicted expression levels. The association has to be performed separately. 
 
-A beta version of the software that does both prediction and association can be found here [HOWTO.md](https://github.com/hakyimlab/PrediXcan/blob/master/Software/HOWTO.md)
+A beta version of the software that does both prediction and association can be found here [HOWTO-beta.md](https://github.com/hakyimlab/PrediXcan/blob/master/Software/HOWTO-beta.md)
 
 To run PrediXcan you will need 
 
