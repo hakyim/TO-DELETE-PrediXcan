@@ -68,7 +68,8 @@ will be saved in *results/association.txt*.
 
 ### Transcriptome models
 
-You can download sqlite database models from [here](https://app.box.com/s/5nejbvzgsis77wtrxt8xokyn7pcdgnnp)
+You can download PRELIMINARY sqlite database models from [here](https://app.box.com/s/5nejbvzgsis77wtrxt8xokyn7pcdgnnp).
+THESE MODELS WILL BE UPDATED
 
 ### Dosage File Format
 
