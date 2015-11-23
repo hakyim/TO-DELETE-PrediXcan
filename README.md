@@ -29,6 +29,7 @@ The following models are available for download.
 - DGN Whole Blood Elastic Net SQLite db [Download](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50.db") (A ~28MB file will be downloaded)
 - DGN Whole Blood Elastic Net text [Download](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
 - DGN Whole Blood LASSO SQLite db [Download](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1.db") (A ~18MB file will be downloaded)
+
 - GTEx models (internal release 6/13/2014, models ran on 11/13/2015 by Kaanan) [Box Link](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w).
   - these models have now ENSid's instead of gene symbols in the gene column. The gene symbol is in the 'extra' table in the db under the genename columns.
 
