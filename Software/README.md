@@ -36,7 +36,7 @@ The script predict\_gene\_expression.py predicts gene expression levels using pr
 
 For now the association with phenotype needs to be performed manually. We are currently working on an R package that will do both the prediction of expression levels and the association with the phenotype.
 
-All the scripts used to develop the prediction models can be found [here](https://github.com/hwheeler01/PrediXmod "Prediction Model Pipeline")
+All the scripts used to develop the prediction models can be found [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Heather/DGN-calc-weights "Prediction Model Pipeline")
 
 
 Supported operating systems:
