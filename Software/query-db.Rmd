@@ -1,0 +1,39 @@
+
+---
+title: "Example Query of Prediction db"
+output: html_document
+---
+
+
+```{r}
+
+install.packages("RSQLite")
+library("RSQLite")
+sqlite <- dbDriver("SQLite")
+dbname <- "DGN-WB_0.5.db" ## add full path if db file not in current directory
+
+## connect to db
+
+db = dbConnect(sqlite,dbname)
+
+## list tables
+
+dbListTables(db)
+dbListFields(db, "weights")
+dbListFields(db, "extra")
+
+## convenience query function
+
+query <- function(...) dbGetQuery(db, ...)
+
+## example queries
+
+query('select count(*) from weights')
+query('select * from weights where gene = "GATA6" ')
+query('select * from weights limit 10')
+
+## select genes with R2>0.01 (this is cor>0.1)
+
+high.h2.genes <- query('select * from extra where R2 > 0.01')
+
+```
