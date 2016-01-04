@@ -8,7 +8,7 @@ import numpy as np
 import os
 import sqlite3
 import sys
-import rpy2.robjects as robjects
+import pandas as pd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
@@ -61,7 +61,7 @@ def buffered_file(file):
 
 def get_all_dosages():
     for chrfile in [x for x in sorted(os.listdir(DOSAGE_DIR)) if x.startswith(DOSAGE_PREFIX)]:
-        print datetime.datetime.now(), "Processing %s"%chrfile
+        print datetime.datetime.now(), "Processing %s" % chrfile
         for line in buffered_file(gzip.open(os.path.join(DOSAGE_DIR, chrfile))):
             arr = line.strip().split()
             rsid = arr[1]
@@ -134,20 +134,33 @@ class TranscriptionMatrix:
 class Phenotype:
 
     def __init__(self):
-        pass
-
-    def get(self):
-        pass
+        
+        self.data = pd.read_table(
+                PHENO_FILE,
+                names=['FamilyID', 'IndividualID', 'PaternalID', 'MaternalID', 'Sex', 'Pheno']
+        )
 
     def filter(self, filter_file):
-        pass
+        
+        # Filter out rows of Phenotype.data according to a provided filter file.
+        # Only Rows that have a 1 in the Filter column will remain afterwards.
+        # Rows are matched on FamilyID and IndividualID.
+
+        filter = pd.read_table(FILTER_FILE, 'FamilyID', 'IndividualID', 'Filter')
+        merged = pd.merge(
+                self.data,
+                filter,
+                on=['FamilyID', 'IndividualID'],
+                how='inner'
+        )
+        self.data = merged[merged['Filter'] == 1]
 
 class Association:
 
     def __init__(self):
-        pass
+        self.D = np.zeros(len(self.gene_list), 5)
 
-    def create_assoc(self, transcription_matrix, phenotype):
+    def create_assoc(self, transcription_matrix, phenotype, model_type='logistic'):
         pass
 
     def get_significant(self, alpha=0.01):
