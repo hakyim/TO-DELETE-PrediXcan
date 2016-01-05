@@ -8,7 +8,6 @@ import numpy as np
 import os
 import sqlite3
 import sys
-import pandas as pd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
@@ -130,17 +129,65 @@ class TranscriptionMatrix:
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 
+    def read(self):
+        # Creates the transcription matrix from a file.
+        with open(PRED_EXP_FILE, 'r') as infile:
+            self.gene_list = infile.readline().rstrip(['\n']).split('\t')
+            self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
+            levels = []
+            for line in infile:
+                parsed_line = line.rstrip(['\n']).split('\t')
+                row = [float(level) for level in parsed_line]
+                levels.append(row)
+        self.D = np.array(levels)
 
-class Phenotype:
 
-    def __init__(self):
+class PhenotypeArray:
+
+    def __init__(self, pheno_name=None, mpheno=None):
         
-        self.data = pd.read_table(
-                PHENO_FILE,
-                names=['FamilyID', 'IndividualID', 'PaternalID', 'MaternalID', 'Sex', 'Pheno']
-        )
+        self.phenodict = {}
+        self.pheno_name = pheno_name
 
-    def filter(self, filter_file):
+        if mpheno:
+            column_index = mpheno + 1
+        else:
+            # Select last column if no phenotype column is specified.
+            column_index = -1
+
+        if FILTER_FILE:
+            self.filterdict = {}
+
+            #TODO: make mfilter arguments
+            filter_column = mfilter + 1 if mfilter else -1
+
+            with open(FILTER_FILE, 'r') as infile:
+                parsed_line = line.rstrip(['\n']).split()
+                self.filterdict[(parsed_line[0], parsed_line[1])] = parsed_line[filter_column]
+
+        with open(PHENO_FILE, 'r') as infile:
+            for line in infile:
+                parsed_line = line.rstrip(['\n']).split()
+
+                # Check if there's a header in the file.
+                if parsed_line[0] == 'FID' and parsed_line[1] == 'IID':
+                    # TODO: create argument specifying phenotype name to select called pheno_name
+                    if self.pheno_name:
+                        column_index = parsed_line.index(self.pheno_name)
+                    continue
+
+                fid = parsed_line[0]
+                iid = parsed_line[1]
+                try:
+                    # TODO: make filter value argument. Default to 1.
+                    if self.filterdict[(fid, iid)] == filter_value:
+                        self.phenodict[(fid, iid)] = parsed_line[column_index]
+                except KeyError as e:
+                    # Person in pheno file not found in filter file.
+                    # Do not include this person in association.
+                    pass
+
+    def filter(self):
         
         # Filter out rows of Phenotype.data according to a provided filter file.
         # Only Rows that have a 1 in the Filter column will remain afterwards.
@@ -160,7 +207,7 @@ class Association:
     def __init__(self):
         self.D = np.zeros(len(self.gene_list), 5)
 
-    def create_assoc(self, transcription_matrix, phenotype, model_type='logistic'):
+    def association_test(self, transcription_matrix, phenotype, model_type='logistic'):
         pass
 
     def get_significant(self, alpha=0.01):
