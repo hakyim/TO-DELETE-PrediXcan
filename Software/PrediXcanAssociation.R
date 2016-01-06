@@ -1,14 +1,11 @@
-library(dplyr, warn.conflicts=FALSE)
 
-read_pheno <- function(fam_file) {
-    fam <- read.table(fam_file)
-    colnames(fam) <- c("FAMILY","INDIVIDUAL", "PATERNAL", "MATERNAL", "SEX","PHENOTYPE")
+read_pheno <- function(pheno_file) {
+    fam <- read.table(pheno_file, as.is=TRUE)
     return(fam)
 }
 
 read_filter <- function(filter_file) {
-    filter <- read.table(filter_file)
-    colnames(filter) <- c("FAMILY", "INDIVIDUAL", "FILTER")
+    filter <- read.table(filter_file, as.is=TRUE)
     return(filter)
 }
     

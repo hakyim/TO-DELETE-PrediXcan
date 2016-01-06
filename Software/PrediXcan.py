@@ -23,6 +23,9 @@ parser.add_argument('--pheno-name', action="store", dest="pheno_name", default=N
 parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
 parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
 parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
+parser.add_argument('--logistic', action="store_false", dest="logistic", help="Include to perform a logistic regression")
+parser.add_argument('--linear', action="store_false", dest="linear", help="Include to perform a linear regression")
+parser.add_argument('--survival', action="store_false", dest="survival", help="Include to perform survial analysis")
 
 args = parser.parse_args()
 
