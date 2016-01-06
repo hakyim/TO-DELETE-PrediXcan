@@ -8,9 +8,10 @@ import numpy as np
 import os
 import sqlite3
 import sys
-import pandas as pd
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--predict', action="store_false", dest="predict", help="Include to predict gene expression")
+parser.add_argument('--assoc', action="store_false", dest="assoc", help="Include to perform association test")
 parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
 parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
 parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", action="store", help="Prefix of filenames of gzipped dosage files.")
@@ -18,7 +19,9 @@ parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, act
 parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db",  help="SQLite database with rsid weights.")
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
 parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
-parser.add_argument('--filter', action="store", dest="fil", default=None, help="Filter file for which ids to include")
+parser.add_argument('--pheno-name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
+parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
+parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
 parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
 
 args = parser.parse_args()
@@ -30,7 +33,9 @@ DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
 PHENO_FILE = args.pheno
-FILTER_FILE = args.fil
+PHENO_NAME = args.pheno_name
+FILTER = args.fil
+MFILTER = args.mfil
 OUTPUT_DIR = args.output
 
 PRED_EXP_FILE = os.path.join(OUTPUT_DIR, "predicted_expression.txt")
@@ -130,37 +135,67 @@ class TranscriptionMatrix:
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 
+    def read(self):
+        # Creates the transcription matrix from a file.
+        with open(PRED_EXP_FILE, 'r') as infile:
+            self.gene_list = infile.readline().rstrip(['\n']).split('\t')
+            self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
+            levels = []
+            for line in infile:
+                parsed_line = line.rstrip(['\n']).split('\t')
+                row = [float(level) for level in parsed_line]
+                levels.append(row)
+        self.D = np.array(levels)
 
-class Phenotype:
 
-    def __init__(self):
+class PhenotypeArray:
+
+    def __init__(self, pheno_name=None, mpheno=None):
         
-        self.data = pd.read_table(
-                PHENO_FILE,
-                names=['FamilyID', 'IndividualID', 'PaternalID', 'MaternalID', 'Sex', 'Pheno']
-        )
+        self.phenodict = {}
+        self.filterdict = {}
+        self.pheno_name = PHENO_NAME
 
-    def filter(self, filter_file):
-        
-        # Filter out rows of Phenotype.data according to a provided filter file.
-        # Only Rows that have a 1 in the Filter column will remain afterwards.
-        # Rows are matched on FamilyID and IndividualID.
+        if FILTER:
+            # Specify which column to be selecting from.
+            filter_column = MFILTER + 1 if MFILTER else -1
+            with open(FILTER[0], 'r') as infile:
+                for line in infile:
+                    parsed_line = line.rstrip(['\n']).split()
+                    self.filterdict[(parsed_line[0], parsed_line[1])] = parsed_line[filter_column]
 
-        filter = pd.read_table(FILTER_FILE, 'FamilyID', 'IndividualID', 'Filter')
-        merged = pd.merge(
-                self.data,
-                filter,
-                on=['FamilyID', 'IndividualID'],
-                how='inner'
-        )
-        self.data = merged[merged['Filter'] == 1]
+        column_index = mpheno + 1 if mpheno else -1
+
+        with open(PHENO_FILE, 'r') as infile:
+            for line in infile:
+                parsed_line = line.rstrip(['\n']).split()
+                # Check if there's a header in the file.
+                if parsed_line[0] == 'FID' and parsed_line[1] == 'IID':
+                    if self.pheno_name:
+                        column_index = parsed_line.index(self.pheno_name)
+                    continue
+
+                fid = parsed_line[0]
+                iid = parsed_line[1]
+                try:
+                    # Only include cases matching the filter value.
+                    if not FILTER:
+                        self.phenodict[(fid, iid)] = parsed_line[column_index]
+                    else:
+                        if self.filterdict[(fid, iid)] == FILTER[1]:
+                            self.phenodict[(fid, iid)] = parsed_line[column_index]
+                except KeyError as e:
+                    # Person in pheno file not found in filter file.
+                    # Do not include this person in association.
+                        print "Case %s %s from pheno file not found in filter.  Not including in association." % fid, iid
+                        pass
 
 class Association:
 
     def __init__(self):
         self.D = np.zeros(len(self.gene_list), 5)
 
-    def create_assoc(self, transcription_matrix, phenotype, model_type='logistic'):
+    def association_test(self, transcription_matrix, phenotype, model_type='logistic'):
         pass
 
     def get_significant(self, alpha=0.01):
