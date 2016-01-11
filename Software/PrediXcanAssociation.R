@@ -1,24 +1,35 @@
 
 read_pheno <- function(pheno_file) {
-    fam <- read.table(pheno_file, as.is=TRUE)
-    return(fam)
+    pheno <- read.table(pheno_file, as.is=TRUE)
+    return(pheno)
 }
 
-read_filter <- function(filter_file) {
-    filter <- read.table(filter_file, as.is=TRUE)
-    return(filter)
+read_filter <- function(filter_file, filter_column) {
+    fil <- read.table(filter_file, as.is=TRUE)
+    # Only keep columns of filter file necessary
+    fil <- fil[c(1, 2, filter_column)]
+    names(fil) <- c("FID", "IID", "FIL_VAL")
+    return(fil)
 }
     
-read_predicted <- function(predicted_file) {
-    predicted <- read.delim(predicted_file)
-    return(predicted)
+read_predicted <- function(pred_exp_file) {
+    pred_exp <- read.delim(pred_exp_file)
+    return(pred_exp)
 }
 
-association <- function(fam, filter, predicted) {
-    genes <- colnames(predicted)
-    merged_people <- merge(fam, filter)
-    merged <- cbind(predicted, merged_people)
-    filtered <- merged %>% filter(FILTER==1)
+# Filter out rows of the phenotype dataframe
+filter_pheno <- function(pheno, fil, filter_on) {
+    # merge the pheno df and fil by the Family ID and Individul ID columns
+    pheno <- merge(pheno, fil, by=c(1,2), sort=FALSE)
+    pheno <- filter(pheno, FIL_VAL==filter_on)
+    pheno$FIL_VAL <- NULL
+    return(pheno)
+}
+
+association <- function(pheno, pred_exp, fil, filter_on) {
+    genes <- colnames(pred_exp)
+    merged <- merge(cbind(pheno, pred_exp), fil, by=c(1,2), sort=FALSE)
+    filtered <- filter(merged, FIL_VAL=filter_on)
 
     pheno <- filtered$PHENO
     filtered <- subset(filtered, select = genes)
