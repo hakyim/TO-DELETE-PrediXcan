@@ -1,12 +1,19 @@
 
-read_pheno <- function(pheno_file, pheno_column = NULL) {
-  pheno <- read.table(pheno_file, as.is = T)
+read_pheno <- function(pheno_file, pheno_column = NULL, pheno_name = NULL) {
+  pheno <- read.table(pheno_file, header = F, as.is = T)
+  # Fix dataframe if there is a header row.
+  if (pheno[1,1] == "FID" & pheno[1,2] == "IID") {
+    names(pheno) <- pheno[1,]
+    pheno <- pheno[-1,]
+  }
   # Only keep first 2 columns and the phenotype column we care about.
   # If user does not specify pheno_column, phenotype vals are in last column.
   if (pheno_column != NULL) {
-    pheno <- pheno(c(1, 2, pheno_column))
+    pheno <- pheno[c(1, 2, pheno_column)]
+  } else if (pheno_name != NULL) {
+    pheno <- cbind(pheno[c(1, 2)], pheno[pheno_name], 
   } else {
-    pheno <- pheno(c(1, 2, ncol(pheno)))
+    pheno <- pheno[c(1, 2, ncol(pheno))]
   }
   names(pheno) <- c("fid", "iid", "phenotype")
   return(pheno)
@@ -42,12 +49,10 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
 }
 
 association <- function(merged, genes, test_type = "logistic") {
-  assoc_df <- NULL
-
+  assoc_df <- NULL # Init association dataframe
+  # Perform test between each pred_gene_exp column and phenotype----
   for (gene in genes) {
     pred_gene_exp <- merged[[gene]]
-    # TODO: Remove na's in phenotype, and if doing a logistic regression,
-    # make sure values 0 or 1.
     if (test_type == "logistic") { 
       model <- glm(phenotype ~ pred_gene_exp, data = merged, family = binomial)
     } else if (test_type == "linear") {
@@ -72,6 +77,33 @@ association <- function(merged, genes, test_type = "logistic") {
   return(assoc_df)
 }
 
-write_association <- function(OUT, output_file) {
-    write.table(OUT,output_file,col.names=T,row.names=F,quote=F)
+write_association <- function(assoc_df, output_file) {
+  write.table(assoc_df, output_file, col.names = T, row.names = F, quote = F)
 }
+
+# Get Arguments
+argv <- commandArgs(trailingOnly = T)
+
+# TODO: Parse Arguments/Assign to appropriate variables.
+# If variables missing, assign default values here.
+
+# Run functions.
+pheno <- read_pheno(PHENO_FILE, pheno_column = PHENO_COLUMN, pheno_name = PHENO_NAME)
+if (FILTER_FILE == NULL) {
+  fil_df <- NULL
+} else {
+  fil_df <- read_filter(FILTER_FILE, filter_column = FILTER_COLUMN)
+}
+pred_exp <- read_predicted(PRED_EXP_FILE)
+genes <- colnames(pred_exp)
+merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = FILTER_VAL)
+# Remove rows with missing phenotype data, and if doing a logistic regression,
+# Make sure affected = 1 and unaffected = 0.
+if (TEST_TYPE == "logistic" & ONE_FLAG == FALSE) {
+  merged <- subset(merged, phenotype != MISSING_PHENOTYPE | phenotype != 0)
+  merged$phenotype <- merged$phenotype - 1
+} else {
+  merged <- subset(merged, phenotype != MISSING_PHENOTYPE)
+} 
+assoc_df <- association(merged, genes, test_type = TEST_TYPE)
+write_association(assoc_df, OUT)
