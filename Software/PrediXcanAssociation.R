@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 
 read_pheno <- function(pheno_file, pheno_column = NULL, pheno_name = NULL) {
   pheno <- read.table(pheno_file, header = F, as.is = T)
@@ -81,29 +82,70 @@ write_association <- function(assoc_df, output_file) {
   write.table(assoc_df, output_file, col.names = T, row.names = F, quote = F)
 }
 
-# Get Arguments
+# Get Arguments----------------------------------------------------------------
 argv <- commandArgs(trailingOnly = T)
+names <- seq(1, length(argv), 2)
+vals <- seq(2, length(argv), 2)
+argv <- as.data.frame(t(as.data.frame(argv[vals], row.names = argv[names])), stringsAsFactors = F)
 
-# TODO: Parse Arguments/Assign to appropriate variables.
-# If variables missing, assign default values here.
+# Set default values for arguments and set to correct data types---------------
+if (argv$PHENO_FILE == NULL) {
+  cat("Error: User must supply a phenotype file to perform association test.\n")
+  stop()
+}
+if (argv$PHENO_COLUMN != NULL) {
+  argv$PHENO_COLUMN <- as.numeric(argv$PHENO_COLUMN)
+}
+if (argv$FILTER_COLUMN == NULL) {
+  argv$FILTER_COLUMN <- 3
+} else {
+  argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN)
+}
+if (argv$FILTER_VAL == NULL) {
+  argv$FILTER_VAL <- 1
+} else {
+  argv$FILTER_VAL <- as.numeric(argv$FILTER_VAL)
+}
+if (argv$TEST_TYPE == NULL) {
+  argv$TEST_TYPE <- "logistic"
+}
+if (argv$ONE_FLAG == NULL) {
+  argv$ONE_FLAG <- FALSE
+} else {
+  argv$ONE_FLAG <- as.logical(argv$ONE_FLAG)
+}
+if (argv$MISSING_PHENOTYPE == NULL) {
+  argv$MISSING_PHENOTYPE <- -9
+} else {
+  argv$MISSING_PHENOTYPE <- as.numeric(argv$MISSING_PHENOTYPE)
+}
 
-# Run functions.
-pheno <- read_pheno(PHENO_FILE, pheno_column = PHENO_COLUMN, pheno_name = PHENO_NAME)
-if (FILTER_FILE == NULL) {
+# Run functions----------------------------------------------------------------
+cat(c(as.character(Sys.time()), "Reading phenotype file...\n"))
+pheno <- read_pheno(argv$PHENO_FILE, pheno_column = argv$PHENO_COLUMN, pheno_name = argv$PHENO_NAME)
+if (argv$FILTER_FILE == NULL) {
   fil_df <- NULL
 } else {
-  fil_df <- read_filter(FILTER_FILE, filter_column = FILTER_COLUMN)
+  cat(c(as.character(Sys.time()), "Reading filter file...\n"))
+  fil_df <- read_filter(argv$FILTER_FILE, filter_column = argv$FILTER_COLUMN)
 }
-pred_exp <- read_predicted(PRED_EXP_FILE)
+cat(c(as.character(Sys.time()), "Reading transcription file...\n"))
+pred_exp <- read_predicted(argv$PRED_EXP_FILE)
 genes <- colnames(pred_exp)
-merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = FILTER_VAL)
+cat(c(as.character(Sys.time()), "Processing data...\n"))
+merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILTER_VAL)
 # Remove rows with missing phenotype data, and if doing a logistic regression,
-# Make sure affected = 1 and unaffected = 0.
-if (TEST_TYPE == "logistic" & ONE_FLAG == FALSE) {
-  merged <- subset(merged, phenotype != MISSING_PHENOTYPE | phenotype != 0)
+# Make sure affected == 1 and unaffected == 0.
+if (argv$TEST_TYPE == "logistic" & argv$ONE_FLAG == FALSE) {
+  merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE | phenotype != 0)
+  # Normal input classification for unaffected and affected is 1 and 2 respectively.
+  # Change to 0 and 1. 
   merged$phenotype <- merged$phenotype - 1
 } else {
-  merged <- subset(merged, phenotype != MISSING_PHENOTYPE)
+  merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE)
 } 
-assoc_df <- association(merged, genes, test_type = TEST_TYPE)
-write_association(assoc_df, OUT)
+cat(c(as.character(Sys.time()), "Performing association test..."))
+assoc_df <- association(merged, genes, test_type = argv$TEST_TYPE)
+cat(c(as.character(Sys.time()), "Writing results to file..."))
+write_association(assoc_df, argv$OUT)
+cat(c(as.character(Sys.time()), "Done. Results saved in", argv$OUT))
