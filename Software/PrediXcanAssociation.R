@@ -42,7 +42,7 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   # correspond to the same person.
   if (fil != NULL) {
     merged <- merge(cbind(pheno, pred_exp), fil, by = c(1, 2), sort = F)
-    merged <- filter(merged, FIL_VAL = filter_val)
+    merged <- filter(merged, fil_val = filter_val)
   } else {
     merged <- cbind(pheno, pred_exp)
   }
@@ -51,7 +51,8 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
 
 association <- function(merged, genes, test_type = "logistic") {
   assoc_df <- NULL # Init association dataframe
-  # Perform test between each pred_gene_exp column and phenotype----
+
+  # Perform test between each pred_gene_exp column and phenotype
   for (gene in genes) {
     pred_gene_exp <- merged[[gene]]
     if (test_type == "logistic") { 
@@ -59,7 +60,7 @@ association <- function(merged, genes, test_type = "logistic") {
     } else if (test_type == "linear") {
       model <- lm(phenotype ~ pred_gene_exp, data = merged)
     } else if (test_type == "survival") {
-      # TODO
+      # TODO: survival analysis
       model <- NULL
     }
     results <- coef(summary(model))[c(2,6,8,4)]
@@ -67,7 +68,7 @@ association <- function(merged, genes, test_type = "logistic") {
     assoc_df <- rbind(assoc_df,line)
   }
 
-  # Specify column names----
+  # Specify column names of assoc_df
   if (test_type == "logistic") {
     colnames(assoc_df) <- c("gene", "beta", "z", "p", "se(beta)")
   } else if (test_type == "linear") {
@@ -86,11 +87,14 @@ write_association <- function(assoc_df, output_file) {
 argv <- commandArgs(trailingOnly = T)
 names <- seq(1, length(argv), 2)
 vals <- seq(2, length(argv), 2)
-argv <- as.data.frame(t(as.data.frame(argv[vals], row.names = argv[names])), stringsAsFactors = F)
+argv <- as.data.frame(
+    t(as.data.frame(argv[vals], row.names = argv[names])),
+    stringsAsFactors = F
+)
 
 # Set default values for arguments and set to correct data types---------------
 if (argv$PHENO_FILE == NULL) {
-  cat("Error: User must supply a phenotype file to perform association test.\n")
+  cat("Error: User must supply a phenotype file to for association test.\n")
   stop()
 }
 if (argv$PHENO_COLUMN != NULL) {
@@ -121,25 +125,33 @@ if (argv$MISSING_PHENOTYPE == NULL) {
 }
 
 # Run functions----------------------------------------------------------------
+# Read pheno----
 cat(c(as.character(Sys.time()), "Reading phenotype file...\n"))
-pheno <- read_pheno(argv$PHENO_FILE, pheno_column = argv$PHENO_COLUMN, pheno_name = argv$PHENO_NAME)
+pheno <- read_pheno(
+    argv$PHENO_FILE,
+    pheno_column = argv$PHENO_COLUMN,
+    pheno_name = argv$PHENO_NAME
+)
+# Read filter file if given----
 if (argv$FILTER_FILE == NULL) {
   fil_df <- NULL
 } else {
   cat(c(as.character(Sys.time()), "Reading filter file...\n"))
   fil_df <- read_filter(argv$FILTER_FILE, filter_column = argv$FILTER_COLUMN)
 }
+# Read Transcription----
 cat(c(as.character(Sys.time()), "Reading transcription file...\n"))
 pred_exp <- read_predicted(argv$PRED_EXP_FILE)
+
 genes <- colnames(pred_exp)
+
 cat(c(as.character(Sys.time()), "Processing data...\n"))
 merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILTER_VAL)
 # Remove rows with missing phenotype data, and if doing a logistic regression,
 # Make sure affected == 1 and unaffected == 0.
 if (argv$TEST_TYPE == "logistic" & argv$ONE_FLAG == FALSE) {
   merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE | phenotype != 0)
-  # Normal input classification for unaffected and affected is 1 and 2 respectively.
-  # Change to 0 and 1. 
+  # Normal input for unaffected and affected is 1 and 2. Change to 0 and 1. 
   merged$phenotype <- merged$phenotype - 1
 } else {
   merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE)
