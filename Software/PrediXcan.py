@@ -19,30 +19,35 @@ parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, act
 parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db",  help="SQLite database with rsid weights.")
 parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
 parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
-parser.add_argument('--pheno-name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
+parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
+parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
 parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
 parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
-parser.add_argument('--output', action="store", dest="output", default="output", help="Path to output directory")
+parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
 parser.add_argument('--logistic', action="store_false", dest="logistic", help="Include to perform a logistic regression")
 parser.add_argument('--linear', action="store_false", dest="linear", help="Include to perform a linear regression")
-parser.add_argument('--survival', action="store_false", dest="survival", help="Include to perform survial analysis")
+parser.add_argument('--survival', action="store_false", dest="survival", help="Include to perform survival analysis")
 
 args = parser.parse_args()
 
+PREDICT = args.predict
 GENE_LIST = args.genelist
 DOSAGE_DIR = args.dosages
 DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
+
+ASSOC = args.assoc
 PHENO_FILE = args.pheno
 PHENO_NAME = args.pheno_name
 FILTER = args.fil
 MFILTER = args.mfil
+
 OUTPUT_DIR = args.output
 
 PRED_EXP_FILE = os.path.join(OUTPUT_DIR, "predicted_expression.txt")
-ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")                           
+ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
 
 def buffered_file(file):
     if not DOSAGE_BUFFER:
@@ -65,7 +70,7 @@ def buffered_file(file):
                     last_eol = next_eol + 1
                     if last_eol >= len(buf):
                         buf = ''
-                        break                
+                        break
 
 def get_all_dosages():
     for chrfile in [x for x in sorted(os.listdir(DOSAGE_DIR)) if x.startswith(DOSAGE_PREFIX)]:
@@ -107,7 +112,7 @@ class GetApplicationsOf:
         if self.tuples:
             for tup in self.tuples[rsid]:
                 yield tup
-        else:                
+        else:
             for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=?", (rsid,)):
                 yield tup
 
@@ -125,10 +130,10 @@ class TranscriptionMatrix:
 
     def update(self, gene, weight, ref_allele, allele, dosage_row):
         if self.D is None:
-            self.gene_list = self.get_gene_list()  
+            self.gene_list = self.get_gene_list()
             self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
             self.D = np.zeros((len(self.gene_list), len(dosage_row))) # Genes x Cases
-        if gene in self.gene_index:            
+        if gene in self.gene_index:
             multiplier = 1 if ref_allele == allele else -1
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
 
@@ -151,67 +156,10 @@ class TranscriptionMatrix:
         self.D = np.array(levels)
 
 
-class PhenotypeArray:
 
-    def __init__(self, pheno_name=None, mpheno=None):
-        
-        self.phenodict = {}
-        self.filterdict = {}
-        self.pheno_name = PHENO_NAME
-
-        if FILTER:
-            # Specify which column to be selecting from.
-            filter_column = MFILTER + 1 if MFILTER else -1
-            with open(FILTER[0], 'r') as infile:
-                for line in infile:
-                    parsed_line = line.rstrip(['\n']).split()
-                    self.filterdict[(parsed_line[0], parsed_line[1])] = parsed_line[filter_column]
-
-        column_index = mpheno + 1 if mpheno else -1
-
-        with open(PHENO_FILE, 'r') as infile:
-            for line in infile:
-                parsed_line = line.rstrip(['\n']).split()
-                # Check if there's a header in the file.
-                if parsed_line[0] == 'FID' and parsed_line[1] == 'IID':
-                    if self.pheno_name:
-                        column_index = parsed_line.index(self.pheno_name)
-                    continue
-
-                fid = parsed_line[0]
-                iid = parsed_line[1]
-                try:
-                    # Only include cases matching the filter value.
-                    if not FILTER:
-                        self.phenodict[(fid, iid)] = parsed_line[column_index]
-                    else:
-                        if self.filterdict[(fid, iid)] == FILTER[1]:
-                            self.phenodict[(fid, iid)] = parsed_line[column_index]
-                except KeyError as e:
-                    # Person in pheno file not found in filter file.
-                    # Do not include this person in association.
-                        print "Case %s %s from pheno file not found in filter.  Not including in association." % fid, iid
-                        pass
-
-class Association:
-
-    def __init__(self):
-        self.D = np.zeros(len(self.gene_list), 5)
-
-    def association_test(self, transcription_matrix, phenotype, model_type='logistic'):
-        pass
-
-    def get_significant(self, alpha=0.01):
-        '''
-        Returns all genes with p-values under the specifed alpha value.
-        '''
-        pass
-
-    def save(self):
-        pass
 
 if not os.path.exists(OUTPUT_DIR):
-    os.mkdir(OUTPUT_DIR)    
+    os.mkdir(OUTPUT_DIR)
 if not os.path.exists(PRED_EXP_FILE):
     get_applications_of = GetApplicationsOf()
     transcription_matrix = TranscriptionMatrix()
