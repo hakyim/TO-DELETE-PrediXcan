@@ -113,8 +113,8 @@ for(i in 1:length(explist)){
     minorsnps <- subset(colMeans(cisgenos), colMeans(cisgenos,na.rm=TRUE)>0) ###pull snps with at least 1 minor allele###
     minorsnps <- names(minorsnps)
     cisgenos <- cisgenos[,minorsnps]
-    cisgenos <- scale(cisgenos, center=T, scale=T)
-    cisgenos[is.na(cisgenos)] <- 0
+    ##cisgenos <- scale(cisgenos, center=T, scale=T)
+    ##cisgenos[is.na(cisgenos)] <- 0
     if(is.null(dim(cisgenos)) | dim(cisgenos)[2] == 0){###effectively skips genes with <2 cis-SNPs
       bestbetas <- data.frame() ###effectively skips genes with <2 cis-SNPs
     }else{

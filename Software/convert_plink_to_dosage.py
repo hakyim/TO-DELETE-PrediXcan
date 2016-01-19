@@ -5,6 +5,8 @@ import os
 import subprocess
 import gzip
 from argparse import ArgumentParser
+from collections import defaultdict
+from itertools import izip
 
 if __name__ == "__main__":
   parser = ArgumentParser(
@@ -18,8 +20,12 @@ if __name__ == "__main__":
     "-o", "--out", dest="out", required=False,
     help="prefix for output files", default="chr"
   )
-
-  if len(sys.argv) == 1:
+  parser.add_argument(
+    "-p", "--plink-binary", dest="plink", default="plink2",
+    help="path to plink (1.9) binary"
+  )
+  
+  if len(sys.argv) == 2:
     parser.print_help()
     sys.exit()
 
@@ -27,68 +33,48 @@ if __name__ == "__main__":
 
   # First we get the minor allele dosages for *all* chromosomes:
   subprocess.call([
-    'plink2', '--bfile', args.bfile, '--geno', '0',
+    args.plink, '--bfile', args.bfile,
     '--recode', 'A-transpose', '--out', args.out
   ])
 
   # Now calculate the minor allele frequency:
   subprocess.call([
-    'plink2', '--bfile', args.bfile, '--freq', '--out', args.out
+    args.plink, '--bfile', args.bfile, '--freq', '--out', args.out
   ])
 
-  # now we need to process the files line by line to create the dosage files
-  with open(args.out + ".traw") as dfile, open(args.out + ".frq") as ffile, open(args.bfile + ".bim") as bfile:
-    i = 1
-    curCHR = -1
-    while True:
-      # skip the headers
-      if i == 1:
-        dfile.readline()
-        ffile.readline()
-        i += 1
-      else:
-        # First check that we're not at the end of the files
-        dline = dfile.readline()
-        fline = ffile.readline()
-        bline = bfile.readline()
-        if not dline: break
-        if not fline: break
-        if not bline: break
-        # Split into columns by whitespace
-        dcols = dline.split()
-        fcols = fline.split()
-        bcols = bline.split()
-        # Make sure rsIDs match in maf frequency file -- note this cannot
-        # be filtered unlike the --recode 'd file
-        while True:
-          if fcols[1] != dcols[1]:
-            fcols = ffile.readline().split()
-          else:
-            break
-        # Combine columns as per 'dosage' format
-        nline = fcols[0:2] + [bcols[3]]+ fcols[2:5] + dcols[6:]
-        # Write out to the appropriate file for that chromosome
-        if fcols[0] != curCHR:
-          if curCHR != -1:
-            ofile.close()
-          ofile = open(args.out + fcols[0] + ".txt", "a")
-          ofile.write(" ".join(nline) + "\n")
-  ofile.close()
+  # Thanks to Adam Whiteside (https://github.com/adamcw) for
+  # cleaning up this code to be more efficient
+  diter = iter(x.split() for x in open(args.out + ".traw"))
+  fiter = iter(x.split() for x in open(args.out + ".frq"))
+  biter = iter(x.split() for x in open(args.bfile + ".bim"))
 
-  # now we need to gzip the files
-  out_dir = os.path.dirname(args.out)
-  prefix = os.path.basename(args.out)
-  for chrfile in [x for x in os.listdir(out_dir) if (x.startswith(prefix) and x.endswith(".txt"))]:
-    f = open(os.path.join(out_dir, chrfile), 'rb')
-    ofile = gzip.open(os.path.join(out_dir, chrfile + ".gz"), "wb")
-    ofile.writelines(f)
-    f.close()
-    ofile.close()
-    # remove non-zipped file
-    os.remove(os.path.join(out_dir, chrfile))
+  buff = defaultdict(list)
+
+  # First skip the header row
+  diter.next()
+  fiter.next()
+
+  # Then process the lines
+  for (dcols, fcols, bcols) in izip(diter, fiter, biter):
+    # Combine columns as per 'dosage' format.
+    # First we add the information columns for each rsID
+    nline = fcols[0:2] + [bcols[3]] + [fcols[3]] + [fcols[2]] + [fcols[4]]
+
+    # Next add the (additive linear) dosage data for the samples.
+    # Impute missing data as 2*MAF.
+    MAF = float(fcols[4])
+    nline = nline + [str(MAF*2) if e == "NA" else e for e in dcols[6:]]
+
+    # Add line to write buffer
+    buff[fcols[0]].append(" ".join(nline) + "\n")
+
+
+  # Write out the buffer
+  for curCHR, lines in buff.iteritems():
+    with gzip.open(args.out + curCHR + ".txt.gz", "wb") as ofile:
+      ofile.writelines(lines)
 
   # Remove left over files
-  os.remove(os.path.join(out_dir, prefix + ".frq"))
-  os.remove(os.path.join(out_dir, prefix + ".traw"))
-  os.remove(os.path.join(out_dir, prefix + ".log"))
-
+  os.remove(args.out + ".frq")
+  os.remove(args.out + ".traw")
+  os.remove(args.out + ".log")

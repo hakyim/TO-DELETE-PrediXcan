@@ -5,9 +5,13 @@ PrediXcan is a gene-based association test that prioritizes genes that are likel
 
 
 ##Reference
-Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. [Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. 
 
-†:equal contribution *:correspondence
+[Link to paper](http://www.nature.com/ng/journal/v47/n9/full/ng.3367.html)
+
+[Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
+
+†:equal contribution *:correspondence haky at uchicago dot edu
 
 
 ##Software
@@ -22,9 +26,6 @@ PredictDB hosts genetic prediction models of transcriptome levels to be used wit
 
 The following models are available for download. 
 
-- DGN Whole Blood Elastic Net SQLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50.db") (A ~28MB file will be downloaded)
-- DGN Whole Blood Elastic Net text [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.txt "DGN-WB-EN0.50.txt") (A ~18MB file will be downloaded)
-- DGN Whole Blood LASSO SQLite db [link](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_1.db "DGN-WB-EN1.db") (A ~18MB file will be downloaded)
 
 G2Pdb
 =========

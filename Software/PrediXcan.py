@@ -8,25 +8,27 @@ import numpy as np
 import os
 import sqlite3
 import sys
+import subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--predict', action="store_false", dest="predict", help="Include to predict gene expression")
-parser.add_argument('--assoc', action="store_false", dest="assoc", help="Include to perform association test")
+parser.add_argument('--predict', action="store_true", dest="predict", default=False, help="Include to predict gene expression")
+parser.add_argument('--assoc', action="store_true", dest="assoc", default=False, help="Include to perform association test")
 parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
 parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
 parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", action="store", help="Prefix of filenames of gzipped dosage files.")
 parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
-parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db",  help="SQLite database with rsid weights.")
-parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk",  help="Don't load weights db to memory.")
+parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db", help="SQLite database with rsid weights.")
+parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk", help="Don't load weights db to memory.")
 parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
 parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
 parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
 parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
 parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
 parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
-parser.add_argument('--logistic', action="store_false", dest="logistic", help="Include to perform a logistic regression")
-parser.add_argument('--linear', action="store_false", dest="linear", help="Include to perform a linear regression")
-parser.add_argument('--survival', action="store_false", dest="survival", help="Include to perform survival analysis")
+parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
+parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
+parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
+parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
 
 args = parser.parse_args()
 
@@ -37,17 +39,21 @@ DOSAGE_PREFIX = args.dosages_prefix
 DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
 BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
-
 ASSOC = args.assoc
 PHENO_FILE = args.pheno
+MPHENO = args.mpheno + 2
 PHENO_NAME = args.pheno_name
-FILTER = args.fil
+FILTER_FILE, FILTER_VAL = args.fil if args.fil else (None, '1')
 MFILTER = args.mfil
-
 OUTPUT_DIR = args.output
-
-PRED_EXP_FILE = os.path.join(OUTPUT_DIR, "predicted_expression.txt")
+PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
 ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
+if args.logistic:
+    TEST_TYPE = "logistic"
+elif args.survival:
+    TEST_TYPE = "survival"
+else:
+    TEST_TYPE = "linear"
 
 def buffered_file(file):
     if not DOSAGE_BUFFER:
@@ -155,9 +161,6 @@ class TranscriptionMatrix:
                 levels.append(row)
         self.D = np.array(levels)
 
-
-
-
 if not os.path.exists(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
 if not os.path.exists(PRED_EXP_FILE):
@@ -167,3 +170,18 @@ if not os.path.exists(PRED_EXP_FILE):
         for gene, weight, ref_allele in get_applications_of(rsid):
             transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
     transcription_matrix.save()
+if PREDICT:
+    subprocess.call(
+            [
+            "./PrediXcanAssociation.R",
+            "PRED_EXP_FILE", PRED_EXP_FILE,
+            "PHENO_FILE", PHENO_FILE,
+            "PHENO_COLUMN", MPHENO,
+            "PHENO_NAME", PHENO_NAME,
+            "FILTER_FILE", FILTER_FILE,
+            "FILTER_VAL", FILTER_VAL,
+            "FILTER_COLUMN", MFILTER,
+            "TEST_TYPE", TEST_TYPE,
+            "OUT", ASSOC_FILE
+            ],
+            )

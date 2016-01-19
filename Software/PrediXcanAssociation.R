@@ -18,7 +18,6 @@ read_pheno <- function(pheno_file, pheno_column = NULL, pheno_name = NULL) {
   }
   names(pheno) <- c("fid", "iid", "phenotype")
   return(pheno)
-}
 
 read_filter <- function(filter_file, filter_column = 3) {
   fil <- read.table(filter_file, as.is = T)
@@ -111,7 +110,7 @@ if (argv$FILTER_VAL == NULL) {
   argv$FILTER_VAL <- as.numeric(argv$FILTER_VAL)
 }
 if (argv$TEST_TYPE == NULL) {
-  argv$TEST_TYPE <- "logistic"
+  argv$TEST_TYPE <- "linear"
 }
 if (argv$ONE_FLAG == NULL) {
   argv$ONE_FLAG <- FALSE
