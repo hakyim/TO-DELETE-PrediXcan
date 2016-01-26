@@ -22,6 +22,8 @@ parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_d
 parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
 parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
 parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
+parser.add_argument('--1', action="store_true", dest="one_flag", default=False, help="Include if phenotype file is coded as 0/1 for unaffected/affected.")
+parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='-9', help="Specify code for missing phenotype information.  Default is -9")
 parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
 parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
 parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
@@ -41,10 +43,12 @@ BETA_FILE = args.weights
 PRELOAD_WEIGHTS = not args.weights_on_disk
 ASSOC = args.assoc
 PHENO_FILE = args.pheno
-MPHENO = args.mpheno + 2
-PHENO_NAME = args.pheno_name
-FILTER_FILE, FILTER_VAL = args.fil if args.fil else (None, '1')
-MFILTER = args.mfil
+MPHENO = str(int(args.mpheno) + 2) if args.mpheno else 'None'
+PHENO_NAME = args.pheno_name if args.pheno_name else 'None'
+ONE_FLAG = str(args.one_flag)
+MISSING_PHENOTYPE = args.missing_phenotype
+FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
+MFILTER = args.mfil if args.mfil else 'None'
 OUTPUT_DIR = args.output
 PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
 ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
@@ -163,25 +167,24 @@ class TranscriptionMatrix:
 
 if not os.path.exists(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
-if not os.path.exists(PRED_EXP_FILE):
+if not os.path.exists(PRED_EXP_FILE) and PREDICT:
     get_applications_of = GetApplicationsOf()
     transcription_matrix = TranscriptionMatrix()
     for rsid, allele, dosage_row in get_all_dosages():
         for gene, weight, ref_allele in get_applications_of(rsid):
             transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
     transcription_matrix.save()
-if PREDICT:
+if ASSOC:
     subprocess.call(
-            [
-            "./PrediXcanAssociation.R",
-            "PRED_EXP_FILE", PRED_EXP_FILE,
-            "PHENO_FILE", PHENO_FILE,
-            "PHENO_COLUMN", MPHENO,
-            "PHENO_NAME", PHENO_NAME,
-            "FILTER_FILE", FILTER_FILE,
-            "FILTER_VAL", FILTER_VAL,
-            "FILTER_COLUMN", MFILTER,
-            "TEST_TYPE", TEST_TYPE,
-            "OUT", ASSOC_FILE
-            ],
-            )
+        ["./PrediXcanAssociation.R",
+        "PRED_EXP_FILE", PRED_EXP_FILE,
+        "PHENO_FILE", PHENO_FILE,
+        "PHENO_COLUMN", MPHENO,
+        "PHENO_NAME", PHENO_NAME,
+        "ONE_FLAG", ONE_FLAG,
+        "MISSING_PHENOTYPE", MISSING_PHENOTYPE,
+        "FILTER_FILE", FILTER_FILE,
+        "FILTER_VAL", FILTER_VAL,
+        "FILTER_COLUMN", MFILTER,
+        "TEST_TYPE", TEST_TYPE,
+        "OUT", ASSOC_FILE])

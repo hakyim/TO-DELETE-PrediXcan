@@ -1,23 +1,26 @@
 #!/usr/bin/env Rscript
 
-read_pheno <- function(pheno_file, pheno_column = NULL, pheno_name = NULL) {
+read_pheno <- function(pheno_file) {
   pheno <- read.table(pheno_file, header = F, as.is = T)
-  # Fix dataframe if there is a header row.
+  # Fix dataframe if there is a header row. Returned df will have apropos column names
   if (pheno[1,1] == "FID" & pheno[1,2] == "IID") {
     names(pheno) <- pheno[1,]
     pheno <- pheno[-1,]
   }
+  return(pheno)
+}
+
+reduce_pheno <- function(pheno, pheno_name = colnames(pheno)[ncol(pheno)]) {
   # Only keep first 2 columns and the phenotype column we care about.
-  # If user does not specify pheno_column, phenotype vals are in last column.
-  if (pheno_column != NULL) {
-    pheno <- pheno[c(1, 2, pheno_column)]
-  } else if (pheno_name != NULL) {
-    pheno <- cbind(pheno[c(1, 2)], pheno[pheno_name], 
+  # If user does not specify pheno column, phenotype vals are in last column.
+  if (!is.null(pheno_name)) {
+    pheno <- cbind(pheno[c(1, 2)], pheno[pheno_name])
   } else {
     pheno <- pheno[c(1, 2, ncol(pheno))]
   }
   names(pheno) <- c("fid", "iid", "phenotype")
   return(pheno)
+}
 
 read_filter <- function(filter_file, filter_column = 3) {
   fil <- read.table(filter_file, as.is = T)
@@ -28,7 +31,7 @@ read_filter <- function(filter_file, filter_column = 3) {
 }
     
 read_predicted <- function(pred_exp_file) {
-  pred_exp <- read.delim(pred_exp_file)
+  pred_exp <- read.table(pred_exp_file, header = T, as.is = T)
   return(pred_exp)
 }
 
@@ -39,7 +42,7 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   # IMPORTANT: Each row in the pheno and pred_exp dfs represent people so
   # for the cbind to make sense, the row numbers in each data frame must
   # correspond to the same person.
-  if (fil != NULL) {
+  if (!is.null(fil)) {
     merged <- merge(cbind(pheno, pred_exp), fil, by = c(1, 2), sort = F)
     merged <- filter(merged, fil_val = filter_val)
   } else {
@@ -92,53 +95,74 @@ argv <- as.data.frame(
 )
 
 # Set default values for arguments and set to correct data types---------------
-if (argv$PHENO_FILE == NULL) {
+if (is.null(argv$PHENO_FILE)) {
   cat("Error: User must supply a phenotype file to for association test.\n")
   stop()
 }
-if (argv$PHENO_COLUMN != NULL) {
-  argv$PHENO_COLUMN <- as.numeric(argv$PHENO_COLUMN)
+if (!is.null(argv$PHENO_COLUMN)) {
+  if (argv$PHENO_COLUMN != 'None') {
+    argv$PHENO_COLUMN <- as.numeric(argv$PHENO_COLUMN)
+  } else {
+    argv$PHENO_COLUMN <- NULL
+  }
 }
-if (argv$FILTER_COLUMN == NULL) {
+if (!is.null(argv$PHENO_NAME)) {
+  if (argv$PHENO_NAME == 'None') {
+    argv$PHENO_NAME <- NULL
+  }
+}
+if (is.null(argv$FILTER_COLUMN) | argv$FILTER_COLUMN == 'None') {
   argv$FILTER_COLUMN <- 3
 } else {
   argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN)
 }
-if (argv$FILTER_VAL == NULL) {
+if (is.null(argv$FILTER_VAL)) {
   argv$FILTER_VAL <- 1
 } else {
   argv$FILTER_VAL <- as.numeric(argv$FILTER_VAL)
 }
-if (argv$TEST_TYPE == NULL) {
+if (is.null(argv$TEST_TYPE)) {
   argv$TEST_TYPE <- "linear"
 }
-if (argv$ONE_FLAG == NULL) {
+if (is.null(argv$ONE_FLAG)) {
   argv$ONE_FLAG <- FALSE
 } else {
   argv$ONE_FLAG <- as.logical(argv$ONE_FLAG)
 }
-if (argv$MISSING_PHENOTYPE == NULL) {
+if (is.null(argv$MISSING_PHENOTYPE)) {
   argv$MISSING_PHENOTYPE <- -9
 } else {
   argv$MISSING_PHENOTYPE <- as.numeric(argv$MISSING_PHENOTYPE)
 }
 
 # Run functions----------------------------------------------------------------
-# Read pheno----
+# Read pheno-------------------------------------------------------------------
 cat(c(as.character(Sys.time()), "Reading phenotype file...\n"))
-pheno <- read_pheno(
-    argv$PHENO_FILE,
-    pheno_column = argv$PHENO_COLUMN,
-    pheno_name = argv$PHENO_NAME
-)
-# Read filter file if given----
-if (argv$FILTER_FILE == NULL) {
+pheno <- read_pheno(argv$PHENO_FILE)
+
+# Parse info on pheno df-------------------------------------------------------
+if (is.null(argv$PHENO_COLUMN) & is.null(argv$PHENO_NAME)) {
+  argv$PHENO_NAME <- colnames(pheno)[ncol(pheno)]
+} else if (is.null(argv$PHENO_NAME)) {
+  argv$PHENO_NAME <- colnames(pheno)[argv$PHENO_COLUMN]
+} else if (!is.null(argv$PHENO_NAME) & !is.null(argv$PHENO_COLUMN)) {
+  # Error checking
+  if (argv$PHENO_NAME != colnames(pheno)[argv$PHENO_COLUMN]) {
+    cat(c(as.character(Sys.time()), "Mismatch between phenotype name and column number.\n"))
+    stop()
+  }
+}
+pheno <- reduce_pheno(pheno, pheno_name = argv$PHENO_NAME)
+
+# Read filter file if given----------------------------------------------------
+if (argv$FILTER_FILE == 'None' | is.null(argv$FILTER_FILE)) {
   fil_df <- NULL
 } else {
   cat(c(as.character(Sys.time()), "Reading filter file...\n"))
   fil_df <- read_filter(argv$FILTER_FILE, filter_column = argv$FILTER_COLUMN)
 }
-# Read Transcription----
+
+# Read Transcription-----------------------------------------------------------
 cat(c(as.character(Sys.time()), "Reading transcription file...\n"))
 pred_exp <- read_predicted(argv$PRED_EXP_FILE)
 
@@ -149,14 +173,16 @@ merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILT
 # Remove rows with missing phenotype data, and if doing a logistic regression,
 # Make sure affected == 1 and unaffected == 0.
 if (argv$TEST_TYPE == "logistic" & argv$ONE_FLAG == FALSE) {
-  merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE | phenotype != 0)
+  merged <- merged[merged$phenotype != argv$MISSING_PHENOTYPE | phenotype != 0]
   # Normal input for unaffected and affected is 1 and 2. Change to 0 and 1. 
   merged$phenotype <- merged$phenotype - 1
 } else {
-  merged <- subset(merged, phenotype != argv$MISSING_PHENOTYPE)
+  merged <- merged[merged$phenotype != argv$MISSING_PHENOTYPE]
 } 
-cat(c(as.character(Sys.time()), "Performing association test..."))
+
+# Association Tests------------------------------------------------------------
+cat(c(as.character(Sys.time()), "Performing association test...\n"))
 assoc_df <- association(merged, genes, test_type = argv$TEST_TYPE)
-cat(c(as.character(Sys.time()), "Writing results to file..."))
+cat(c(as.character(Sys.time()), "Writing results to file...\n"))
 write_association(assoc_df, argv$OUT)
-cat(c(as.character(Sys.time()), "Done. Results saved in", argv$OUT))
+cat(c(as.character(Sys.time()), "Done. Results saved in", argv$OUT, "\n"))
