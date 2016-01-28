@@ -44,7 +44,7 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   # correspond to the same person.
   if (!is.null(fil)) {
     merged <- merge(cbind(pheno, pred_exp), fil, by = c(1, 2), sort = F)
-    merged <- filter(merged, fil_val = filter_val)
+    merged <- merged[merged$fil_val == filter_val, ]
   } else {
     merged <- cbind(pheno, pred_exp)
   }
@@ -78,7 +78,7 @@ association <- function(merged, genes, test_type = "logistic") {
   } else if (test_type == "survival") {
     # TODO
   }
-  return(assoc_df)
+  return(as.data.frame(assoc_df))
 }
 
 write_association <- function(assoc_df, output_file) {
