@@ -62,7 +62,7 @@ This will produce a file in the specified output directory called `predicted_exp
 > ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output_dir output
 
 ####Prediction Example
-- Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-predict-example.tar)
+- Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_predict_example.tar)
 - Go to folder and run the following
 
 > ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --weights DGN-WB_0.5.db --output_dir output
@@ -99,7 +99,7 @@ Filter files can specify a subset rows in the pheno file to perform the associat
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp predicted_expression_file --linear --filter filter_file filter_val --output_dir output_directory
 
 ####Association Example
-- Download and untar this file [Association Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-association-example.tar)
+- Download and untar this file [Association Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_association_example.tar)
 - Go to folder and run the following
 
 > ./PrediXcan.py --assoc --pheno igrowth_phenotype.txt --filter igrowth_phasefilter.txt 3 --pred_exp predicted_expression.txt --linear
