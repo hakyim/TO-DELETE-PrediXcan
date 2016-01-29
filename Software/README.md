@@ -12,57 +12,97 @@ Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carro
 
 ##Instructions
 
-To run PrediXcan you will need 
+To run PrediXcan you will need
 
-Input: 
+Software Requirements:
+
+- Linux or Mac OS
+- Python 2.7
+    - numpy package
+- R
+
+Scripts:
+
+- PrediXcan.py
+- PrediXcanAssociation.R
+
+Input Files: 
 
 - genotype file 
 - phenotype file
-- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloded if you click the link).
+- filter file - Specifies a subset of rows on which to perform association tests (optional).
+- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloaded if you click the link).
 
  	- tissue: Whole Blood (default)
 	- source: DGN (default)
 	- model: Elastic Net 0.50 (default)
 
-download [this](https://github.com/hakyimlab/PrediXmod/blob/master/PrediXcan/predict_gene_expression.py "Prediction Script") python script to compute predicted expression levels. Python 2.7 is needed.
-
 The cross validated performance measures for each gene can be found in each db.
-
-The script predict\_gene\_expression.py predicts gene expression levels using prediction models (stored in sqlite db such as DGN-WB_0.5.db) and whole genome variation data.
-
-For now the association with phenotype needs to be performed manually. We are currently working on an R package that will do both the prediction of expression levels and the association with the phenotype.
 
 All the scripts used to develop the prediction models can be found [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Heather/DGN-calc-weights "Prediction Model Pipeline")
 
-
-Supported operating systems:
-Linux or Mac Os.
-
-
 ###Transcriptome Prediction
 
-
-The following arguments are allowed, with default values as follows
+To predict the transcriptome from a given genotype file, include the `--predict` flag when running PrediXcan.py and specify the following arguments:
 
 1. genelist: list of genes. By default it will use all available genes in model database
 2. dosages: imputed genotype file path. Default value: 'data/dosages/'
 3. dosage_prefix: prefix of dosage file. Default value: 'chr' 
 4. weights: full name of database. Default value: 'weight.db'
-5. output: output file name 'output'
+5. output_dir: path to the desired output directory.  Default value: 'output'
 
-####dosage file format
+This will produce a file in the specified output directory called `predicted_expression.txt`, which contains all of the predicted expression levels.
+
+####Dosage File Format
 - columns are snpid rsid position allele1 allele2 MAF dosage_1 ..... dosage_n 
 - dosage for each person refers to the number of alleles for the 2nd allele listed (between 0 and 2)
 - it is expected that there will be one file per chromosome
 
-####USAGE
-> ./predict_gene_expression.py  --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output output
+####Usage
+> ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output_dir output
 
-####Example
-- Download and untar this file [Working Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-working-example.tar)
+####Prediction Example
+- Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-predict-example.tar)
 - Go to folder and run the following
 
-> ./predict_gene_expression.py  --dosages dosages  --dosages_prefix chr --weights DGN-WB_0.5.db --output output
+> ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --weights DGN-WB_0.5.db --output_dir output
+
+###Phenotype Association
+
+To perform an association test between the predicted expression levels and phenotype, include the `--assoc` flag when running PrediXcan.py and specify the following arguments:
+
+1. pred_exp: predicted transcriptome from previous run of PrediXcan.  Default value: 'output/predicted_expression.txt'.
+2. pheno: phenotype file.  No default value.  See below for file format.
+3. filter: filter file to specify which rows to include in test and a number to filter on.  Optional. See below for details.
+4. linear or logistic: specify one of these to perform a linear or logistic regression between the expression levels of each gene and phenotype.  Default is logistic.
+5. output_dir: path to the desired output directory. Default value: 'output'
+
+This will produce a file in the specified output directory called `association.txt`, with summary statistics on the association between each gene and the phenotype.
+
+####Phenotype File Format
+
+Phenotype files are expected to be in a format similar to the format required for PLINK.  Most commonly, the phenotype file is tab delimited, and has no header.  By default, PrediXcan will assume the first column is the Family ID, the second column is the Individual ID, and the *last* column is the phenotype column.
+
+If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc.
+
+**Note**: If the phenotype file does have a header line, the first two columns **must** be labeled FID and IID, respectively.  If there are multiple phenotype columns, you can specify which column to perform the association on with the `--pheno_name` flag.
+
+For logistic tests on qualititative traits, by default the trait is assumed to be encoded as 1 for unaffected and 2 for affected.  0 is a missing value.  If the trait is encoded as 0 for unaffected and 1 for affected, include `--1` when running PrediXcan.
+
+By default, -9 specifies a missing phenotype value.  To specify a different missing phenotype value, say -99 for example, include `--missing_phenotype -99'.
+
+####Filter File Format
+
+Filter files can specify a subset rows in the pheno file to perform the association on.  It is a tab delimited file with the first 2 columns identical to the pheno file.  The third column holds numerical values on which to filter.  If the filter file is called filter.txt, with filter values 1 and 2, including `--filter filter.txt 2` will perform the association test only on individuals marked 2 in the filter file.
+
+####Usage
+> ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp predicted_expression_file --linear --filter filter_file filter_val --output_dir output_directory
+
+####Prediction Example
+- Download and untar this file [Associattion Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-association-example.tar)
+- Go to folder and run the following
+
+> ./PrediXcan.py --assoc --pheno igrowth_phenotype.txt --filter igrowth_phasefilter.txt 3 --pred_exp predicted_expression.txt --linear
 
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
