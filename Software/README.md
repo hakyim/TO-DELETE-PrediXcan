@@ -30,7 +30,7 @@ Input Files:
 
 - genotype file 
 - phenotype file
-- filter file - Specifies a subset of rows on which to perform association tests (optional).
+- filter file - Specifies a subset of rows on which to perform association tests (optional)
 - transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloaded if you click the link).
 
  	- tissue: Whole Blood (default)
@@ -98,8 +98,8 @@ Filter files can specify a subset rows in the pheno file to perform the associat
 ####Usage
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp predicted_expression_file --linear --filter filter_file filter_val --output_dir output_directory
 
-####Prediction Example
-- Download and untar this file [Associattion Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-association-example.tar)
+####Association Example
+- Download and untar this file [Association Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan-association-example.tar)
 - Go to folder and run the following
 
 > ./PrediXcan.py --assoc --pheno igrowth_phenotype.txt --filter igrowth_phasefilter.txt 3 --pred_exp predicted_expression.txt --linear
