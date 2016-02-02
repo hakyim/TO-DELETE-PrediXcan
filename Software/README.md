@@ -31,7 +31,7 @@ Input Files:
 - genotype file 
 - phenotype file
 - filter file - Specifies a subset of rows on which to perform association tests (optional)
-- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB_0.5.db "DGN-WB-EN0.50") (A 28MB file will be downloaded if you click the link).
+- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB-unscaled_0.5.db "DGN-WB-EN-unscaled_0.5") (A 33MB file will be downloaded if you click the link).
 
  	- tissue: Whole Blood (default)
 	- source: DGN (default)
