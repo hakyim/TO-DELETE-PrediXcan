@@ -29,45 +29,42 @@ Scripts:
 Input Files: 
 
 - genotype file 
+- sample file
 - phenotype file
 - filter file - Specifies a subset of rows on which to perform association tests (optional)
 - transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB-unscaled_0.5.db "DGN-WB-EN-unscaled_0.5") (A 33MB file will be downloaded if you click the link).
 
- 	- tissue: Whole Blood (default)
-	- source: DGN (default)
-	- model: Elastic Net 0.50 (default)
-
-The cross validated performance measures for each gene can be found in each db.
-
 All the scripts used to develop the prediction models can be found [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Heather/DGN-calc-weights "Prediction Model Pipeline")
 
-###Transcriptome Prediction
+###Imputing Expression
 
 To predict the transcriptome from a given genotype file, include the `--predict` flag when running PrediXcan.py and specify the following arguments:
 
-1. genelist: list of genes. By default it will use all available genes in model database
+1. genelist: list of genes. Optional. By default it will use all available genes in model database
 2. dosages: imputed genotype file path. Default value: 'data/dosages/'
 3. dosage_prefix: prefix of dosage file. Default value: 'chr' 
 4. weights: full name of database. Default value: 'weight.db'
-5. output_dir: path to the desired output directory.  Default value: 'output'
+5. output_dir: path to the desired output directory.  Default value: 'output/'
 
 This will produce a file in the specified output directory called `predicted_expression.txt`, which contains all of the predicted expression levels.
 
 ####Dosage File Format
-- columns are snpid rsid position allele1 allele2 MAF dosage_1 ..... dosage_n 
-- dosage for each person refers to the number of alleles for the 2nd allele listed (between 0 and 2)
-- it is expected that there will be one file per chromosome
+- Columns are snpid rsid position allele1 allele2 MAF id1 ..... idn.
+- Dosage for each person refers to the number of alleles for the 2nd allele listed (between 0 and 2).
+- It is expected that there will be one file per chromosome.
+- There must be a file of the individuals with id #'s listed in the same order as the genotype columns. This should be in the format of a PLINK .fam file.
 
 ####Usage
 > ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output_dir output
 
 ####Prediction Example
 - Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_predict_example.tar)
+    - To untar, go the folder and run `tar -xvf predixcan_predict_example.tar`
 - Go to folder and run the following
 
 > ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --weights DGN-WB_0.5.db --output_dir output
 
-###Phenotype Association
+###Running Association with Phenotype
 
 To perform an association test between the predicted expression levels and phenotype, include the `--assoc` flag when running PrediXcan.py and specify the following arguments:
 
@@ -81,13 +78,13 @@ This will produce a file in the specified output directory called `association.t
 
 ####Phenotype File Format
 
-Phenotype files are expected to be in a format similar to the format required for PLINK.  Most commonly, the phenotype file is tab delimited, and has no header.  By default, PrediXcan will assume the first column is the Family ID, the second column is the Individual ID, and the *last* column is the phenotype column.
+Phenotype files are expected to be in a format similar to the format required for PLINK.  Most commonly, the phenotype file is tab delimited, and preferably has a header.  By default, PrediXcan will assume the first column is the Family ID, the second column is the Individual ID, and the *last* column is the phenotype column.
 
-If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc.
+**Note**: If the phenotype file has a header line, which preferably it will, the first two columns **must** be labeled FID and IID, respectively.  If there are multiple phenotype columns, you can specify which column to perform the association on with the `--pheno_name` flag.
 
-**Note**: If the phenotype file does have a header line, the first two columns **must** be labeled FID and IID, respectively.  If there are multiple phenotype columns, you can specify which column to perform the association on with the `--pheno_name` flag.
+If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc. This option will mainly be used for when there is no header line, and may behave unexpectedly if the user does not specify options carefully.
 
-For logistic tests on qualititative traits, by default the trait is assumed to be encoded as 1 for unaffected and 2 for affected.  0 is a missing value.  If the trait is encoded as 0 for unaffected and 1 for affected, include `--1` when running PrediXcan.
+Unlike PLINK, for logistic tests on qualititative traits, by default the trait is assumed to be encoded as 0 for unaffected and 1 for affected.  0 is NOT a missing value.  If the trait is encoded as 0 for unaffected and 1 for affected, include `--1` when running PrediXcan.
 
 By default, -9 specifies a missing phenotype value.  To specify a different missing phenotype value, say -99 for example, include `--missing_phenotype -99'.
 
