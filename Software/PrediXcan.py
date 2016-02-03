@@ -121,6 +121,7 @@ def main():
     parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
     parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", action="store", help="Prefix of filenames of gzipped dosage files.")
     parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
+    parser.add_argument('--samples', dest='sample_file', default="samples.txt", action="store", help="File in dosages directory with individual ids.  Must be in same order as columns for dosages")
     parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db", help="SQLite database with rsid weights.")
     parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk", help="Don't load weights db to memory.")
     parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
@@ -143,6 +144,7 @@ def main():
     DOSAGE_DIR = args.dosages
     DOSAGE_PREFIX = args.dosages_prefix
     DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
+    SAMPLE_FILE = os.path.join(DOSAGE_DIR, args.sample_file)
     BETA_FILE = args.weights
     PRELOAD_WEIGHTS = not args.weights_on_disk
     ASSOC = args.assoc
