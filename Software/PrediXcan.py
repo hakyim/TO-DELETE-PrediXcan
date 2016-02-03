@@ -10,63 +10,15 @@ import sqlite3
 import sys
 import subprocess
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--predict', action="store_true", dest="predict", default=False, help="Include to predict gene expression")
-parser.add_argument('--assoc', action="store_true", dest="assoc", default=False, help="Include to perform association test")
-parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
-parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
-parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", action="store", help="Prefix of filenames of gzipped dosage files.")
-parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
-parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db", help="SQLite database with rsid weights.")
-parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk", help="Don't load weights db to memory.")
-parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
-parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
-parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
-parser.add_argument('--1', action="store_true", dest="one_flag", default=False, help="Include if phenotype file is coded as 0/1 for unaffected/affected.")
-parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='-9', help="Specify code for missing phenotype information.  Default is -9")
-parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
-parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
-parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
-parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
-parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
-parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
-parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
 
-args = parser.parse_args()
-
-PREDICT = args.predict
-GENE_LIST = args.genelist
-DOSAGE_DIR = args.dosages
-DOSAGE_PREFIX = args.dosages_prefix
-DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
-BETA_FILE = args.weights
-PRELOAD_WEIGHTS = not args.weights_on_disk
-ASSOC = args.assoc
-PHENO_FILE = args.pheno
-MPHENO = str(int(args.mpheno) + 2) if args.mpheno else 'None'
-PHENO_NAME = args.pheno_name if args.pheno_name else 'None'
-ONE_FLAG = str(args.one_flag)
-MISSING_PHENOTYPE = args.missing_phenotype
-FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
-MFILTER = args.mfil if args.mfil else 'None'
-OUTPUT_DIR = args.output
-PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
-ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
-if args.logistic:
-    TEST_TYPE = "logistic"
-elif args.survival:
-    TEST_TYPE = "survival"
-else:
-    TEST_TYPE = "linear"
-
-def buffered_file(file):
-    if not DOSAGE_BUFFER:
+def buffered_file(file, dosage_buffer=None):
+    if not dosage_buffer:
         for line in file:
             yield line
     else:
         buf = ''
         while True:
-            buf = buf + file.read(DOSAGE_BUFFER*(1024**3))
+            buf = buf + file.read(dosage_buffer*(1024**3))
             if not buf:
                 raise StopIteration
             last_eol = 0
@@ -82,20 +34,21 @@ def buffered_file(file):
                         buf = ''
                         break
 
-def get_all_dosages():
-    for chrfile in [x for x in sorted(os.listdir(DOSAGE_DIR)) if x.startswith(DOSAGE_PREFIX)]:
+
+def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
+    for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix)]:
         print datetime.datetime.now(), "Processing %s" % chrfile
-        for line in buffered_file(gzip.open(os.path.join(DOSAGE_DIR, chrfile))):
+        for line in buffered_file(gzip.open(os.path.join(dosage_dir, chrfile)), dosage_buffer=dbuffer):
             arr = line.strip().split()
             rsid = arr[1]
             refallele = arr[4]
             dosage_row = np.array(map(float, arr[6:]))
             yield rsid, refallele, dosage_row
 
-class WeightsDB:
 
-    def __init__(self):
-        self.conn = sqlite3.connect(BETA_FILE)
+class WeightsDB:
+    def __init__(self, beta_file):
+        self.conn = sqlite3.connect(beta_file)
 
     def query(self, sql, args=None):
         c = self.conn.cursor()
@@ -106,11 +59,11 @@ class WeightsDB:
             for ret in c.execute(sql):
                 yield ret
 
-class GetApplicationsOf:
 
-    def __init__(self):
-        self.db = WeightsDB()
-        if PRELOAD_WEIGHTS:
+class GetApplicationsOf:
+    def __init__(self, beta_file, preload_weights=True):
+        self.db = WeightsDB(beta_file)
+        if preload_weights:
             print datetime.datetime.now(), "Preloading weights..."
             self.tuples = defaultdict(list)
             for tup in self.db.query("SELECT rsid, gene, weight, eff_allele FROM weights"):
@@ -128,15 +81,16 @@ class GetApplicationsOf:
 
 
 class TranscriptionMatrix:
-
-    def __init__(self):
+    def __init__(self, beta_file, gene_file=None):
         self.D = None
+        self.beta_file = beta_file
+        self.gene_file = gene_file
 
     def get_gene_list(self):
-        if GENE_LIST:
-            return list(sorted([line.strip().split()[-1] for line in open(GENE_LIST)]))
+        if self.gene_file:
+            return list(sorted([line.strip().split()[-1] for line in open(gene_file)]))
         else:
-            return [tup[0] for tup in WeightsDB().query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
+            return [tup[0] for tup in WeightsDB(self.beta_file).query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
 
     def update(self, gene, weight, ref_allele, allele, dosage_row):
         if self.D is None:
@@ -147,44 +101,92 @@ class TranscriptionMatrix:
             multiplier = 1 if ref_allele == allele else -1
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
 
-    def save(self):
-        with open(PRED_EXP_FILE, 'w+') as outfile:
+    def get_samples(self, sample_file):
+        with open(sample_file, 'r') as samples:
+            for line in samples:
+                yield line.split()[0]
+
+    def save(self, pred_exp_file):
+        with open(pred_exp_file, 'w+') as outfile:
             outfile.write('\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
             for col in range(0, self.D.shape[1]):
                 outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
 
-    def read(self):
-        # Creates the transcription matrix from a file.
-        with open(PRED_EXP_FILE, 'r') as infile:
-            self.gene_list = infile.readline().rstrip(['\n']).split('\t')
-            self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
-            levels = []
-            for line in infile:
-                parsed_line = line.rstrip(['\n']).split('\t')
-                row = [float(level) for level in parsed_line]
-                levels.append(row)
-        self.D = np.array(levels)
 
-if not os.path.exists(OUTPUT_DIR):
-    os.mkdir(OUTPUT_DIR)
-if not os.path.exists(PRED_EXP_FILE) and PREDICT:
-    get_applications_of = GetApplicationsOf()
-    transcription_matrix = TranscriptionMatrix()
-    for rsid, allele, dosage_row in get_all_dosages():
-        for gene, weight, ref_allele in get_applications_of(rsid):
-            transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-    transcription_matrix.save()
-if ASSOC:
-    subprocess.call(
-        ["./PrediXcanAssociation.R",
-        "PRED_EXP_FILE", PRED_EXP_FILE,
-        "PHENO_FILE", PHENO_FILE,
-        "PHENO_COLUMN", MPHENO,
-        "PHENO_NAME", PHENO_NAME,
-        "ONE_FLAG", ONE_FLAG,
-        "MISSING_PHENOTYPE", MISSING_PHENOTYPE,
-        "FILTER_FILE", FILTER_FILE,
-        "FILTER_VAL", FILTER_VAL,
-        "FILTER_COLUMN", MFILTER,
-        "TEST_TYPE", TEST_TYPE,
-        "OUT", ASSOC_FILE])
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--predict', action="store_true", dest="predict", default=False, help="Include to predict gene expression")
+    parser.add_argument('--assoc', action="store_true", dest="assoc", default=False, help="Include to perform association test")
+    parser.add_argument('--genelist', action="store", dest="genelist", default=None, help="Text file with chromosome, gene pairs.")
+    parser.add_argument('--dosages', action="store", dest="dosages", default="data/dosages", help="Path to a directory of gzipped dosage files.")
+    parser.add_argument('--dosages_prefix', dest="dosages_prefix", default="chr", action="store", help="Prefix of filenames of gzipped dosage files.")
+    parser.add_argument('--dosages_buffer', dest="dosages_buffer", default=None, action="store", help="Buffer size in GB for each dosage file (default: read line by line)")
+    parser.add_argument('--weights', action="store", dest="weights",default="data/weights.db", help="SQLite database with rsid weights.")
+    parser.add_argument('--weights_on_disk', action="store_true", dest="weights_on_disk", help="Don't load weights db to memory.")
+    parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
+    parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
+    parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
+    parser.add_argument('--1', action="store_true", dest="one_flag", default=False, help="Include if phenotype file is coded as 0/1 for unaffected/affected.")
+    parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='-9', help="Specify code for missing phenotype information.  Default is -9")
+    parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
+    parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
+    parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
+    parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
+    parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
+    parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
+    parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
+
+    args = parser.parse_args()
+
+    PREDICT = args.predict
+    GENE_LIST = args.genelist
+    DOSAGE_DIR = args.dosages
+    DOSAGE_PREFIX = args.dosages_prefix
+    DOSAGE_BUFFER = int(args.dosages_buffer) if args.dosages_buffer else None
+    BETA_FILE = args.weights
+    PRELOAD_WEIGHTS = not args.weights_on_disk
+    ASSOC = args.assoc
+    PHENO_FILE = args.pheno
+    MPHENO = str(int(args.mpheno) + 2) if args.mpheno else 'None'
+    PHENO_NAME = args.pheno_name if args.pheno_name else 'None'
+    ONE_FLAG = str(args.one_flag)
+    MISSING_PHENOTYPE = args.missing_phenotype
+    FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
+    MFILTER = args.mfil if args.mfil else 'None'
+    OUTPUT_DIR = args.output
+    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
+    ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
+    if args.logistic:
+        TEST_TYPE = "logistic"
+    elif args.survival:
+        TEST_TYPE = "survival"
+    else:
+        TEST_TYPE = "linear"
+
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+    if not os.path.exists(PRED_EXP_FILE) and PREDICT:
+        get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
+        transcription_matrix = TranscriptionMatrix(BETA_FILE, GENE_LIST)
+        for rsid, allele, dosage_row in get_all_dosages(DOSAGE_DIR, DOSAGE_PREFIX, DOSAGE_BUFFER):
+            for gene, weight, ref_allele in get_applications_of(rsid):
+                transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
+        transcription_matrix.save(PRED_EXP_FILE)
+    if ASSOC:
+        subprocess.call(
+            ["./PrediXcanAssociation.R",
+            "PRED_EXP_FILE", PRED_EXP_FILE,
+            "PHENO_FILE", PHENO_FILE,
+            "PHENO_COLUMN", MPHENO,
+            "PHENO_NAME", PHENO_NAME,
+            "ONE_FLAG", ONE_FLAG,
+            "MISSING_PHENOTYPE", MISSING_PHENOTYPE,
+            "FILTER_FILE", FILTER_FILE,
+            "FILTER_VAL", FILTER_VAL,
+            "FILTER_COLUMN", MFILTER,
+            "TEST_TYPE", TEST_TYPE,
+            "OUT", ASSOC_FILE])
+
+
+if __name__ == '__main__':
+    main()
