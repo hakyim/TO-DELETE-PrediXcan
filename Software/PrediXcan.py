@@ -81,10 +81,11 @@ class GetApplicationsOf:
 
 
 class TranscriptionMatrix:
-    def __init__(self, beta_file, gene_file=None):
+    def __init__(self, beta_file, sample_file, gene_file=None):
         self.D = None
         self.beta_file = beta_file
         self.gene_file = gene_file
+        self.sample_file = sample_file
 
     def get_gene_list(self):
         if self.gene_file:
@@ -101,16 +102,17 @@ class TranscriptionMatrix:
             multiplier = 1 if ref_allele == allele else -1
             self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
 
-    def get_samples(self, sample_file):
-        with open(sample_file, 'r') as samples:
+    def get_samples(self):
+        with open(self.sample_file, 'r') as samples:
             for line in samples:
-                yield line.split()[0]
+                yield [line.split()[0], line.split()[1]]
 
     def save(self, pred_exp_file):
+        sample_generator = self.get_samples()
         with open(pred_exp_file, 'w+') as outfile:
-            outfile.write('\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
+            outfile.write('FID\t' + 'IID\t' + '\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
             for col in range(0, self.D.shape[1]):
-                outfile.write('\t'.join(map(str, self.D[:,col]))+'\n')
+                outfile.write('\t'.join(next(sample_generator)) + '\t' + '\t'.join(map(str, self.D[:,col]))+'\n')
 
 
 def main():
@@ -167,9 +169,11 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
+    if os.path.exists(PRED_EXP_FILE) and PREDICT:
+        print PRED_EXP_FILE + ' already exists! Move or change this filename to run this prediction.'
     if not os.path.exists(PRED_EXP_FILE) and PREDICT:
         get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
-        transcription_matrix = TranscriptionMatrix(BETA_FILE, GENE_LIST)
+        transcription_matrix = TranscriptionMatrix(BETA_FILE, SAMPLE_FILE, GENE_LIST)
         for rsid, allele, dosage_row in get_all_dosages(DOSAGE_DIR, DOSAGE_PREFIX, DOSAGE_BUFFER):
             for gene, weight, ref_allele in get_applications_of(rsid):
                 transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)

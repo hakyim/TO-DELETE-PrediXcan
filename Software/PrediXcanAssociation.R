@@ -43,10 +43,10 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   # for the cbind to make sense, the row numbers in each data frame must
   # correspond to the same person.
   if (!is.null(fil)) {
-    merged <- merge(cbind(pheno, pred_exp), fil, by = c(1, 2), sort = F)
+    merged <- merge(merge(pheno, pred_exp, by = c(1, 2), sort = F), fil, by = c(1, 2), sort = F)
     merged <- merged[merged$fil_val == filter_val, ]
   } else {
-    merged <- cbind(pheno, pred_exp)
+    merged <- merge(pheno, pred_exp, by = c(1, 2), sort = F)
   }
   return(merged)
 }
@@ -166,7 +166,7 @@ if (argv$FILTER_FILE == 'None' | is.null(argv$FILTER_FILE)) {
 cat(c(as.character(Sys.time()), "Reading transcription file...\n"))
 pred_exp <- read_predicted(argv$PRED_EXP_FILE)
 
-genes <- colnames(pred_exp)
+genes <- colnames(pred_exp)[c(-1, -2)] # First 2 cols are FID and IID
 
 cat(c(as.character(Sys.time()), "Processing data...\n"))
 merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILTER_VAL)
