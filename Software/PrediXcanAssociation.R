@@ -51,7 +51,7 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   return(merged)
 }
 
-association <- function(merged, genes, test_type = "logistic") {
+association <- function(merged, genes, test_type = "linear") {
   assoc_df <- NULL # Init association dataframe
 
   # Perform test between each pred_gene_exp column and phenotype
@@ -173,11 +173,11 @@ merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILT
 # Remove rows with missing phenotype data, and if doing a logistic regression,
 # Make sure affected == 1 and unaffected == 0.
 if (argv$TEST_TYPE == "logistic" & argv$ONE_FLAG == FALSE) {
-  merged <- merged[merged$phenotype != argv$MISSING_PHENOTYPE | phenotype != 0]
+  merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE & !is.na(merged$phenotype) & merged$phenotype != 0]
   # Normal input for unaffected and affected is 1 and 2. Change to 0 and 1. 
   merged$phenotype <- merged$phenotype - 1
 } else {
-  merged <- merged[merged$phenotype != argv$MISSING_PHENOTYPE]
+  merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE & !is.na(merged$phenotype)), ]
 } 
 
 # Association Tests------------------------------------------------------------
