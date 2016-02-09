@@ -84,9 +84,9 @@ Phenotype files are expected to be in a format similar to the format required fo
 
 If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc. This option will mainly be used for when there is no header line, and may behave unexpectedly if the user does not specify options carefully.
 
-Unlike PLINK, for logistic tests on qualititative traits, by default the trait is assumed to be encoded as 0 for unaffected and 1 for affected.  0 is NOT a missing value.  If the trait is encoded as 0 for unaffected and 1 for affected, include `--1` when running PrediXcan.
+Unlike PLINK, for logistic tests on qualititative traits, by default the trait is assumed to be encoded as 0 for unaffected and 1 for affected.  0 is NOT a missing value.
 
-By default, -9 specifies a missing phenotype value.  To specify a different missing phenotype value, say -99 for example, include `--missing_phenotype -99'.
+By default, NA specifies a missing phenotype value.  To specify a missing phenotype value that is encoded numerically, say -9 for example, include `--missing_phenotype -9'.
 
 ####Filter File Format
 

@@ -124,13 +124,8 @@ if (is.null(argv$FILTER_VAL)) {
 if (is.null(argv$TEST_TYPE)) {
   argv$TEST_TYPE <- "linear"
 }
-if (is.null(argv$ONE_FLAG)) {
-  argv$ONE_FLAG <- FALSE
-} else {
-  argv$ONE_FLAG <- as.logical(argv$ONE_FLAG)
-}
 if (is.null(argv$MISSING_PHENOTYPE)) {
-  argv$MISSING_PHENOTYPE <- -9
+  argv$MISSING_PHENOTYPE <- NA
 } else {
   argv$MISSING_PHENOTYPE <- as.numeric(argv$MISSING_PHENOTYPE)
 }
@@ -170,15 +165,12 @@ genes <- colnames(pred_exp)[c(-1, -2)] # First 2 cols are FID and IID
 
 cat(c(as.character(Sys.time()), "Processing data...\n"))
 merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILTER_VAL)
-# Remove rows with missing phenotype data, and if doing a logistic regression,
-# Make sure affected == 1 and unaffected == 0.
-if (argv$TEST_TYPE == "logistic" & argv$ONE_FLAG == FALSE) {
-  merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE & !is.na(merged$phenotype) & merged$phenotype != 0]
-  # Normal input for unaffected and affected is 1 and 2. Change to 0 and 1. 
-  merged$phenotype <- merged$phenotype - 1
+# Remove rows with missing phenotype data
+if (is.na(argv$MISSING_PHENOTYPE)) {
+  merged <- merged[which(!is.na(merged$phenotype), ]
 } else {
-  merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE & !is.na(merged$phenotype)), ]
-} 
+  merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE), ]
+}
 
 # Association Tests------------------------------------------------------------
 cat(c(as.character(Sys.time()), "Performing association test...\n"))

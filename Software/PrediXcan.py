@@ -129,8 +129,7 @@ def main():
     parser.add_argument('--pheno', action="store", dest="pheno", default=None, help="Phenotype file")
     parser.add_argument('--mpheno', action="store", dest="mpheno", default=None, help="Specify which phenotype column if > 1")
     parser.add_argument('--pheno_name', action="store", dest="pheno_name", default=None, help="Column name of the phenotype to perform association on.")
-    parser.add_argument('--1', action="store_true", dest="one_flag", default=False, help="Include if phenotype file is coded as 0/1 for unaffected/affected.")
-    parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='-9', help="Specify code for missing phenotype information.  Default is -9")
+    parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='NA', help="Specify code for missing phenotype information.  Default is NA")
     parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
     parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
     parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
@@ -153,7 +152,6 @@ def main():
     PHENO_FILE = args.pheno
     MPHENO = str(int(args.mpheno) + 2) if args.mpheno else 'None'
     PHENO_NAME = args.pheno_name if args.pheno_name else 'None'
-    ONE_FLAG = str(args.one_flag)
     MISSING_PHENOTYPE = args.missing_phenotype
     FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
     MFILTER = args.mfil if args.mfil else 'None'
@@ -185,7 +183,6 @@ def main():
             "PHENO_FILE", PHENO_FILE,
             "PHENO_COLUMN", MPHENO,
             "PHENO_NAME", PHENO_NAME,
-            "ONE_FLAG", ONE_FLAG,
             "MISSING_PHENOTYPE", MISSING_PHENOTYPE,
             "FILTER_FILE", FILTER_FILE,
             "FILTER_VAL", FILTER_VAL,
