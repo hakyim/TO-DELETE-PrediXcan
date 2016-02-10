@@ -114,9 +114,11 @@ class TranscriptionMatrix:
             self.gene_list = self.get_gene_list()  
             self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
             self.D = np.zeros((len(self.gene_list), len(dosage_row))) # Genes x Cases
-        if gene in self.gene_index:            
-            multiplier = 1 if ref_allele == allele else -1
-            self.D[self.gene_index[gene],] += dosage_row * weight * multiplier # Update all cases for that gene
+        if gene in self.gene_index: #assumes strands are aligned to PrediXcan reference and dosage coding 0 to 2           
+            if ref_allele == allele: 
+                self.D[self.gene_index[gene],] += dosage_row * weight
+            else:
+                self.D[self.gene_index[gene],] += (2-dosage_row) * weight # Update all cases for that gene 
 
     def save(self):
         with open(OUTPUT_FILE, 'w+') as outfile:
