@@ -3,6 +3,8 @@ PrediXcan
 
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
+You have only summary results? Try this new extension of PrediXcan that uses only summary statistics, no individual level data [link](https://github.com/hakyimlab/MetaXcan)
+
 
 ##Reference
 Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367. 
