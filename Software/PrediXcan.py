@@ -89,7 +89,7 @@ class TranscriptionMatrix:
 
     def get_gene_list(self):
         if self.gene_file:
-            return list(sorted([line.strip().split()[-1] for line in open(gene_file)]))
+            return list(sorted([line.strip().split()[-1] for line in open(self.gene_file)]))
         else:
             return [tup[0] for tup in WeightsDB(self.beta_file).query("SELECT DISTINCT gene FROM weights ORDER BY gene")]
 

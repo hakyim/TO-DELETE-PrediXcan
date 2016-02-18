@@ -19,11 +19,17 @@ reduce_pheno <- function(pheno, pheno_name = colnames(pheno)[ncol(pheno)]) {
     pheno <- pheno[c(1, 2, ncol(pheno))]
   }
   names(pheno) <- c("fid", "iid", "phenotype")
+  pheno$phenotype <- as.numeric(pheno$phenotype)
   return(pheno)
 }
 
 read_filter <- function(filter_file, filter_column = 3) {
-  fil <- read.table(filter_file, as.is = T)
+  fil <- read.table(filter_file, header = F, as.is = T)
+  # Fix dataframe if there is a header row.
+  if (fil[1,1] == "FID" & fil[1,2] == "IID") {
+    names(fil) <- fil[1,]
+    fil <- fil[-1,]
+  }
   # Only keep columns of filter file necessary
   fil <- fil[c(1, 2, filter_column)]
   names(fil) <- c("fid", "iid", "fil_val")
@@ -114,7 +120,7 @@ if (!is.null(argv$PHENO_NAME)) {
 if (is.null(argv$FILTER_COLUMN) | argv$FILTER_COLUMN == 'None') {
   argv$FILTER_COLUMN <- 3
 } else {
-  argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN)
+  argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN) + 2
 }
 if (is.null(argv$FILTER_VAL)) {
   argv$FILTER_VAL <- 1
@@ -167,7 +173,7 @@ cat(c(as.character(Sys.time()), "Processing data...\n"))
 merged <- merge_and_filter(pheno, pred_exp, fil = fil_df, filter_val = argv$FILTER_VAL)
 # Remove rows with missing phenotype data
 if (is.na(argv$MISSING_PHENOTYPE)) {
-  merged <- merged[which(!is.na(merged$phenotype), ]
+  merged <- merged[which(!is.na(merged$phenotype)), ]
 } else {
   merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE), ]
 }

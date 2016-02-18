@@ -80,7 +80,7 @@ This will produce a file in the specified output directory called `association.t
 
 Phenotype files are expected to be in a format similar to the format required for PLINK.  Most commonly, the phenotype file is tab delimited, and preferably has a header.  By default, PrediXcan will assume the first column is the Family ID, the second column is the Individual ID, and the *last* column is the phenotype column.
 
-**Note**: If the phenotype file has a header line, which preferably it will, the first two columns **must** be labeled FID and IID, respectively.  If there are multiple phenotype columns, you can specify which column to perform the association on with the `--pheno_name` flag.
+**Note**: If the phenotype file has a header line, which preferably it will, the first two columns *must* be labeled FID and IID, respectively.  If there are multiple phenotype columns, you can specify which column to perform the association on with the `--pheno_name` flag.
 
 If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc. This option will mainly be used for when there is no header line, and may behave unexpectedly if the user does not specify options carefully.
 
@@ -91,6 +91,8 @@ By default, NA specifies a missing phenotype value.  To specify a missing phenot
 ####Filter File Format
 
 Filter files can specify a subset rows in the pheno file to perform the association on.  It is a tab delimited file with the first 2 columns identical to the pheno file.  The third column holds numerical values on which to filter.  If the filter file is called filter.txt, with filter values 1 and 2, including `--filter filter.txt 2` will perform the association test only on individuals marked 2 in the filter file.
+
+Header rows are optional for the filter file, but if they are included, the first two columns must be labeled FID and IID.
 
 ####Usage
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp predicted_expression_file --linear --filter filter_file filter_val --output_dir output_directory
