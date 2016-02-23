@@ -93,6 +93,8 @@ write_association <- function(assoc_df, output_file) {
 
 # Get Arguments----------------------------------------------------------------
 argv <- commandArgs(trailingOnly = T)
+# Make data.frame of arguments by selecting odd numbered argvs as options
+# and even numbered argvs as values of options
 names <- seq(1, length(argv), 2)
 vals <- seq(2, length(argv), 2)
 argv <- as.data.frame(
@@ -105,6 +107,7 @@ if (is.null(argv$PHENO_FILE)) {
   cat("Error: User must supply a phenotype file to for association test.\n")
   stop()
 }
+# Default PHENO_COLUMN: NULL
 if (!is.null(argv$PHENO_COLUMN)) {
   if (argv$PHENO_COLUMN != 'None') {
     argv$PHENO_COLUMN <- as.numeric(argv$PHENO_COLUMN)
@@ -112,24 +115,29 @@ if (!is.null(argv$PHENO_COLUMN)) {
     argv$PHENO_COLUMN <- NULL
   }
 }
+# Default PHENO_NAME: NULL
 if (!is.null(argv$PHENO_NAME)) {
   if (argv$PHENO_NAME == 'None') {
     argv$PHENO_NAME <- NULL
   }
 }
+# Default FILTER_COLUMN: 3
 if (is.null(argv$FILTER_COLUMN) | argv$FILTER_COLUMN == 'None') {
   argv$FILTER_COLUMN <- 3
 } else {
   argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN) + 2
 }
+# Default FILTER_VAL: 1
 if (is.null(argv$FILTER_VAL)) {
   argv$FILTER_VAL <- 1
 } else {
   argv$FILTER_VAL <- as.numeric(argv$FILTER_VAL)
 }
+# Default TEST_TYPE: linear
 if (is.null(argv$TEST_TYPE)) {
   argv$TEST_TYPE <- "linear"
 }
+# Default MISSING_PHENOTYPE: NA
 if (is.null(argv$MISSING_PHENOTYPE)) {
   argv$MISSING_PHENOTYPE <- NA
 } else {
@@ -176,6 +184,18 @@ if (is.na(argv$MISSING_PHENOTYPE)) {
   merged <- merged[which(!is.na(merged$phenotype)), ]
 } else {
   merged <- merged[which(merged$phenotype != argv$MISSING_PHENOTYPE), ]
+}
+
+# If all rows filtered out, throw error.
+if (nrow(merged) == 0) {
+  cat(c(as.character(Sys.time()), "ERROR: Filtered out all rows of phenotype"))
+  stop()
+}
+
+# If logistic, and more than 2 values for phenotype, throw error.
+if (argv$TEST_TYPE == 'logistic' & length(table(merged$phenotype)) > 2) {
+  cat(c(as.character(Sys.time()), "ERROR: For logistic tests, phenotype column can only have 2 values: 0 - unaffected, 1 - affected"))
+  stop()
 }
 
 # Association Tests------------------------------------------------------------

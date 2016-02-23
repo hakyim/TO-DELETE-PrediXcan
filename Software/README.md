@@ -52,17 +52,20 @@ This will produce a file in the specified output directory called `predicted_exp
 - Columns are snpid rsid position allele1 allele2 MAF id1 ..... idn.
 - Dosage for each person refers to the number of alleles for the 2nd allele listed (between 0 and 2).
 - It is expected that there will be one file per chromosome.
-- There must be a file of the individuals with id #'s listed in the same order as the genotype columns. This should be in the format of a PLINK .fam file.
+- In the dosages directory, there must be a file of the individuals with id #'s listed in the same order as the genotype columns.
+    - The first column must contain the family ID, and the second must contain the individual ID.
+    - If the the family ID is unavailable, it is ok if the individual ID column is copied over to the FID
+    - The remaining columns of the sample file are not used in the creating the output, so it is possible to have a file with only two columns, but a [PLINK .fam file](https://www.cog-genomics.org/plink2/formats#fam) is also an acceptable format for the samples file.
 
 ####Usage
-> ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --weights prediction_db --output_dir output
+> ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --samples samples_file --weights prediction_db --output_dir output
 
 ####Prediction Example
 - Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_predict_example.tar)
     - To untar, go the folder and run `tar -xvf predixcan_predict_example.tar`
 - Go to folder and run the following
 
-> ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --weights DGN-WB_0.5.db --output_dir output
+> ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --samples samples.txt --weights DGN-WB-unscaled_0.5.db --output_dir output
 
 ###Running Association with Phenotype
 
@@ -84,9 +87,13 @@ Phenotype files are expected to be in a format similar to the format required fo
 
 If there is more than one phenotype column in the file, you can specify which phenotype to perform the association on with the `--mpheno` option.  For example `--mpheno 1` will do the association with the 3rd column in the phenotype file, as columns 1 and 2 are ID numbers, `--mpheno 2` does the association on 4th, etc. This option will mainly be used for when there is no header line, and may behave unexpectedly if the user does not specify options carefully.
 
+By default, PrediXcan performs a linear regression for association tests, and assumes quantitative traits in the phenotype file.
+
 Unlike PLINK, for logistic tests on qualititative traits, by default the trait is assumed to be encoded as 0 for unaffected and 1 for affected.  0 is NOT a missing value.
 
 By default, NA specifies a missing phenotype value.  To specify a missing phenotype value that is encoded numerically, say -9 for example, include `--missing_phenotype -9'.
+
+If a logistic test is specified and there are more than two levels of the phenotype, the user will recieve an error.
 
 ####Filter File Format
 
