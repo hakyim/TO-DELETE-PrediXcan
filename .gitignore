@@ -36,3 +36,6 @@
 ehthumbs.db
 Thumbs.db
 
+# Jupyter notebooks for testing #
+#################################
+*.ipynb

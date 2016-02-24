@@ -24,7 +24,7 @@ if __name__ == "__main__":
     "-p", "--plink-binary", dest="plink", default="plink2",
     help="path to plink (1.9) binary"
   )
-
+  
   if len(sys.argv) == 2:
     parser.print_help()
     sys.exit()
@@ -78,4 +78,3 @@ if __name__ == "__main__":
   os.remove(args.out + ".frq")
   os.remove(args.out + ".traw")
   os.remove(args.out + ".log")
-
