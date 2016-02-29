@@ -24,7 +24,7 @@ Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carro
 
 PredictDB
 =========
-PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [Link to Page](http://hakyimlab.org/predictdb/). 
+PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [Link to Page](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w). 
 
 Below are older links
 
