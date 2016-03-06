@@ -36,7 +36,7 @@ Input Files:
 
 All the scripts used to develop the prediction models can be found [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Heather/DGN-calc-weights "Prediction Model Pipeline")
 
-###Imputing Expression
+###Predicting/Imputing Expression
 
 To predict the transcriptome from a given genotype file, include the `--predict` flag when running PrediXcan.py and specify the following arguments:
 
