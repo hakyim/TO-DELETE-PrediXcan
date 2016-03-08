@@ -28,7 +28,8 @@ PredictDB hosts genetic prediction models of transcriptome levels to be used wit
 
 Below are older links
 
-- GTEx and DGN models (internal release 6/13/2014, models ran on 11/13/2015 by Kaanan) [Box Link](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w).
+- GTEx and DGN models (internal release 6/13/2014, models ran on 11/13/2015 by Kaanan, db and cov processed by Alvao) [PredictDB](http://predictdb.org) or 
+  [Box Link](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w).
   - these models have now ENSid's instead of gene symbols in the gene column. The gene symbol is in the 'extra' table in the db under the genename columns.
 
 G2Pdb
