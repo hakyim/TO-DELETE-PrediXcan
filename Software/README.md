@@ -60,13 +60,6 @@ This will produce a file in the specified output directory called `predicted_exp
 ####Usage
 > ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix chr --samples samples_file --weights prediction_db --output_dir output
 
-####Prediction Example
-- Download and untar this file [Prediction Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_predict_example.tar)
-    - To untar, go the folder and run `tar -xvf predixcan_predict_example.tar`
-- Go to folder and run the following
-
-> ./PrediXcan.py --predict --dosages dosages --dosages_prefix chr --samples samples.txt --weights DGN-WB-unscaled_0.5.db --output_dir output
-
 ###Running Association with Phenotype
 
 To perform an association test between the predicted expression levels and phenotype, include the `--assoc` flag when running PrediXcan.py and specify the following arguments:
@@ -104,11 +97,11 @@ Header rows are optional for the filter file, but if they are included, the firs
 ####Usage
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp predicted_expression_file --linear --filter filter_file filter_val --output_dir output_directory
 
-####Association Example
-- Download and untar this file [Association Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/predixcan_association_example.tar)
+##Example for Prediction and Association
+- Download and untar this file [PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample.tar)
 - Go to folder and run the following
 
-> ./PrediXcan.py --assoc --pheno igrowth_phenotype.txt --filter igrowth_phasefilter.txt 3 --pred_exp predicted_expression.txt --linear
+> ./PrediXcan.py --predict --assoc --weights weights/DGN-WB-unscaled_0.5.db --dosages genotype --samples samples.txt --pheno phenotype/igrowth.txt --output_dir results --linear
 
 ** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
 
