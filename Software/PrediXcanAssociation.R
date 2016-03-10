@@ -118,7 +118,7 @@ if (is.null(argv$PHENO_FILE)) {
 # Default PHENO_COLUMN: NULL
 if (!is.null(argv$PHENO_COLUMN)) {
   if (argv$PHENO_COLUMN != 'None') {
-    argv$PHENO_COLUMN <- as.numeric(argv$PHENO_COLUMN)
+    argv$PHENO_COLUMN <- suppressWarnings(as.numeric(argv$PHENO_COLUMN))
   } else {
     argv$PHENO_COLUMN <- NULL
   }
@@ -133,13 +133,13 @@ if (!is.null(argv$PHENO_NAME)) {
 if (is.null(argv$FILTER_COLUMN) | argv$FILTER_COLUMN == 'None') {
   argv$FILTER_COLUMN <- 3
 } else {
-  argv$FILTER_COLUMN <- as.numeric(argv$FILTER_COLUMN) + 2
+  argv$FILTER_COLUMN <- suppressWarnings(as.numeric(argv$FILTER_COLUMN) + 2)
 }
 # Default FILTER_VAL: 1
 if (is.null(argv$FILTER_VAL)) {
   argv$FILTER_VAL <- 1
 } else {
-  argv$FILTER_VAL <- as.numeric(argv$FILTER_VAL)
+  argv$FILTER_VAL <- suppressWarnings(as.numeric(argv$FILTER_VAL))
 }
 # Default TEST_TYPE: linear
 if (is.null(argv$TEST_TYPE)) {
@@ -149,7 +149,7 @@ if (is.null(argv$TEST_TYPE)) {
 if (is.null(argv$MISSING_PHENOTYPE)) {
   argv$MISSING_PHENOTYPE <- NA
 } else {
-  argv$MISSING_PHENOTYPE <- as.numeric(argv$MISSING_PHENOTYPE)
+  argv$MISSING_PHENOTYPE <- suppressWarnings(as.numeric(argv$MISSING_PHENOTYPE))
 }
 
 # Run functions----------------------------------------------------------------
