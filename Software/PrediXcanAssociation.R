@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+options(digits.secs=6)
 
 read_pheno <- function(pheno_file) {
   pheno <- read.table(pheno_file, header = F, as.is = T)
@@ -48,11 +49,18 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   # IMPORTANT: Each row in the pheno and pred_exp dfs represent people so
   # for the cbind to make sense, the row numbers in each data frame must
   # correspond to the same person.
+  npheno <- nrow(pheno)
+  npred_exp <- nrow(pred_exp)
+  cat(c(as.character(Sys.time()), npheno, "individuals found in phenotype file.\n"))
+  cat(c(as.character(Sys.time()), npred_exp, "individuals found in predicted expression file.\n"))
+  merged <- merge(pheno, pred_exp, by = c(1, 2), sort = F)
+  nmerged <- nrow(merged)
+  cat(c(as.character(Sys.time()), nmerged, "individuals common to both.  Performing assoc on intersection.\n"))
   if (!is.null(fil)) {
-    merged <- merge(merge(pheno, pred_exp, by = c(1, 2), sort = F), fil, by = c(1, 2), sort = F)
+    merged <- merge(merged, fil, by = c(1, 2), sort = F)
     merged <- merged[merged$fil_val == filter_val, ]
-  } else {
-    merged <- merge(pheno, pred_exp, by = c(1, 2), sort = F)
+    nfilter <- nrow(merged)
+    cat(c(as.character(Sys.time()), nfilter, "individuals remain for association after filtering.\n"))
   }
   return(merged)
 }
@@ -104,7 +112,7 @@ argv <- as.data.frame(
 
 # Set default values for arguments and set to correct data types---------------
 if (is.null(argv$PHENO_FILE)) {
-  cat("Error: User must supply a phenotype file to for association test.\n")
+  cat(c(as.character(Sys.time()), "Error: User must supply a phenotype file to for association test.\n"))
   stop()
 }
 # Default PHENO_COLUMN: NULL
@@ -188,13 +196,13 @@ if (is.na(argv$MISSING_PHENOTYPE)) {
 
 # If all rows filtered out, throw error.
 if (nrow(merged) == 0) {
-  cat(c(as.character(Sys.time()), "ERROR: Filtered out all rows of phenotype"))
+  cat(c(as.character(Sys.time()), "ERROR: Filtered out all rows of phenotype\n"))
   stop()
 }
 
 # If logistic, and more than 2 values for phenotype, throw error.
 if (argv$TEST_TYPE == 'logistic' & length(table(merged$phenotype)) > 2) {
-  cat(c(as.character(Sys.time()), "ERROR: For logistic tests, phenotype column can only have 2 values: 0 - unaffected, 1 - affected"))
+  cat(c(as.character(Sys.time()), "ERROR: For logistic tests, phenotype column can only have 2 values: 0 - unaffected, 1 - affected\n"))
   stop()
 }
 
