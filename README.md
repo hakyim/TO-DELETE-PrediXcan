@@ -8,10 +8,10 @@ You have only summary results? Try this new extension of PrediXcan that uses onl
 
 ##Reference
 - Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK. (2015) **A gene-based association method for mapping traits using reference transcriptome data**. Nat Genet. doi:10.1038/ng.3367. ([Link to paper](http://www.nature.com/ng/journal/v47/n9/full/ng.3367.html), [Link to Preprint on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164) )
-  †:equal contribution *:correspondence haky at uchicago dot edu
 
-- Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, and Hae Kyung Im (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues** [doi:](http://dx.doi.org/10.1101/043653), [Link to Preprint](https://s3.amazonaws.com/imlab-open/Webdata/Paper-Links/h2r2-2016-03-17-no-TS.db); correspondence hwheeler at luc dot edu and haky at uchicago dot edu
-
+  †:equal contribution 
+  
+  *:correspondence haky at uchicago dot edu
 
 ##Software
 
@@ -33,6 +33,10 @@ G2Pdb
 =========
 G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
 
+Genetic Architecture of Gene Expression Traits
+=======
+- Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, and Hae Kyung Im (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues** [doi:](http://dx.doi.org/10.1101/043653), [Link to Preprint](https://s3.amazonaws.com/imlab-open/Webdata/Paper-Links/h2r2-2016-03-17-no-TS.db); correspondence hwheeler at luc dot edu and haky at uchicago dot edu
+- Database of heritability estimates [link](https://s3.amazonaws.com/imlab-open/Webdata/Paper-Links/h2r2-2016-03-17-no-TS.db) or [link](https://github.com/WheelerLab/GenArchDB)
 
 ##Acknowledgements
 
