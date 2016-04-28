@@ -119,8 +119,18 @@ class TranscriptionMatrix:
                     outfile.write('\t'.join(next(sample_generator)) + '\t' + '\t'.join(map(str, self.D[:,col]))+'\n')
                 except StopIteration:
                     print "ERROR: There are not enough rows in your sample file!"
-                    print "Make sure dosage files and sample files have number of individuals in same order."
+                    print "Make sure dosage files and sample files have the same number of individuals in the same order."
+                    os.remove(pred_exp_file)
                     sys.exit(1)
+            try:
+                next(sample_generator)
+            except StopIteration:
+                print "Predicted expression file complete!"
+            else:
+                print "ERROR: There are too many rows in your sample file!"
+                print "Make sure dosage files and sample files have the same number of individuals in the ame order."
+                os.remove(pred_exp_file)
+                sys.exit(1)
 
 
 def main():
