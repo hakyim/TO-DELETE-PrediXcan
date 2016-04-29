@@ -9,6 +9,7 @@ Frequently Asked Questions
 - How do I query the prediction model db?
   - Find example queries in [link](https://github.com/hakyimlab/PrediXcan/blob/master/Software/query-db.Rmd)
   
-  
+- PrediXcan says my samples file has too few/too many rows.
+  - In order for the predicted expression file to be correct, the dosage files and samples file must correspond to the same individual.  The columns for the dosage files are columns are snpid rsid position allele1 allele2 MAF id1 ..... idn and the samples file lists out the information for id1 ... idn row by row.  As the id numbers are not included in the dosage file, it is critically important that the samples file has the same number of individuals in the same order as the dosages files.  Otherwise later association tests will be invalid.
 
 

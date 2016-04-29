@@ -109,13 +109,28 @@ class TranscriptionMatrix:
         with open(self.sample_file, 'r') as samples:
             for line in samples:
                 yield [line.split()[0], line.split()[1]]
-
+                    
     def save(self, pred_exp_file):
         sample_generator = self.get_samples()
         with open(pred_exp_file, 'w+') as outfile:
             outfile.write('FID\t' + 'IID\t' + '\t'.join(self.gene_list) + '\n') # Nb. this lists the names of rows, not of columns
             for col in range(0, self.D.shape[1]):
-                outfile.write('\t'.join(next(sample_generator)) + '\t' + '\t'.join(map(str, self.D[:,col]))+'\n')
+                try:
+                    outfile.write('\t'.join(next(sample_generator)) + '\t' + '\t'.join(map(str, self.D[:,col]))+'\n')
+                except StopIteration:
+                    print "ERROR: There are not enough rows in your sample file!"
+                    print "Make sure dosage files and sample files have the same number of individuals in the same order."
+                    os.remove(pred_exp_file)
+                    sys.exit(1)
+            try:
+                next(sample_generator)
+            except StopIteration:
+                print "Predicted expression file complete!"
+            else:
+                print "ERROR: There are too many rows in your sample file!"
+                print "Make sure dosage files and sample files have the same number of individuals in the ame order."
+                os.remove(pred_exp_file)
+                sys.exit(1)
 
 
 def main():
