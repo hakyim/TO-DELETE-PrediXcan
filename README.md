@@ -1,9 +1,12 @@
-PrediXcan
-=========
+## PrediXcan
+
 
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
 You have only summary results? Try this new extension of PrediXcan that uses only summary statistics, no individual level data [link](https://github.com/hakyimlab/MetaXcan)
+
+Please join this [Google Group](https://groups.google.com/forum/#!forum/predixcanmetaxcan) for news on releases, features, etc. 
+For support and feature requests, you can use this repository's issue tracker.
 
 
 ##Reference
@@ -19,8 +22,8 @@ You have only summary results? Try this new extension of PrediXcan that uses onl
 
 - Download software from this [link](https://github.com/hakyimlab/PrediXcan/tree/master/Software)
 
-PredictDB
-=========
+## PredictDB
+
 PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [PredictDB](http://predictdb.org). 
 
 Below are older links
@@ -29,12 +32,12 @@ Below are older links
   [Box Link](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w).
   - these models have now ENSid's instead of gene symbols in the gene column. The gene symbol is in the 'extra' table in the db under the genename columns.
 
-G2Pdb
-=========
+## G2Pdb
+
 G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
 
-Genetic Architecture of Gene Expression Traits
-=======
+# Genetic Architecture of Gene Expression Traits
+
 - Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, and Hae Kyung Im (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues** [Link to Preprint](http://dx.doi.org/10.1101/043653); correspondence hwheeler at luc dot edu and haky at uchicago dot edu
 - Database of heritability estimates [link](https://github.com/jlbren/GenArchDB) [older link](https://s3.amazonaws.com/imlab-open/Webdata/Paper-Links/h2r2-2016-03-17-no-TS.db) or [older link](https://github.com/WheelerLab/GenArchDB)
 

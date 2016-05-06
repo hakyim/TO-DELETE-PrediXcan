@@ -39,3 +39,6 @@ Thumbs.db
 # Jupyter notebooks for testing #
 #################################
 *.ipynb
+
+# Pycharm
+.idea
