@@ -49,7 +49,7 @@ To predict the transcriptome from a given genotype file, include the `--predict`
 This will produce a file in the specified output directory called `predicted_expression.txt`, which contains all of the predicted expression levels.
 
 ####Dosage File Format
-- Columns are snpid rsid position allele1 allele2 MAF id1 ..... idn.
+- Columns are chromosome rsid position allele1 allele2 MAF id1 ..... idn.
 - Dosage for each person refers to the number of alleles for the 2nd allele listed (between 0 and 2).
 - It is expected that there will be one file per chromosome.
 - In the dosages directory, there must be a file of the individuals with id #'s listed in the same order as the genotype columns.
@@ -67,7 +67,7 @@ To perform an association test between the predicted expression levels and pheno
 1. pred_exp: predicted transcriptome from previous run of PrediXcan.  Default value: 'output/predicted_expression.txt'.
 2. pheno: phenotype file.  No default value.  See below for file format.
 3. filter: filter file to specify which rows to include in test and a number to filter on.  Optional. See below for details.
-4. linear or logistic: specify one of these to perform a linear or logistic regression between the expression levels of each gene and phenotype.  Default is logistic.
+4. linear or logistic: specify one of these to perform a linear or logistic regression between the expression levels of each gene and phenotype.  Default is linear.
 5. output_dir: path to the desired output directory. Default value: 'output'
 
 This will produce a file in the specified output directory called `association.txt`, with summary statistics on the association between each gene and the phenotype.
