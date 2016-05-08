@@ -49,4 +49,5 @@ Data downloaded from [NIMH Repository and Genomics Resource](https://www.nimhgen
 
 Battle, A., Mostafavi, S., Zhu, X., Potash, J.B., Weissman, M.M., McCormick, C., Haudenschild, C.D., Beckman, K.B., Shi, J., Mei, R., et al. (2014). Characterizing the genetic basis of transcriptome diversity through RNA-sequencing of 922 individuals. Genome Research 24, 14–24.
 
-
+___
+[![Analytics](https://ga-beacon.appspot.com/UA-61894206-3/welcome-page-hakyimlab)](https://github.com/hakyimlab/PrediXcan)
