@@ -24,7 +24,7 @@ For support and feature requests, you can use this repository's issue tracker.
 
 ## PredictDB
 
-PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [PredictDB](http://predictdb.org). 
+PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [PredictDB](http://predictdb.org). Samples sizes of RNAseq data from GTEx used in version from 2015-11-12 are here: [RNAseq sample sizes](https://docs.google.com/spreadsheets/d/1YjA_t6Gd5WJgGUvV7FAyyH7xFekTIOoAtWqxmECkaK8/edit?usp=sharing)
 
 Below are older links
 
