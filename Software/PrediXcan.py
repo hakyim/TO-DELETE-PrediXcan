@@ -9,6 +9,7 @@ import os
 import sqlite3
 import sys
 import subprocess
+import inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
