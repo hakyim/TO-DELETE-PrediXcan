@@ -10,6 +10,8 @@ import sqlite3
 import sys
 import subprocess
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 def buffered_file(file, dosage_buffer=None):
     if not dosage_buffer:
@@ -196,7 +198,7 @@ def main():
         transcription_matrix.save(PRED_EXP_FILE)
     if ASSOC:
         subprocess.call(
-            ["./PrediXcanAssociation.R",
+            [(path + "/PrediXcanAssociation.R"), #this is beter way to call the Rscript
             "PRED_EXP_FILE", PRED_EXP_FILE,
             "PHENO_FILE", PHENO_FILE,
             "PHENO_COLUMN", MPHENO,
