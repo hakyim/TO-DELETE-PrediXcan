@@ -158,7 +158,7 @@ def main():
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
     parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
-    parser.add_argument('--nthread', action="store_true", dest="nthread", default=False, help="Include to run the association test in parallel threads")
+    parser.add_argument('--nthread', action="store_true", dest="nthread", default="1", help="Include to run the association test in parallel threads")
 
     args = parser.parse_args()
 
@@ -201,7 +201,7 @@ def main():
         transcription_matrix.save(PRED_EXP_FILE)
     if ASSOC:
         subprocess.call(
-            [(path + "/PrediXcanAssociation.R"), #this is beter way to call the Rscript
+            [(path + "/PrediXcanAssociation.R"), 
             "PRED_EXP_FILE", PRED_EXP_FILE,
             "PHENO_FILE", PHENO_FILE,
             "PHENO_COLUMN", MPHENO,
