@@ -158,9 +158,11 @@ def main():
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
     parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
+    parser.add_argument('--nthread', action="store_true", dest="nthread", default=False, help="Include to run the association test in parallel threads")
 
     args = parser.parse_args()
 
+    NTHREAD = args.nthread
     PREDICT = args.predict
     GENE_LIST = args.genelist
     DOSAGE_DIR = args.dosages
@@ -209,7 +211,8 @@ def main():
             "FILTER_VAL", FILTER_VAL,
             "FILTER_COLUMN", MFILTER,
             "TEST_TYPE", TEST_TYPE,
-            "OUT", ASSOC_FILE])
+            "OUT", ASSOC_FILE,
+	    "NTHREAD", NTHREAD])
 
 
 if __name__ == '__main__':

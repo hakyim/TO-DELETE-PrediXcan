@@ -1,6 +1,17 @@
 #!/usr/bin/env Rscript
 options(digits.secs=6)
 
+#install the packages if they are not installed already
+if(!(require(data.table) & c(require(foreach) & require(doParallel)))) {
+  print("Installing the required pacckages")
+  install.packages(c("data.table","doParallel","foreach"), 
+                   repos = "http://cran.us.r-project.org")
+}
+#loading required packages
+library(data.table)
+library(foreach)
+library(doParallel)
+
 read_pheno <- function(pheno_file) {
   pheno <- read.table(pheno_file, header = F, as.is = T)
   # Fix dataframe if there is a header row. Returned df will have apropos column names
@@ -38,7 +49,8 @@ read_filter <- function(filter_file, filter_column = 3) {
 }
     
 read_predicted <- function(pred_exp_file) {
-  pred_exp <- read.table(pred_exp_file, header = T, as.is = T)
+  #this will be a big data frame and so fread (instead of read.table) is a better choice
+  pred_exp <- fread(pred_exp_file, header = T)
   return(pred_exp)
 }
 
@@ -65,9 +77,8 @@ merge_and_filter <- function(pheno, pred_exp, fil = NULL, filter_val = 1) {
   return(merged)
 }
 
-association <- function(merged, genes, test_type = "linear") {
+association <- function(merged, genes, test.type = "linear") {
   assoc_df <- NULL # Init association dataframe
-
   # Perform test between each pred_gene_exp column and phenotype
   for (gene in genes) {
     pred_gene_exp <- merged[[gene]]
@@ -94,6 +105,29 @@ association <- function(merged, genes, test_type = "linear") {
   }
   return(as.data.frame(assoc_df))
 }
+
+association.fun <- function(gene, test.type = "logistic"){
+  pred_gene_exp <- merged[[gene]]
+  fml <- as.formula(paste("phenotype ~ pred_gene_exp"))
+  if (test.type == "logistic"){
+    res <- coef(summary(glm(fml, data = merged, family = binomial))) #res is a matrix
+  } else {
+    res <- coef(summary(lm(fml, data = merged))) #res is a matrix
+  }
+  return(c(gene,unlist(res[2,]))) #the second row of res holds the main results
+}
+
+association.loop = function(merged,genes,test.type = "logistic", nthread = 1){ 
+  cat("Performing ",test.type,"regression on the predicted gene expressions")
+  cat("No. of parallel threads :", nthread)
+  cl <- makeCluster(nthread)
+  registerDoParallel(cl)
+  foreach(gene = genes,
+          .combine = rbind) %dopar%
+    association.fun(gene,test.type = test.type)
+  stopCluster(cl)
+  }
+
 
 write_association <- function(assoc_df, output_file) {
   write.table(assoc_df, output_file, col.names = T, row.names = F, quote = F)
@@ -208,7 +242,7 @@ if (argv$TEST_TYPE == 'logistic' & length(table(merged$phenotype)) > 2) {
 
 # Association Tests------------------------------------------------------------
 cat(c(as.character(Sys.time()), "Performing association test...\n"))
-assoc_df <- association(merged, genes, test_type = argv$TEST_TYPE)
+assoc_df <- association.loop(merged, genes, test_type = argv$TEST_TYPE, nthread = argv$NTHREAD)
 cat(c(as.character(Sys.time()), "Writing results to file...\n"))
 write_association(assoc_df, argv$OUT)
 cat(c(as.character(Sys.time()), "Done. Results saved in", argv$OUT, "\n"))
