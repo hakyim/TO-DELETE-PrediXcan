@@ -122,6 +122,7 @@ association.loop = function(merged,genes,test_type = "logistic", nthread = 1){
   cat("No. of parallel threads :", nthread)
   cl <- makeCluster(nthread)
   registerDoParallel(cl)
+  clusterExport(cl, c("association.fun","merged","genes"))
   foreach(gene = genes,
           .combine = rbind) %dopar%
     association.fun(gene,test_type = test_type)
@@ -185,6 +186,8 @@ if (is.null(argv$MISSING_PHENOTYPE)) {
 } else {
   argv$MISSING_PHENOTYPE <- suppressWarnings(as.numeric(argv$MISSING_PHENOTYPE))
 }
+
+argv$NTHREAD = as.numeric(argv$NTHREAD)
 
 # Run functions----------------------------------------------------------------
 # Read pheno-------------------------------------------------------------------
