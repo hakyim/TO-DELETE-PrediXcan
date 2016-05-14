@@ -158,7 +158,7 @@ def main():
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
     parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
-    parser.add_argument('--nthread', action="store_true", dest="nthread", default=1, help="Include to run the association test in parallel threads", type=int)
+    parser.add_argument('--nthread', dest="nthread", default=1, help="Include to run the association test in parallel threads", type=int)
 
     args = parser.parse_args()
 
