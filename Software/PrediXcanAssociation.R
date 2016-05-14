@@ -106,10 +106,10 @@ association <- function(merged, genes, test.type = "linear") {
   return(as.data.frame(assoc_df))
 }
 
-association.fun <- function(gene, test.type = "logistic"){
+association.fun <- function(gene, test_type = "logistic"){
   pred_gene_exp <- merged[[gene]]
   fml <- as.formula(paste("phenotype ~ pred_gene_exp"))
-  if (test.type == "logistic"){
+  if (test_type == "logistic"){
     res <- coef(summary(glm(fml, data = merged, family = binomial))) #res is a matrix
   } else {
     res <- coef(summary(lm(fml, data = merged))) #res is a matrix
@@ -117,14 +117,14 @@ association.fun <- function(gene, test.type = "logistic"){
   return(c(gene,unlist(res[2,]))) #the second row of res holds the main results
 }
 
-association.loop = function(merged,genes,test.type = "logistic", nthread = 1){ 
-  cat("Performing ",test.type,"regression on the predicted gene expressions")
+association.loop = function(merged,genes,test_type = "logistic", nthread = 1){ 
+  cat("Performing ",test_type,"regression on the predicted gene expressions")
   cat("No. of parallel threads :", nthread)
   cl <- makeCluster(nthread)
   registerDoParallel(cl)
   foreach(gene = genes,
           .combine = rbind) %dopar%
-    association.fun(gene,test.type = test.type)
+    association.fun(gene,test_type = test_type)
   stopCluster(cl)
   }
 

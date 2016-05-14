@@ -212,7 +212,7 @@ def main():
             "FILTER_COLUMN", MFILTER,
             "TEST_TYPE", TEST_TYPE,
             "OUT", ASSOC_FILE,
-	    "NTHREAD", NTHREAD])
+	    "NTHREAD", str(NTHREAD)])
 
 
 if __name__ == '__main__':
