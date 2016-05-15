@@ -106,7 +106,7 @@ association <- function(merged, genes, test.type = "linear") {
   return(as.data.frame(assoc_df))
 }
 
-association.fun <- function(gene, test_type = "logistic"){
+association.fun <- function(gene){
   pred_gene_exp <- merged[[gene]]
   fml <- as.formula(paste("phenotype ~ pred_gene_exp"))
   if (test_type == "logistic"){
@@ -120,13 +120,14 @@ association.fun <- function(gene, test_type = "logistic"){
 association.loop = function(merged,genes,test_type = "logistic", nthread = 1){ 
   cat("Performing ",test_type,"regression on the predicted gene expressions")
   cat("No. of parallel threads :", nthread)
-  cl <- makeCluster(nthread)
+  cl <- makeCluster(nthread, type = "FORK")
   registerDoParallel(cl)
-  clusterExport(cl, c("association.fun","merged","genes"))
-  foreach(gene = genes,
+  clusterExport(cl, c("association.fun","merged","genes","test_type"))
+  res.df = foreach(gene = genes,
           .combine = rbind) %dopar%
-    association.fun(gene,test_type = test_type)
+    association.fun(gene)
   stopCluster(cl)
+  return(res.df)
   }
 
 
