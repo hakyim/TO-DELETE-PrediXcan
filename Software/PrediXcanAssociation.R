@@ -252,7 +252,7 @@ if (argv$TEST_TYPE == 'logistic' & length(table(merged$phenotype)) > 2) {
 
 # Association Tests------------------------------------------------------------
 cat(c(as.character(Sys.time()), "Performing association test...\n"))
-assoc_df <- association.loop(merged, genes, test_type = argv$TEST_TYPE, nthread = argv$NTHREAD)
+assoc_df <- association.loop(nthread = argv$NTHREAD)
 cat(c(as.character(Sys.time()), "Writing results to file...\n"))
 write_association(assoc_df, argv$OUT)
 cat(c(as.character(Sys.time()), "Done. Results saved in", argv$OUT, "\n"))
