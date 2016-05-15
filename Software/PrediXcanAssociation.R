@@ -121,16 +121,14 @@ association.fun <- function(gene){
   }
 }
 
-association.loop = function(merged,genes,test_type = "logistic", nthread = 1){ 
+#variables merged, genes, test_type should be defined in the global environment 
+association.loop = function(nthread = 1){ 
   cat("Performing ",test_type,"regression on the predicted gene expressions")
   cat("No. of parallel threads :", nthread,"\n")
-  #cl <- makeCluster(nthread, type = "FORK")
   registerDoParallel(nthread)
-  clusterExport(cl, c("association.fun","merged","genes","test_type"), envir = environment())
   res.df = foreach(gene = genes,
           .combine = rbind) %dopar%
     association.fun(gene)
-  #stopCluster(cl)
   stopImplicitCluster()
   return(res.df)
   }
@@ -185,7 +183,10 @@ if (is.null(argv$FILTER_VAL)) {
 # Default TEST_TYPE: linear
 if (is.null(argv$TEST_TYPE)) {
   argv$TEST_TYPE <- "linear"
+  
 }
+test_type <- argv$TEST_TYPE #test_type should be declared in the global environment 
+
 # Default MISSING_PHENOTYPE: NA
 if (is.null(argv$MISSING_PHENOTYPE)) {
   argv$MISSING_PHENOTYPE <- NA
