@@ -122,7 +122,7 @@ association.loop = function(merged,genes,test_type = "logistic", nthread = 1){
   cat("No. of parallel threads :", nthread)
   cl <- makeCluster(nthread, type = "FORK")
   registerDoParallel(cl)
-  clusterExport(cl, c("association.fun","merged","genes","test_type"))
+  clusterExport(cl, c("association.fun","merged","genes","test_type"), envir = environment())
   res.df = foreach(gene = genes,
           .combine = rbind) %dopar%
     association.fun(gene)
