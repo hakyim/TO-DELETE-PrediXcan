@@ -129,7 +129,7 @@ association.loop = function(nthread = 1){
   res.df = foreach(gene = genes,
           .combine = rbind) %dopar%
     association.fun(gene)
-  stopImplicitCluster()
+  #stopImplicitCluster()
   return(res.df)
   }
 
