@@ -114,19 +114,24 @@ association.fun <- function(gene){
   } else {
     res <- coef(summary(lm(fml, data = merged))) #res is a matrix
   }
+  if(nrow(res)<2){
+  return(c(gene,rep(NA,ncol(res))))
+  } else {
   return(c(gene,unlist(res[2,]))) #the second row of res holds the main results
+  }
 }
 
 association.loop = function(merged,genes,test_type = "logistic", nthread = 1){ 
   cat("Performing ",test_type,"regression on the predicted gene expressions")
-  cat("No. of parallel threads :", nthread)
-  cl <- makeCluster(nthread, type = "FORK")
-  registerDoParallel(cl)
+  cat("No. of parallel threads :", nthread,"\n")
+  #cl <- makeCluster(nthread, type = "FORK")
+  registerDoParallel(nthread)
   clusterExport(cl, c("association.fun","merged","genes","test_type"), envir = environment())
   res.df = foreach(gene = genes,
           .combine = rbind) %dopar%
     association.fun(gene)
-  stopCluster(cl)
+  #stopCluster(cl)
+  stopImplicitCluster()
   return(res.df)
   }
 
