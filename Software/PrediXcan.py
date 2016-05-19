@@ -154,6 +154,7 @@ def main():
     parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
     parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
     parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
+    parser.add_argument('--outname' , action = "store", dest="outname", default="out", help="prefix to be added to the output file")
     parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
@@ -179,8 +180,9 @@ def main():
     FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
     MFILTER = args.mfil if args.mfil else 'None'
     OUTPUT_DIR = args.output
-    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
-    ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
+    OUTNAME = args.outputname
+    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR,("out" + ".predicted_expression.txt"))
+    ASSOC_FILE = os.path.join(OUTPUT_DIR, ("out" +  ".association.txt"))
     if args.logistic:
         TEST_TYPE = "logistic"
     elif args.survival:
