@@ -36,7 +36,7 @@ Below are older links
 
 ## Gene2Pheno database of results
 
-G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). Currently, the prototype hosts the results of PrediXcan applied to WTCCC (Wellcome Trust Case Control Consoritium) diseases using DGN whole blood prediction models.
+G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a variety of phenotypes. [Link to prototype](http://www.gene2pheno.org/). 
 
 # Genetic Architecture of Gene Expression Traits
 
