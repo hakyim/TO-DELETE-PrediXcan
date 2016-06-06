@@ -43,13 +43,13 @@ G2Pdb, Gene to Phenotype database, hosts the results of PrediXcan applied to a v
 - Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, and Hae Kyung Im (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues** [Link to Preprint](http://dx.doi.org/10.1101/043653); correspondence hwheeler at luc dot edu and haky at uchicago dot edu
 - Database of heritability estimates [link](https://github.com/jlbren/GenArchDB) [older link](https://s3.amazonaws.com/imlab-open/Webdata/Paper-Links/h2r2-2016-03-17-no-TS.db) or [older link](https://github.com/WheelerLab/GenArchDB)
 
-### Acknowledgements
+## Acknowledgements
 
-## GTEx data
+### GTEx data
 
 Data downloaded from dbGaP [link](http://www.gtexportal.org/)
 
-## DGN RNA-seq data
+### DGN RNA-seq data
 
 Data downloaded from [NIMH Repository and Genomics Resource](https://www.nimhgenetics.org )
 
