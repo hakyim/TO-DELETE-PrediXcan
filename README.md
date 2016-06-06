@@ -18,9 +18,9 @@ For support and feature requests, you can use this repository's issue tracker.
   
   *:correspondence haky at uchicago dot edu
 
-- Alvaro Barbeira, Kaanan P Shah, Jason M Torres, Heather E Wheeler, Eric S Torstenson, Todd Edwards, Tzintzuni Garcia, Graeme I Bell, Dan Nicolae, Nancy J Cox, Hae Kyung Im. (2016) **MetaXcan: Summary Statistics Based Gene-Level Association Method Infers Accurate PrediXcan Results** [link to preprint](doi: http://dx.doi.org/10.1101/045260)
+- Alvaro Barbeira, Kaanan P Shah, Jason M Torres, Heather E Wheeler, Eric S Torstenson, Todd Edwards, Tzintzuni Garcia, Graeme I Bell, Dan Nicolae, Nancy J Cox, Hae Kyung Im. (2016) **MetaXcan: Summary Statistics Based Gene-Level Association Method Infers Accurate PrediXcan Results** [link to preprint](http://dx.doi.org/10.1101/045260)
 
-- Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, Hae Kyung Im. (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues**. [link to preprint](doi: http://dx.doi.org/10.1101/043653)
+- Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, Hae Kyung Im. (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues**. [link to preprint](http://dx.doi.org/10.1101/043653)
 
 
 ##Software
