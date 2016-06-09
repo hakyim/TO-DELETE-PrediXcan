@@ -42,7 +42,7 @@ def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
             arr = line.strip().split()
             rsid = arr[1]
             refallele = arr[4]
-            dosage_row = np.array(map(float, arr[6:]))
+            dosage_row = np.array(arr[6:], dtype=np.float64)
             yield rsid, refallele, dosage_row
 
 
