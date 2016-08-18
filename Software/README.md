@@ -28,13 +28,11 @@ Scripts:
 
 Input Files: 
 
-- genotype file 
+- genotype file
 - sample file
+- transcriptome prediction model (sqlite db to be downloaded from [PredictDB](https://predictdb.hakyimlab.org/).)
 - phenotype file
 - filter file - Specifies a subset of rows on which to perform association tests (optional)
-- transcriptome prediction model (sqlite db to be downloaded from [here](https://s3.amazonaws.com/imlab-open/Data/PredictDB/DGN-WB-unscaled_0.5.db "DGN-WB-EN-unscaled_0.5") (A 33MB file will be downloaded if you click the link).
-
-All the scripts used to develop the prediction models can be found [here](https://github.com/hakyimlab/PrediXcan/tree/master/Paper-Scripts/Heather/DGN-calc-weights "Prediction Model Pipeline")
 
 ###Predicting/Imputing Expression
 
@@ -43,7 +41,7 @@ To predict the transcriptome from a given genotype file, include the `--predict`
 1. genelist: list of genes. Optional. By default it will use all available genes in model database
 2. dosages: imputed genotype file path. Default value: 'data/dosages/'
 3. dosage_prefix: prefix of dosage file. Default value: 'chr' 
-4. weights: full name of database. Default value: 'weight.db'
+4. weights: full path to the prediction model database. Default value: 'data/weights.db'
 5. output_dir: path to the desired output directory.  Default value: 'output/'
 
 This will produce a file in the specified output directory called `predicted_expression.txt`, which contains all of the predicted expression levels.
@@ -101,12 +99,8 @@ Header rows are optional for the filter file, but if they are included, the firs
 - Download and untar this file [PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample.tar)
 - Go to folder and run the following
 
-> ./PrediXcan.py --predict --assoc --weights weights/DGN-WB-unscaled_0.5.db --dosages genotype --samples samples.txt --pheno phenotype/igrowth.txt --output_dir results --linear
+> ./PrediXcan.py --predict --assoc --weights weights/TW_Cells_EBV-transformed_lymphocytes_0.5.db --dosages genotype --samples samples.txt --pheno phenotype/igrowth.txt --output_dir results --linear
 
-** to speed up the process the dosage files can be filtered to SNPs in HapMapSnpsCEU.list.gz.
-
-hapmapSnpsCEU.list.gz: List of SNPs used to develop the models is [here](https://app.box.com/s/6ftz3lr5h6detnf2iwzc7soyo5szrrej "HapMap2 SNP set") downloaded from [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/hapmapSnpsCEU.txt.gz "HapMap2 UCSC"). 
-SNPs not included on this list is not used to make predictions.
 
 #### Helper Scripts
 Conversion from Plink to Dosage (provided by scottritchie73 via pull request, thank you!) [link](https://github.com/hakyimlab/PrediXcan/blob/master/Software/convert_plink_to_dosage.py)

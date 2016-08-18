@@ -1,6 +1,5 @@
 ## PrediXcan
 
-
 PrediXcan is a gene-based association test that prioritizes genes that are likely to be causal for the phenotype. 
 
 You have only summary results? Try this new extension of PrediXcan that uses only summary statistics, no individual level data [link](https://github.com/hakyimlab/MetaXcan)
@@ -23,7 +22,7 @@ For support and feature requests, you can use this repository's issue tracker.
 - Heather E Wheeler, Kaanan P Shah, Jonathon Brenner, Tzintzuni Garcia, Keston Aquino-Michaels, GTEx Consortium, Nancy J Cox, Dan L Nicolae, Hae Kyung Im. (2016) **Survey of the Heritability and Sparsity of Gene Expression Traits Across Human Tissues**. [link to preprint](http://dx.doi.org/10.1101/043653)
 
 
-##Software
+## Software
 
 ### Python version
 
@@ -31,13 +30,7 @@ For support and feature requests, you can use this repository's issue tracker.
 
 ## PredictDB
 
-PredictDB hosts genetic prediction models of transcriptome levels to be used with PrediXcan [PredictDB](http://predictdb.org). Samples sizes of RNAseq data from GTEx used in version from 2015-11-12 are here: [RNAseq sample sizes](https://docs.google.com/spreadsheets/d/1YjA_t6Gd5WJgGUvV7FAyyH7xFekTIOoAtWqxmECkaK8/edit?usp=sharing)
-
-Below are older links
-
-- GTEx and DGN models (internal release 6/13/2014, models ran on 11/13/2015 by Kaanan, db and cov processed by Alvao) 
-  [Box Link](https://app.box.com/s/gujt4m6njqjfqqc9tu0oqgtjvtz9860w).
-  - these models have now ENSid's instead of gene symbols in the gene column. The gene symbol is in the 'extra' table in the db under the genename columns.
+[PredictDB](http://predictdb.hakyimlab.org/) hosts genetic prediction models of transcriptome levels to be used with PrediXcan. See [our wiki](https://github.com/hakyimlab/PrediXcan/wiki/PredictDB-Update:-Aug-18,-2016) for a report of a recent update of the prediction models.
 
 ## Gene2Pheno database of results
 
