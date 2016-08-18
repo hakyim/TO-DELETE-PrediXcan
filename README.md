@@ -30,7 +30,7 @@ For support and feature requests, you can use this repository's issue tracker.
 
 ## PredictDB
 
-[PredictDB](http://predictdb.hakyimlab.org/) hosts genetic prediction models of transcriptome levels to be used with PrediXcan. See [our wiki](./wiki/) for a report of a recent update of the prediction models.
+[PredictDB](http://predictdb.hakyimlab.org/) hosts genetic prediction models of transcriptome levels to be used with PrediXcan. See [our wiki](https://github.com/hakyimlab/PrediXcan/wiki/PredictDB-Update:-Aug-18,-2016) for a report of a recent update of the prediction models.
 
 ## Gene2Pheno database of results
 
