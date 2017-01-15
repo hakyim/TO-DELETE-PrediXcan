@@ -36,7 +36,7 @@ def buffered_file(file, dosage_buffer=None):
 
 
 def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
-    for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix)]:
+    for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix) and x.endswith(".gz")]:
         print datetime.datetime.now(), "Processing %s" % chrfile
         for line in buffered_file(gzip.open(os.path.join(dosage_dir, chrfile)), dosage_buffer=dbuffer):
             arr = line.strip().split()
@@ -175,7 +175,7 @@ def main():
     FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
     MFILTER = args.mfil if args.mfil else 'None'
     OUTPUT_DIR = args.output
-    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
+    PRED_EXP_FILE = os.path.join(OUTPUT_DIR, args.pred_exp) if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
     ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
     if args.logistic:
         TEST_TYPE = "logistic"
@@ -186,8 +186,12 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
+    if not PREDICT and not ASSOC:
+	print "Error: User did not specify --predict or --assoc. Please specify one or both options."
+	sys.exit(1)
     if os.path.exists(PRED_EXP_FILE) and PREDICT:
         print PRED_EXP_FILE + ' already exists! Move or change this filename to run this prediction.'
+	sys.exit(1)
     if not os.path.exists(PRED_EXP_FILE) and PREDICT:
         get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
         transcription_matrix = TranscriptionMatrix(BETA_FILE, SAMPLE_FILE, GENE_LIST)
