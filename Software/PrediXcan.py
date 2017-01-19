@@ -36,7 +36,7 @@ def buffered_file(file, dosage_buffer=None):
 
 
 def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
-    for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix)]:
+    for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix) and x.endswith(".gz")]:
         print datetime.datetime.now(), "Processing %s" % chrfile
         for line in buffered_file(gzip.open(os.path.join(dosage_dir, chrfile)), dosage_buffer=dbuffer):
             arr = line.strip().split()
@@ -152,6 +152,7 @@ def main():
     parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
     parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
     parser.add_argument('--output_dir', action="store", dest="output", default="output", help="Path to output directory")
+    parser.add_argument('--output_prefix', action="store", dest="output_prefix", default=None, help="Optional prefix for output files. Will concatenate specified prefix with underscore.")
     parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
@@ -175,8 +176,10 @@ def main():
     FILTER_FILE, FILTER_VAL = args.fil if args.fil else ('None', '1')
     MFILTER = args.mfil if args.mfil else 'None'
     OUTPUT_DIR = args.output
-    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, "predicted_expression.txt")
-    ASSOC_FILE = os.path.join(OUTPUT_DIR, "association.txt")
+    OUT_EXP_NAME = args.output_prefix + "_predicted_expression.txt"  if args.output_prefix else "predicted_expression.txt"
+    PRED_EXP_FILE = args.pred_exp if args.pred_exp else os.path.join(OUTPUT_DIR, OUT_EXP_NAME)
+    OUT_ASSOC_NAME = args.output_prefix + "_association.txt" if args.output_prefix else "association.txt"
+    ASSOC_FILE = os.path.join(OUTPUT_DIR, OUT_ASSOC_NAME)
     if args.logistic:
         TEST_TYPE = "logistic"
     elif args.survival:
@@ -186,8 +189,12 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
+    if not PREDICT and not ASSOC:
+	print "Error: User did not specify --predict or --assoc. Please specify one or both options."
+	sys.exit(1)
     if os.path.exists(PRED_EXP_FILE) and PREDICT:
         print PRED_EXP_FILE + ' already exists! Move or change this filename to run this prediction.'
+	sys.exit(1)
     if not os.path.exists(PRED_EXP_FILE) and PREDICT:
         get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
         transcription_matrix = TranscriptionMatrix(BETA_FILE, SAMPLE_FILE, GENE_LIST)
