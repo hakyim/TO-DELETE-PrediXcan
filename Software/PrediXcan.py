@@ -9,7 +9,6 @@ import os
 import sqlite3
 import sys
 import subprocess
-import pdb
 
 
 def buffered_file(file, dosage_buffer=None):
@@ -209,11 +208,8 @@ def main():
         get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
         transcription_matrix = TranscriptionMatrix(BETA_FILE, SAMPLE_FILE, GENE_LIST)
         for rsid, allele, dosage_row in get_all_dosages(DOSAGE_DIR, DOSAGE_PREFIX, DOSAGE_BUFFER):
-            #pdb.set_trace()
             for gene, weight, ref_allele in get_applications_of(rsid):
-                #pdb.set_trace()
                 transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
-        #pdb.set_trace()
         transcription_matrix.save(PRED_EXP_FILE)
     if ASSOC:
         check_out_file(ASSOC_FILE)
