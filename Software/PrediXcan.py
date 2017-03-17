@@ -99,7 +99,7 @@ class TranscriptionMatrix:
             self.gene_list = self.get_gene_list()
             self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
             self.D = np.zeros((len(self.gene_list), len(dosage_row))) # Genes x Cases
-        if gene in self.gene_index: #assumes strands are aligned to PrediXcan reference and dosage coding 0 to 2           
+        if gene in self.gene_index: #assumes dosage coding 0 to 2           
             if ref_allele == allele or self.complements[ref_allele] == allele: # assumes non-ambiguous SNPs to resolve strand issues: 
                 self.D[self.gene_index[gene],] += dosage_row * weight
             else:
@@ -160,7 +160,7 @@ def main():
     parser.add_argument('--missing-phenotype', action="store", dest="missing_phenotype",  default='NA', help="Specify code for missing phenotype information.  Default is NA")
     parser.add_argument('--filter', nargs=2, action="store", dest="fil", default=None, help="Takes two arguments. First is the name of the filter file, the second is a value to filter on.")
     parser.add_argument('--mfilter', action="store", dest="mfil", default=None, help="Column number of filter file to filter on.  '1' specifies the first filter column")
-    parser.add_argument('--output_dir', action="store", dest="output", default=None, help="Path to output directory")
+    parser.add_argument('--output_dir', action="store", dest="output", default=None, help="This option is deprecated. Use --output_prefix instead.")
     parser.add_argument('--output_prefix', action="store", dest="output_prefix", default=None, help="Optional prefix for output files. Will concatenate specified prefix with underscore.")
     parser.add_argument('--pred_exp', action="store", dest="pred_exp", default=None, help="Predicted expression file from earlier run of PrediXcan")
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
@@ -186,8 +186,7 @@ def main():
     MFILTER = args.mfil if args.mfil else 'None'
     OUT_EXP_NAME = args.output_prefix + "_predicted_expression.txt"  if args.output_prefix else "predicted_expression.txt"
     PRED_EXP_FILE = args.pred_exp if args.pred_exp else OUT_EXP_NAME
-    OUT_ASSOC_NAME = args.output_prefix + "_association.txt" if args.output_prefix else "association.txt"
-    ASSOC_FILE = OUT_ASSOC_NAME
+    ASSOC_FILE= args.output_prefix + "_association.txt" if args.output_prefix else "association.txt"
     if args.logistic:
         TEST_TYPE = "logistic"
     elif args.survival:
@@ -200,7 +199,7 @@ def main():
         sys.exit(1)
 
     if not args.output is None:
-        print("Error: --output_dir deprecated. Use --output prefix instead.")
+        print("Error: --output_dir deprecated. Use --output_prefix instead.")
         sys.exit(1)
 
     if PREDICT:
