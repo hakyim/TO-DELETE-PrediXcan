@@ -6,7 +6,7 @@ genotype data and performs gene-based association tests, allowing
 researchers to prioritize genes that are likely to be causal for a
 phenotype.
 
-##Reference
+## Reference
 Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K,
 Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK*. (2015) A
 gene-based association method for mapping traits using reference
@@ -16,7 +16,7 @@ transcriptome data. Nat Genet. doi:10.1038/ng.3367.
 
 [An open access preprint can be found on BioRxiv](http://biorxiv.org/content/early/2015/06/17/020164)
 
-##Instructions
+## Instructions
 
 To run PrediXcan you will need
 
@@ -41,7 +41,7 @@ Input Files:
 - filter file - Specifies a subset of rows on which to perform
 association tests (optional)
 
-###Predicting/Imputing Expression
+### Predicting/Imputing Expression
 
 To predict the transcriptome from a given genotype file, include the
 `--predict` flag when running PrediXcan.py and specify the following
@@ -56,7 +56,7 @@ available genes in the model database
 5. output_prefix: prefix for output files.  This includes the path to
 the output files as well as the prefix for the file name
 
-####Dosage File Format
+#### Dosage File Format
 - Columns are `chromosome rsid position allele1 allele2 MAF id1 .....
 idn`.
 - Dosage for each person refers to the number of alleles for the 2nd
@@ -73,12 +73,12 @@ id #'s listed in the same order as the genotype columns.
     columns, but a [PLINK .fam file](https://www.cog-genomics.org/plink2/formats#fam)
     is also an acceptable format for the samples file.
 
-####Usage
+#### Usage
 > ./PrediXcan.py  --predict --dosages dosagefile_path  --dosages_prefix
 chr --samples samples_file --weights prediction_db --output_prefix
 results/tissue
 
-###Running Association with Phenotype
+### Running Association with Phenotype
 
 To perform an association test between the predicted expression levels
 and phenotype, include the `--assoc` flag when running PrediXcan.py and
@@ -99,7 +99,7 @@ This will produce a file with suffix `association.txt`, containing
 summary statistics on the association between each gene and the
 phenotype.
 
-####Phenotype File Format
+#### Phenotype File Format
 
 Phenotype files are expected to be in a format similar to the format
 required for PLINK.  Most commonly, the phenotype file is tab delimited,
@@ -134,7 +134,7 @@ include `--missing_phenotype -9'.
 If a logistic test is specified and there are more than two levels of
 the phenotype, the user will recieve an error.
 
-####Filter File Format
+#### Filter File Format
 
 Filter files can specify a subset rows in the pheno file to perform the
 association on.  It is a tab delimited file with the first 2 columns
@@ -146,12 +146,10 @@ the association test only on individuals marked 2 in the filter file.
 Header rows are optional for the filter file, but if they are included,
 the first two columns must be labeled FID and IID.
 
-####Usage
+#### Usage
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp
 predicted_expression_file --linear --filter filter_file filter_val
---output_dir output_directory
-
-##Example for Prediction and Association
+--output_dir output_dirExample for Prediction and Association
 - Download and untar/unzip this file
 [PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar)
 - Go to folder and run the following
