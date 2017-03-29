@@ -1,8 +1,10 @@
 PrediXcan
 =========
 
-PrediXcan is a gene-based association test that prioritizes genes that
-are likely to be causal for the phenotype. 
+PrediXcan is a command-line tool that predicts gene expression from
+genotype data and performs gene-based association tests, allowing
+researchers to prioritize genes that are likely to be causal for a
+phenotype.
 
 ##Reference
 Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K,
@@ -46,7 +48,7 @@ To predict the transcriptome from a given genotype file, include the
 arguments:
 
 1. genelist: list of genes. Optional. By default it will use all
-available genes in model database
+available genes in the model database
 2. dosages: imputed genotype file path. Default value: 'data/dosages/'
 3. dosage_prefix: prefix of dosage file. Default value: 'chr' 
 4. weights: full path to the prediction model database. Default value:
@@ -82,7 +84,7 @@ To perform an association test between the predicted expression levels
 and phenotype, include the `--assoc` flag when running PrediXcan.py and
 specify the following arguments:
 
-1. pred_exp: predicted transcriptome from previous run of PrediXcan.
+1. pred_exp: predicted transcriptome from a previous run of PrediXcan.
 Default value: 'predicted_expression.txt'.
 2. pheno: phenotype file.  No default value.  See below for file format.
 3. filter: filter file to specify which rows to include in test and a
@@ -94,7 +96,7 @@ phenotype.  Default is linear.
 the output files as well as the prefix for the file name
 
 This will produce a file with suffix `association.txt`, containing
-summary statistics on the association betweeneach gene and the
+summary statistics on the association between each gene and the
 phenotype.
 
 ####Phenotype File Format
@@ -150,14 +152,16 @@ predicted_expression_file --linear --filter filter_file filter_val
 --output_dir output_directory
 
 ##Example for Prediction and Association
-- Download and untar this file
-[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample.tar)
+- Download and untar/unzip this file
+[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar)
 - Go to folder and run the following
 
-> ./PrediXcan.py --predict --assoc --weights
-weights/TW_Cells_EBV-transformed_lymphocytes_0.5.db --dosages genotype
---samples samples.txt --pheno phenotype/igrowth.txt --output_dir
-results/Cells_EBV-transformed_lymphocytes --linear
+> ./PrediXcan.py --predict --assoc --linear \
+                 --weights weights/TW_Cells_EBV-transformed_lymphocytes_0.5.db \
+                 --dosages genotype \
+                 --samples samples.txt \
+                 --pheno phenotype/igrowth.txt \
+                 --output_prefix results/Cells_EBV-transformed_lymphocytes 
 
 
 #### Helper Scripts
