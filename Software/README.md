@@ -153,7 +153,7 @@ predicted_expression_file --linear --filter filter_file filter_val
 
 ## Example for Prediction and Association
 - Download and untar/unzip this file
-[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar)
+[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar.gz)
 - Go to folder and run the following
 
 > ./PrediXcan.py --predict --assoc --linear \
