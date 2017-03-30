@@ -129,7 +129,7 @@ trait is assumed to be encoded as 0 for unaffected and 1 for affected.
 
 By default, NA specifies a missing phenotype value.  To specify a
 missing phenotype value that is encoded numerically, say -9 for example,
-include `--missing_phenotype -9'.
+include `--missing_phenotype -9`.
 
 If a logistic test is specified and there are more than two levels of
 the phenotype, the user will recieve an error.
