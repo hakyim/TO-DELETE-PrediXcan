@@ -37,7 +37,7 @@ def buffered_file(file, dosage_buffer=None):
 
 def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
     for chrfile in [x for x in sorted(os.listdir(dosage_dir)) if x.startswith(dosage_prefix) and x.endswith(".gz")]:
-        print(str(datetime.datetime.now()) + " Processing {}".format(chrfile))
+        print("{} Processing {}".format(datetime.datetime.now(), chrfile))
         for line in buffered_file(gzip.open(os.path.join(dosage_dir, chrfile)), dosage_buffer=dbuffer):
             arr = line.decode('utf-8').strip().split()
             rsid = arr[1]
@@ -64,7 +64,7 @@ class GetApplicationsOf:
     def __init__(self, beta_file, preload_weights=True):
         self.db = WeightsDB(beta_file)
         if preload_weights:
-            print(str(datetime.datetime.now()) + " Preloading weights...")
+            print("{} Preloading weights...".format(datetime.datetime.now()))
             self.tuples = defaultdict(list)
             for tup in self.db.query("SELECT rsid, gene, weight, eff_allele FROM weights"):
                 self.tuples[tup[0]].append(tup[1:])
