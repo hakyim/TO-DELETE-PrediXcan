@@ -15,7 +15,7 @@ for news on releases, features, etc. For support and feature requests,
 you can use this repository's issue tracker.
 
 
-##Reference
+## Reference
 - Gamazon ER†, Wheeler HE†, Shah KP†, Mozaffari SV, Aquino-Michaels K,
 Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK. (2015)
 **A gene-based association method for mapping traits using reference
