@@ -150,17 +150,20 @@ the first two columns must be labeled FID and IID.
 > ./PrediXcan.py --assoc --pheno phenotype_file --pred_exp
 predicted_expression_file --linear --filter filter_file filter_val
 --output_dir output_dirExample for Prediction and Association
+
+## Example for Prediction and Association
 - Download and untar/unzip this file
-[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar)
+[PrediXcan Example tar file](https://s3.amazonaws.com/imlab-open/Data/PredictDB/PrediXcanExample_3_29_17.tar.gz)
 - Go to folder and run the following
 
-> ./PrediXcan.py --predict --assoc --linear \
-                 --weights weights/TW_Cells_EBV-transformed_lymphocytes_0.5.db \
-                 --dosages genotype \
-                 --samples samples.txt \
-                 --pheno phenotype/igrowth.txt \
-                 --output_prefix results/Cells_EBV-transformed_lymphocytes 
-
+```
+./PrediXcan.py --predict --assoc --linear \
+               --weights weights/TW_Cells_EBV-transformed_lymphocytes_0.5.db \
+               --dosages genotype \
+               --samples samples.txt \
+               --pheno phenotype/igrowth.txt \
+               --output_prefix results/Cells_EBV-transformed_lymphocytes 
+```
 
 #### Helper Scripts
 Conversion from Plink to Dosage (provided by scottritchie73 via pull
