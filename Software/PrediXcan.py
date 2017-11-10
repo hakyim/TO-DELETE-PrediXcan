@@ -41,9 +41,9 @@ def get_all_dosages(dosage_dir, dosage_prefix, dbuffer=None):
         for line in buffered_file(gzip.open(os.path.join(dosage_dir, chrfile)), dosage_buffer=dbuffer):
             arr = line.decode('utf-8').strip().split()
             rsid = arr[1]
-            refallele = arr[4]
+            eff_allele = arr[4]
             dosage_row = np.array(arr[6:], dtype=np.float64)
-            yield rsid, refallele, dosage_row
+            yield rsid, eff_allele, dosage_row
 
 
 class WeightsDB:
