@@ -36,4 +36,10 @@ query('select * from weights limit 10')
 
 high.h2.genes <- query('select * from extra where R2 > 0.01')
 
+## how many genes are available for given tissue?
+## dbname should be the name of the sqlite database for the tissue
+query('select count(*) from extra')
+
+
+
 ```
