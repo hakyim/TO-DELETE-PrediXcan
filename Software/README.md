@@ -36,7 +36,7 @@ Input Files:
 
 - genotype file
 - sample file
-- transcriptome prediction model (sqlite db to be downloaded from [PredictDB](http://predictdb.hakyimlab.org/).)
+- transcriptome prediction model (sqlite db to be downloaded from [PredictDB](http://predictdb.org/).)
 - phenotype file
 - filter file - Specifies a subset of rows on which to perform
 association tests (optional)
