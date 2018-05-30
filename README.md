@@ -48,7 +48,7 @@ Expression Traits Across Human Tissues**.
 
 ## PredictDB
 
-[PredictDB](http://predictdb.hakyimlab.org/) hosts genetic prediction
+[PredictDB](http://predictdb.org/) hosts genetic prediction
 models of transcriptome levels to be used with PrediXcan. See
 [our wiki](https://github.com/hakyimlab/PrediXcan/wiki/PredictDB-Update:-Aug-18,-2016)
 for a report of a recent update of the prediction models.
