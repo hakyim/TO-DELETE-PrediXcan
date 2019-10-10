@@ -62,6 +62,7 @@ idn`.
 - Dosage for each person refers to the number of alleles for the 2nd
 allele listed (between 0 and 2).
 - It is expected that there will be one file per chromosome.
+- Files must be gzipped, and their names are expected to end with ".gz"
 - In the dosages directory, there must be a file of the individuals with
 id #'s listed in the same order as the genotype columns.
     - The first column must contain the family ID, and the second must
