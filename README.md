@@ -1,3 +1,11 @@
+# Deprecation notice
+
+This repository contains the original reference implementation of 
+the [PrediXcan](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4552594/) method.
+It is now considered deprecated and exists only for reference purposes.
+
+Active development is now conducted at the [MetaXcan](https://github.com/hakyimlab/MetaXcan) repository.
+
 ## PrediXcan
 
 PrediXcan is a gene-based association test that prioritizes genes that
