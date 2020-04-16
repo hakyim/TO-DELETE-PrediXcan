@@ -32,13 +32,14 @@ query('select count(*) from weights')
 query('select * from weights where gene = "GATA6" ')
 query('select * from weights limit 10')
 
-## select genes with R2>0.01 (this is cor>0.1)
-
-high.h2.genes <- query('select * from extra where R2 > 0.01')
-
 ## how many genes are available for given tissue?
 ## dbname should be the name of the sqlite database for the tissue
 query('select count(*) from extra')
+
+## select genes with R2>0.01 (this is cor>0.1)
+## ths won't work for the latest MASHR-based GTEx V8 models
+## this only works for models where R2 is included. 
+high.h2.genes <- query('select * from extra where R2 > 0.01')
 
 
 

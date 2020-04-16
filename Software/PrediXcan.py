@@ -61,12 +61,13 @@ class WeightsDB:
 
 
 class GetApplicationsOf:
-    def __init__(self, beta_file, preload_weights=True):
+    def __init__(self, beta_file, preload_weights=True, variant_column="rsid"):
         self.db = WeightsDB(beta_file)
+        self.variant_column = variant_column
         if preload_weights:
             print("{} Preloading weights...".format(datetime.datetime.now()))
             self.tuples = defaultdict(list)
-            for tup in self.db.query("SELECT rsid, gene, weight, eff_allele FROM weights"):
+            for tup in self.db.query("SELECT {variant_column}, gene, weight, eff_allele FROM weights".format(variant_column=self.variant_column)):
                 self.tuples[tup[0]].append(tup[1:])
         else:
             self.tuples = None
@@ -76,7 +77,7 @@ class GetApplicationsOf:
             for tup in self.tuples[rsid]:
                 yield tup
         else:
-            for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE rsid=?", (rsid,)):
+            for tup in self.db.query("SELECT gene, weight, eff_allele FROM weights WHERE {variant_column}=?".format(variant_column=self.variant_column), (rsid,)):
                 yield tup
 
 
@@ -99,11 +100,11 @@ class TranscriptionMatrix:
             self.gene_list = self.get_gene_list()
             self.gene_index = { gene:k for (k, gene) in enumerate(self.gene_list) }
             self.D = np.zeros((len(self.gene_list), len(dosage_row))) # Genes x Cases
-        if gene in self.gene_index: #assumes dosage coding 0 to 2           
-            if ref_allele == allele or self.complements[ref_allele] == allele: # assumes non-ambiguous SNPs to resolve strand issues: 
+        if gene in self.gene_index: #assumes dosage coding 0 to 2
+            if ref_allele == allele or self.complements[ref_allele] == allele: # assumes non-ambiguous SNPs to resolve strand issues:
                 self.D[self.gene_index[gene],] += dosage_row * weight
             else:
-                self.D[self.gene_index[gene],] += (2-dosage_row) * weight # Update all cases for that gene 
+                self.D[self.gene_index[gene],] += (2-dosage_row) * weight # Update all cases for that gene
 
 
     def get_samples(self):
@@ -166,9 +167,15 @@ def main():
     parser.add_argument('--logistic', action="store_true", dest="logistic", default=False, help="Include to perform a logistic regression")
     parser.add_argument('--linear', action="store_true", dest="linear", default=False, help="Include to perform a linear regression")
     parser.add_argument('--survival', action="store_true", dest="survival", default=False, help="Include to perform survival analysis")
+    parser.add_argument('--model_variant_id', help="Use an alternative column name", default="rsid")
 
     args = parser.parse_args()
 
+    _r = os.path.split(args.output_prefix)[0]
+    if not os.path.exists(_r):
+        os.makedirs(_r)
+
+    VARIANT_COLUMN = args.model_variant_id
     PREDICT = args.predict
     GENE_LIST = args.genelist
     DOSAGE_DIR = args.dosages
@@ -203,13 +210,22 @@ def main():
         sys.exit(1)
 
     if PREDICT:
+        variants=set()
         check_out_file(PRED_EXP_FILE)
-        get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS)
+        get_applications_of = GetApplicationsOf(BETA_FILE, PRELOAD_WEIGHTS, VARIANT_COLUMN)
         transcription_matrix = TranscriptionMatrix(BETA_FILE, SAMPLE_FILE, GENE_LIST)
         for rsid, allele, dosage_row in get_all_dosages(DOSAGE_DIR, DOSAGE_PREFIX, DOSAGE_BUFFER):
             for gene, weight, ref_allele in get_applications_of(rsid):
+                variants.add(rsid)
                 transcription_matrix.update(gene, weight, ref_allele, allele, dosage_row)
         transcription_matrix.save(PRED_EXP_FILE)
+        db = WeightsDB(BETA_FILE)
+        count = 0
+        for r in db.query("SELECT count( distinct {variant_column}) FROM weights".format(variant_column=VARIANT_COLUMN)):
+            count = int(r[0])
+        print("{:d}/{:d}({:0.2%}) snps found".format(len(variants), count, 1.0*len(variants)/count))
+        
+        
     if ASSOC:
         check_out_file(ASSOC_FILE)
         subprocess.call(
