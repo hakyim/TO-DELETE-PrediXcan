@@ -96,4 +96,12 @@ al. (2014). Characterizing the genetic basis of transcriptome diversity
 through RNA-sequencing of 922 individuals. Genome Research 24, 14–24.
 
 ___
-[![Analytics](https://ga-beacon.appspot.com/UA-61894206-3/PrediXcan-Readme-Github?useReferrer)](https://github.com/hakyim/PrediXcan)
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P01J86D2KQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-P01J86D2KQ');
+</script>
