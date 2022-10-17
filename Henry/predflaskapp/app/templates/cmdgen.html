@@ -1,0 +1,41 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+
+<!--TODO: CHANGE THIS INTO A NEW POST PAGE -->
+{% block content %}
+  <h1>Enter your information</h1>
+  <form action="" method="post" name="cmdgen">
+      {{form.hidden_tag()}}
+      <table>
+          <tr>
+              <td>Phenotype file path:</td>
+              <td>{{ form.phenofilepath(cols=64, rows=1) }}</td>
+          </tr>
+          <tr>
+              <td>genedata file path:</td>
+              <td>{{ form.genedatafilepath(cols=64, rows=1) }}</td>
+          </tr>
+          <tr>
+              <td>genotype header file path:</td>
+              <td>{{ form.genotypeheader(cols=64, rows=1) }}</td>
+          </tr>
+          <tr>
+              <td>genotype tail format:</td>
+              <td>{{ form.genotypetail(cols=64, rows=1) }}</td>
+          </tr>
+          <tr>
+              <td>tissue type</td>
+              <td>{{form.tissuetype}}</td>
+          </tr>
+          <tr>
+              <td>Study:</td>
+              <td>{{form.study}}</td>
+          </tr>
+          <tr>
+              <td></td>
+              <td><input type="submit" value="submit"></td>
+          </tr>
+      </table>
+  </form>
+{% endblock %}

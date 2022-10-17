@@ -1,0 +1,30 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - PrediXcan</title>
+    {% else %}
+    <title>Welcome to PrediXcan Pre-Alpha</title>
+    {% endif %}
+  </head>
+  <body>
+    <div>PrediXcan: 
+        <a href="{{ url_for('index') }}">Home</a> 
+        <a href='{{ url_for('gen_command') }}'>Command Line Generator</a>
+        <a href="{{ url_for('upload_file') }}">File Upload Test</a>
+        <a href="{{ url_for('tar_upload') }}">tar File Upload Test</a>
+        <a href="{{ url_for('run_predict') }}">Prediction Model</a>
+        <a href="{{ url_for('download',filename='bye.txt') }} ">download test </a>
+    </div>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }} </li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </body> 
+</html>
